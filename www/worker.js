@@ -23,6 +23,7 @@ var filesToCache = [
   '/js/components/saas-multi-status/css/style.css',
 
   '/js/app.js',
+  '/js/config.js',
   '/js/cheat-sheet-installer.js',
   '/js/CLI.js',
   '/js/commands.js',
