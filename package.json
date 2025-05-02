@@ -1,0 +1,20 @@
+{
+        "scripts": {
+          "test": "eslint --ignore-pattern vendor www/js",
+          "start": "cd www && npx serve",
+          "installDeps": "cd node_modules && cp dompurify/dist/purify.min.js ../www/js/vendor && cp handlebars/dist/handlebars.min.js ../www/js/vendor"
+        },
+        "dependencies": {
+          "dompurify": "^3.2.3",
+          "handlebars": "^4.7.8",
+          "split.js": "^1.6.5",
+          "lunr": "^2.3.6",
+          "mermaid": "^11.6.0",
+          "rst2html": "^1.0.0",
+          "glightbox": "^3.1.0",
+          "asciidoctor": "^3.0.3"
+        },
+        "devDependencies": {
+          "eslint": "^8.49.0"
+        }
+      }

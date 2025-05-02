@@ -1,0 +1,7 @@
+.domain.details_on .domain_details {
+        display: block;
+}
+
+.domain_details {
+        display: none;
+}
