@@ -119,6 +119,9 @@ export class Sidebar {
             // Collapse previous selected
             Array.from(document.getElementsByClassName("active")).forEach((p) => p.classList.remove('active'));
 
+            if("" === path)
+                return;
+
             // Open section
             document.querySelector(`li[data-path="${cssPath.replace(/:::.*/, "")}"]`)?.classList.add('active');
 

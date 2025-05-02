@@ -1,33 +1,12 @@
 // vim: set ts=4 sw=4:
 
+import { Config } from '../config.js';
 import { ContentView } from "../content-view.js";
 import { Client } from "../vendor/gradio-client/index.js";
 import { Settings } from "../settings.js";
 
 export class ChatView {
-    static #models = {
-        // Note: first definition is always or default model
-        "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", { message: prompt }),
-        "Qwen/Qwen1.5-110B-Chat-demo": async (client, prompt) => await client.predict("/model_chat", [
-                prompt,
-                [],
-                "You are a helpful assistant."
-            ]),
-        "huggingface-projects/gemma-2-9b-it": async (client, prompt) => await client.predict("/chat", {
-                message: prompt, 		
-                max_new_tokens: 1024, 		
-                temperature: 0.6, 		
-                top_p: 0.9, 		
-                top_k: 50, 		
-                repetition_penalty: 1.2, 
-            }),
-        "eswardivi/Phi-3-mini-128k-instruct": async (client, prompt) => await client.predict("/chat", [
-                prompt,
-                0.6,        // temperature
-                true,       // sampling
-                1024        // max token  
-            ])
-    };
+    static #models = Config.chatBotModels;
     static #currentModel;       // currently selected chat bot model (or undefined)
     static #gradioClient;       // client initialized to active model (or undefined)
     static #showdown;           // markdown converter instance (or undefined)

@@ -13,7 +13,7 @@ import { CheatSheetView } from './views/CheatSheet.js';
 
 export class LZone {
     // state
-    static #path = "";      // currently selected menu path (e.g. 'Examples/Something/Page')
+    static #path = "";      // currently selected menu path (e.g. 'Examples/Something/Page') empty for Home
 
     // routes all rendering into #main-content-content
     static #routes = {
@@ -63,10 +63,10 @@ export class LZone {
                     return;
                 }
             }
-            new HomeView(ContentView.switch('content'));
-            LZone.#pathChanged('');
-            return;
         }
+        console.log("here")
+        new HomeView(ContentView.switch('content'));
+        LZone.#pathChanged('');
     }
 
     static getPath = () => this.#path;
@@ -111,6 +111,7 @@ export class LZone {
         this.#onLocationHashChange();
 
         Search.init();
+        Sidebar.update();
         new CLI('search-input');
         new ChecksView(document.getElementById('toolpanel'));
     }

@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { Config } from './config.js';
 import { GithubRepo } from './github-repo.js';
 import { Sidebar } from './sidebar.js';
 import { Search } from './search.js';
@@ -22,7 +23,7 @@ class CheatSheetInstaller {
 
     static #staticConstructor = (async () => {
         // Always update site cheat sheets index
-        const response = await fetch(`https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/cheat-sheets.json`);
+        const response = await fetch(Config.cheatSheetIndexUrl);
         const repos = await response.json();
 
         for(const name of Object.keys(repos)) {

@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { Config } from "./config.js";
 import { Section } from "./section.js";
 import { Settings } from "./settings.js";
 
@@ -23,7 +24,7 @@ export class SearchIndex {
     // Load search index for site specific cheat sheets
     // Automatically cached by PWA worker
     static async getDefault() {
-        return await fetch('https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/search-index.json')
+        return await fetch(Config.cheatSheetIndexUrl)
             .then((response) => response.json());
     }
 

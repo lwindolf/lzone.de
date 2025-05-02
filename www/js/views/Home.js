@@ -1,3 +1,6 @@
+// vim: set ts=4 sw=4:
+
+import { Config } from "../config.js";
 import { ChecksView } from "./Checks.js";
 import { Section } from "../section.js";
 import * as r from "../helpers/render.js";
@@ -8,11 +11,7 @@ export class HomeView {
             el.innerHTML = r.template(`
                 <div class="about">
                         {{#compare aiPromptHistory.length '==' 0 }}
-                                <p>
-                                        LZone is a progressive web app by <a href="/#/lwindolf">Lars Windolf</a> that supports
-                                        installing a ton of Sysadmin / DevOps / System Architecture related content
-                                        so that you can search and read all of it in one place.
-                                </p>
+                                {{ welcome }}
                         {{/compare}}
 
                         <div id='home-content'>
@@ -30,6 +29,7 @@ export class HomeView {
 
                 <div id="toolpanelHome"></div>    
             `)({
+                welcome: Config.welcome,
                 sections
             });
 
