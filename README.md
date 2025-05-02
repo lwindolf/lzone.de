@@ -1,6 +1,6 @@
 # lzone.de
 
-lzone.de is a static PWA, which means it is backend-less and you can host a copy of it whereever you want.
+lzone.de is a static PWA with offline content caching, which means it is backend-less and you can host a copy of it whereever you want.
 
 ## Setup
 
