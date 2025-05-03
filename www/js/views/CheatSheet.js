@@ -150,9 +150,8 @@ class CheatSheetRenderer {
             await this.#setup();
 
         baseUrl = encodeURI(d.baseUrl);
-console.log(d);
         if (d.type === "link")
-            d.data = await fetch(baseUrl)
+            d.data = await fetch(baseUrl + "/" + d.baseName)
                 .then((response) => response.text());
 
         if (!d.data)

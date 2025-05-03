@@ -74,7 +74,7 @@ export class CheatSheetCatalog {
         });
     }
 
-    static async #documentDownload(group, section, path, url, editUrl) {
+    static async documentDownload(group, section, path, url, editUrl) {
         // on first download ask user about persistance
         navigator.storage.persist();
 
@@ -137,7 +137,7 @@ export class CheatSheetCatalog {
                 if (m.target) {
                     m.target = m.target.replace(/\//g, ':::');
                     if(download)
-                        downloads.push(this.#documentDownload(group, section, m.target,
+                        downloads.push(this.documentDownload(group, section, m.target,
                             `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
                             `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`)
                             .then(() => {

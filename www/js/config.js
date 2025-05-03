@@ -16,17 +16,19 @@ export class Config {
     // A search index is automatically created or a provided one is used
     //
     // Allowed fields:
+    // - `removable`(optional, default: true) if the group can be deactivated
     // - `install` (optional) Github repo definition to install, repo content will be automatically added to the sidebar
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
     static indexUrls = {
-        /*'Lars Windolf': {
+        'Lars Windolf': {
             install : {
                 'Blogs': {
                     github: 'lwindolf/blogs',
                 }
             }
-        },*/
+        },
         'Cheat Sheets': {
+            removable : false,
             install : {
                 'LZone Cheat Sheets': {
                     github: 'lwindolf/lzone-cheat-sheets',
@@ -77,39 +79,8 @@ export class Config {
     // welcome text
     static welcome = `
         <p>
-            LZone is a progressive web app by <a href="/#/about">Lars Windolf</a> that supports
+            LZone is a progressive web app by <a href="/consulting/en">Lars Windolf</a> that supports
             installing a ton of Sysadmin / DevOps / System Architecture related content
             so that you can search and read all of it in one place.
         </p>`;
-
-
-    // about page text
-    static about = `
-        <h1>Lars Windolf</h1>
-
-        <p>
-            Hi! I'm a <a href="/consulting/en">freelancer</a> working as a tech lead supporting
-            DevOps teams in system architecture, agile methods and IT operations. I do strongly care about collecting and sharing 
-            knowledge and I use this web app as a customizable content portal swiss army knife for the knowledge
-            needed in my daily work.
-        </p>
-
-        <h2>Projects</h2>
-
-        <ul>
-            <li><a href="/liferea">Liferea</a> (<a href="https://github.com/lwindolf/liferea">Github</a>) - 20+ years old RSS feed reader for Linux</li>
-            <li><a href="/multi-status">Multi-Status</a> (<a href="https://github.com/lwindolf/multi-status">Github</a>) - SaaS status aggregator</li>
-            <li><a href="/#/wurmterm">WurmTerm</a> (<a href="https://github.com/lwindolf/wurmterm-backend">Github</a>) - DevOps problem discovery agent</li>
-            <li>Cheat Sheet Collection (<a href="https://github.com/lwindolf/lzone-cheat-sheets">Github</a>)</li>
-            <li>Cloud Outage Index (<a href="https://github.com/lwindolf/cloud-outages">Github</a>)</li>
-        </ul>
-
-        <h2>Profiles</h2>
-
-        <ul>
-            <li><a href="https://github.com/lwindolf">Github</a></li>
-            <li><a href="/blog/">Blog</a></li>
-            <li><a rel="me" href="https://mas.to/@lwindolf">Mastodon</a></li>
-        </ul>
-        `;
 }
