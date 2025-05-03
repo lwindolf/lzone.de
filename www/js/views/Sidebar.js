@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { Section } from "../models/section.js";
+import { Section } from "../models/Section.js";
 import { LZone } from "../app.js";
 import * as r from "../helpers/render.js";
 
@@ -12,7 +12,7 @@ export class Sidebar {
         {{#* inline "sidebarChildNode"}}
             <li class="nav-list-item" data-path="{{ id }}">
                 <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
-                <a data-path="{{ id }}" class="nav-list-link" href="/#/{{ id }}">{{ name }}</a>
+                <a data-path="{{ id }}" class="nav-list-link" href="/#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">{{ name }}</a>
                 <ul data-path="{{ id }}" class="nav-list">
                     {{#each nodes }}
                         {{> sidebarChildNode }}
@@ -86,7 +86,7 @@ export class Sidebar {
             // Scroll to selected menu
             document.querySelector(`li[data-path="${cssPath}"]`).scrollIntoView({ block: "nearest" });
         } catch (e) {
-            console.log(e);
+            console.error(`select "${cssPath}" caused: ${e}`);
         }
 
         // JTD: Auto close nav for small screens

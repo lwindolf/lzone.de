@@ -1,9 +1,9 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from '../config.js';
-import { ContentView } from "../content-view.js";
+import { ContentView } from "./Content.js";
 import { Client } from "../vendor/gradio-client/index.js";
-import { Settings } from "../models/settings.js";
+import { Settings } from "../models/Settings.js";
 
 export class ChatView {
     static #models = Config.chatBotModels;

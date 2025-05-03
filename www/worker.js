@@ -24,19 +24,16 @@ var filesToCache = [
 
   '/js/app.js',
   '/js/config.js',
-  '/js/cheat-sheet-installer.js',
   '/js/CLI.js',
   '/js/commands.js',
-  '/js/content-view.js',
-  '/js/github-repo.js',
-  '/js/runbook.js',
-  '/js/search-index.js',
   '/js/search.js',
-  '/js/section.js',
-  '/js/settings.js',
-  '/js/sidebar.js',
   '/js/helpers/debounce.js',
   '/js/helpers/render.js',
+  '/js/models/CheatSheetCatalog.js',
+  '/js/models/GithubRepo.js',
+  '/js/models/SearchIndex.js',
+  '/js/models/Section.js',
+  '/js/models/Settings.js',
   '/js/vendor/asciidoctor.min.js',
   '/js/vendor/glightbox.min.js',
   '/js/vendor/handlebars.min.js',
@@ -45,12 +42,14 @@ var filesToCache = [
   '/js/vendor/purify.es.js',
   '/js/vendor/rst2html.min.js',
   '/js/vendor/showdown.min.js',
+  '/js/views/About.js',
   '/js/views/Chat.js',
   '/js/views/CheatSheet.js',
   '/js/views/Checks.js',
+  '/js/views/Content.js',
   '/js/views/Home.js',
-  '/js/views/LWindolf.js',
-  '/js/views/Settings.js'
+  '/js/views/Settings.js',
+  '/js/views/Sidebar.js'
 ];
 
 /* Start the service worker and cache all of the app's content */

@@ -1,16 +1,17 @@
 // vim: set ts=4 sw=4:
 
 import { CLI } from './CLI.js';
-import { Section } from './models/section.js';
+import { Section } from './models/Section.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
-import { ContentView } from './content-view.js';
+import { ContentView } from './views/Content.js';
 
 import { HomeView } from './views/Home.js';
 import { AboutView } from './views/About.js';
 import { SettingsView } from './views/Settings.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetView } from './views/CheatSheet.js';
+import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
 
 export class LZone {
     // state
@@ -108,13 +109,13 @@ export class LZone {
             navigator.serviceWorker.register('/worker.js');
 
         await Section.init();
+        await CheatSheetCatalog.update();
 
         window.addEventListener("hashchange", this.#onLocationHashChange);
         await ContentView.setup('main-content-wrap');
         this.#onLocationHashChange();
 
         Search.init();
-        Sidebar.update();
         new CLI('search-input');
         new ChecksView(document.getElementById('toolpanel'));
     }

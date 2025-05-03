@@ -1,8 +1,8 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from "../config.js";
-import { Section } from "./section.js";
-import { Settings } from "./settings.js";
+import { Section } from "./Section.js";
+import { Settings } from "./Settings.js";
 
 // Persistent index of all installed documents. Cached to avoid recomputing
 

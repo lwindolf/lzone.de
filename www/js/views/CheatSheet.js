@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { Section } from '../models/section.js';
+import { Section } from '../models/Section.js';
 import * as r from '../helpers/render.js';
 
 // Rendering markup & HTML cheat sheet content
@@ -150,7 +150,7 @@ class CheatSheetRenderer {
             await this.#setup();
 
         baseUrl = encodeURI(d.baseUrl);
-
+console.log(d);
         if (d.type === "link")
             d.data = await fetch(baseUrl)
                 .then((response) => response.text());
@@ -227,13 +227,14 @@ class CheatSheetRenderer {
 
         // If it is no special view load the content
         let s = await Section.get(tmp[0]);
+        console.log(s);
         if (-1 == path.indexOf(':::')) {
             // Load section description
             e.insertAdjacentHTML('afterbegin', this.#sourceTemplate({...s, title: path }));
             e.innerHTML += this.renderToC(s);
         } else {
             let d = await this.renderDocument(e, path);
-            e.insertAdjacentHTML('afterbegin', this.renderToC(s));
+            // FIXME: e.insertAdjacentHTML('afterbegin', this.renderToC(s));
             if (!d?.data)
                 e.insertAdjacentHTML('beforeend', "No content on this page.");     
 

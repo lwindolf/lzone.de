@@ -13,6 +13,8 @@ export class GithubRepo {
             .then((data) => { repoInfo = data; return fetch(`https://api.github.com/repos/${repo.github}/git/trees/${data.default_branch}?recursive=1`)})
             .then((response) => response.json());
 
+        // FIXME: error handling
+
         return {
             data,
             section : {

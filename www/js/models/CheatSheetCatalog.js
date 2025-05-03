@@ -1,9 +1,9 @@
 // vim: set ts=4 sw=4:
 
-import { Config } from './config.js';
-import { GithubRepo } from './models/github-repo.js';
-import { Search } from './search.js';
-import { Section } from './models/section.js';
+import { Config } from '../config.js';
+import { GithubRepo } from './GithubRepo.js';
+import { Search } from '../search.js';
+import { Section } from './Section.js';
 
 // Installing site and 3rd party cheat sheets from curated sources
 //
@@ -17,12 +17,20 @@ import { Section } from './models/section.js';
 //
 // For now only Github as source is supported
 
-export class CheatSheetInstaller {
-    static #staticConstructor = (async () => {
+export class CheatSheetCatalog {
+    // Updates the index of all installed sections if they need updating
+    // Installs default cheat sheets on uninitialized app.
+    static async update() {
+        const sections = await Section.getTree();
+
         for(const group of Object.keys(Config.indexUrls)) {
             if(!Config.indexUrls[group].install)
                     continue;
-            // FIXME: do not fetch on each load!
+
+            // FIXME: do update the index from time to time
+            if(sections.nodes[group])
+                continue;
+                
             try {                
                 for (const name of Object.keys(Config.indexUrls[group].install)) {
                     const repo = Config.indexUrls[group].install[name];
@@ -54,20 +62,30 @@ export class CheatSheetInstaller {
             }
         }
         document.dispatchEvent(new CustomEvent("sections-updated"));
-    })();
+    }
 
-    static async #documentDownload(section, path, url, editUrl) {
+    // add a document that is only a link and will only be downloaded on demand
+    static #documentLink(group, section, path, url, editUrl) {
+        Section.addDocument(group, section, path, {
+            type: 'link',
+            baseName: url.replace(/.*\//, ''),
+            baseUrl: url.replace(/\/[^/]+$/, ''),
+            editUrl
+        });
+    }
+
+    static async #documentDownload(group, section, path, url, editUrl) {
         // on first download ask user about persistance
         navigator.storage.persist();
 
         await fetch(url)
             .then((response) => response.text())
             .then(async (data) => {
-                Section.addDocument(section, path, {
-                    data: data,
+                Section.addDocument(group, section, path, {
+                    data,
                     baseName: url.replace(/.*\//, ''),
                     baseUrl: url.replace(/\/[^/]+$/, ''),
-                    editUrl: editUrl
+                    editUrl
                 });
             });
     }
@@ -95,6 +113,7 @@ export class CheatSheetInstaller {
     }
 
     // Installation with optional full download
+    // FIXME: support delta download too
     static async install(group, section, repo, e = undefined, download = true) {
         const filePattern = repo.filePattern ? repo.filePattern : "^(.+)\\.(md|markdown|rst|adoc|asciidoc)$";
         const re = new RegExp(filePattern);
@@ -106,6 +125,7 @@ export class CheatSheetInstaller {
         if (e)
             e.parentNode.append(info);
 
+        // FIXME: move to GithubRepo.js
         console.log(`Fetching ${section} from ${repo.github}...`);
         await GithubRepo.fetch(repo).then(async (result) => {
             var s = result.section;
@@ -117,13 +137,18 @@ export class CheatSheetInstaller {
                 if (m.target) {
                     m.target = m.target.replace(/\//g, ':::');
                     if(download)
-                        downloads.push(this.#documentDownload(section, m.target,
+                        downloads.push(this.#documentDownload(group, section, m.target,
                             `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
                             `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`)
                             .then(() => {
                                 info.innerText += `Download success: ${e.path}\n`;
                             })
                         )
+                    else
+                        this.#documentLink(group, section, m.target,
+                            `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
+                            `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`);
+                                                    
                     s.children.push(m.target);
                 }
             }

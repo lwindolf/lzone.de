@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { Commands } from "./commands.js";
-import { ContentView } from "./content-view.js";
+import { ContentView } from "./views/Content.js";
 import { ChatView } from "./views/Chat.js";
 
 // A CLI prompt for multiple types of command (AI, commands, search)

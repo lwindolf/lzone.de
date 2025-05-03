@@ -1,19 +1,15 @@
 // vim: set ts=4 sw=4:
 
-import { Settings } from './settings.js';
+import { Settings } from './Settings.js';
 
-/* Handling installable extra cheat sheet sections and their children
-   in IndexedDB */
-
-const splitter = /^((?<parent_id>.+):::)?(?<name>[^:]+)$/;
+/* Handling the installed cheat sheet sections tree and documents leaves in IndexedDB */
 
 export class Section {
     static #sections;
 
     static async init() {
         // FIXME: schema migration
-        //this.#sections = await Settings.get('sections', { nodes: {}});
-        this.#sections = { nodes: {}};
+        this.#sections = await Settings.get('sections', { nodes: {}});
         console.log("Initializing sections");
         console.log(this.#sections);
     }
@@ -51,8 +47,9 @@ export class Section {
             }
             parent.nodes[path[path.length - 1]] = {
                 name      : path[path.length - 1],
-                id        : id,
-                parent_id : parent.id
+                id        : parent.id + ':::' + path[path.length - 1],
+                parent_id : parent.id,
+                type      : s.type
             };
         });
 /*
@@ -89,7 +86,7 @@ export class Section {
             delete tree.nodes[parent.id];
         });
 */
-console.log(root)
+        console.info(root)
         return root;
     }
 
@@ -106,8 +103,6 @@ console.log(root)
 
     // add or update
     static async add(group, name, s) {
-        console.log(`Adding section ${name} to group ${group}`);
-
         if(!this.#sections.nodes[group])
             this.#sections.nodes[group] = { nodes: {}};
         this.#sections.nodes[group].nodes[name] = Section.#buildTree(group, name, s);
@@ -125,5 +120,5 @@ console.log(root)
     static getDocument = (path) => Settings.get(`document:::${path}`, {});
 
     // add or update a document
-    static addDocument = (section, path, data) => Settings.set(`document:::${section}:::${path}`, data);
+    static addDocument = (group, section, path, data) => Settings.set(`document:::${group}:::${section}:::${path}`, data);
 }

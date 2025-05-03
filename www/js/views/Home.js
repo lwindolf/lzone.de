@@ -2,7 +2,7 @@
 
 import { Config } from "../config.js";
 import { ChecksView } from "./Checks.js";
-import { Section } from "../models/section.js";
+import { Section } from "../models/Section.js";
 import * as r from "../helpers/render.js";
 
 export class HomeView {

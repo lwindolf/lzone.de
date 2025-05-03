@@ -18,11 +18,12 @@ window.Handlebars.registerHelper("eachSorted", function (obj, options) {
   return result;
 });
 
-window.Handlebars.registerHelper('replace', function (str, search, replacement) {
-    if (typeof str !== 'string') {
-        return str;
-    }
-    return str.replace(new RegExp(search, 'g'), replacement);
+window.Handlebars.registerHelper('reSub', function (regex, replacement, options) {
+  let str = options.fn(this);
+  if (typeof str !== 'string') {
+      return str;
+  }
+  return str.replace(new RegExp(regex, "g"), replacement);
 });
 
 window.Handlebars.registerHelper('ifTrue', function (v1, options) {

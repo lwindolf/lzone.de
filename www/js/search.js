@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { SearchIndex } from "./models/search-index.js"
+import { SearchIndex } from "./models/SearchIndex.js"
 
 // Inspired by the Just-the-Docs search index loading
 //

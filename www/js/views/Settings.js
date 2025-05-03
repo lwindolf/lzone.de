@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
-import { Settings } from '../models/settings.js';
-import { CheatSheetInstaller } from '../cheat-sheet-installer.js';
+import { Settings } from '../models/Settings.js';
+import { CheatSheetCatalog } from '../models/CheatSheetCatalog.js';
 
 // A view giving an overview on installed and installable cheat sheets
 // and allows adding/removing cheat sheets
@@ -129,13 +129,13 @@ export class SettingsView {
 
     async #onRemove(e) {
         let section = e.getAttribute('data-section');
-        await CheatSheetInstaller.remove(section);
+        await CheatSheetCatalog.remove(section);
         this.#render();
     }
 
     async #onInstall(e, repos) {
         let section = e.getAttribute('data-section');       
-        await CheatSheetInstaller.install(section, repos[section], e);
+        await CheatSheetCatalog.install(section, repos[section], e);
         this.#render();
     }
 
@@ -150,7 +150,7 @@ export class SettingsView {
         if (repos[n].filePattern.length == 0)
             repos[n].filePattern = null;
 
-        await CheatSheetInstaller.install(n, repos[n], e);
+        await CheatSheetCatalog.install(n, repos[n], e);
         this.#render();
     }
 }

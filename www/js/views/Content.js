@@ -1,5 +1,5 @@
-import { Settings } from "./models/settings.js";
-import * as r from "./helpers/render.js";
+import { Settings } from "../models/Settings.js";
+import * as r from "../helpers/render.js";
 
 // Viewing different types of content
 //
