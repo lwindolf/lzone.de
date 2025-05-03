@@ -1,17 +1,17 @@
 // vim: set ts=4 sw=4:
 
-import { Settings } from '../settings.js';
+import { Settings } from '../models/settings.js';
 import { CheatSheetInstaller } from '../cheat-sheet-installer.js';
 
 // A view giving an overview on installed and installable cheat sheets
 // and allows adding/removing cheat sheets
 
 export class SettingsView {
-    #parentId;
+    #parent;
     #repos = {};
 
-    constructor(id) {
-        this.#parentId = id;
+    constructor(el) {
+        this.#parent = el;
         this.#render();
     }
 
@@ -29,7 +29,7 @@ export class SettingsView {
     async #render() {
         let e;
 
-        document.getElementById(this.#parentId).innerHTML = `
+        this.#parent.innerHTML = `
             <h1>Content Settings</h1>
 
             <p>Here you can download and

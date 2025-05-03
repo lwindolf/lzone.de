@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { Config } from "./config.js";
+import { Config } from "../config.js";
 import { Section } from "./section.js";
 import { Settings } from "./settings.js";
 

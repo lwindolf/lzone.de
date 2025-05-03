@@ -4,7 +4,7 @@ import { Commands } from "./commands.js";
 import { ContentView } from "./content-view.js";
 import { ChatView } from "./views/Chat.js";
 
-// An CLI prompt search multipe command types 
+// A CLI prompt for multiple types of command (AI, commands, search)
 export class CLI {
     constructor(id) {
         const input = document.getElementById(id);

@@ -4,25 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src *; style-src 'unsafe-inline' 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self'; img-src *; media-src *; object-src 'none'"/>
+
     <title>LZone</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="http://localhost:3000/css/main.css">
+    <link rel="stylesheet" href="css/main.css">
 
-    <script type="text/javascript" src="http://localhost:3000/js/vendor/lunr.min.js"></script>
-    <!--<script type="text/javascript" src="http://localhost:3000/js/main.js"></script>-->
-    <script type="module"> import { LZone } from "http://localhost:3000/js/app.js"; LZone.load(); </script>
+    <script type="text/javascript" src="js/vendor/lunr.min.js"></script>
+    <script type="module"> import { LZone } from "./js/app.js"; LZone.load(); </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="Home" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="A collection of helpful DevOps cheat sheets" />
     <meta property="og:description" content="A collection of helpful DevOps cheat sheets" />
-    <link rel="canonical" href="http://localhost:3000/" />
-    <meta property="og:url" content="http://localhost:3000/" />
+    <link rel="canonical" href="https://lzone.de/" />
+    <meta property="og:url" content="https://lzone.de/" />
     <meta property="og:site_name" content="LZone" />
     <meta property="og:type" content="website" />
     <script
-        type="application/ld+json"> {"@context":"https://schema.org","@type":"WebSite","description":"A collection of helpful DevOps cheat sheets","headline":"Home","name":"LZone","url":"http://localhost:3000/"}</script>
+        type="application/ld+json"> {"@context":"https://schema.org","@type":"WebSite","description":"A collection of helpful DevOps cheat sheets","headline":"Home","name":"LZone","url":"https://lzone.de/"}</script>
     <link href="/feed/devops.xml" rel="alternate" title="LZone Blog" type="application/atom+xml">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c84fa" />

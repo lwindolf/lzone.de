@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
-import { Section } from '../section.js';
-import { template } from '../helpers/render.js';
+import { Section } from '../models/section.js';
+import * as r from '../helpers/render.js';
 
 // Rendering markup & HTML cheat sheet content
 //
@@ -14,12 +14,12 @@ import { template } from '../helpers/render.js';
 class CheatSheetRenderer {
     static #converters;
 
-    static #jsfiddleTemplate = template(`
+    static #jsfiddleTemplate = r.template(`
         <iframe width="100%" height="1000" src="//jsfiddle.net/lwindolf/{{jsfiddle}}/embedded/result,js" allowfullscreen="allowfullscreen" frameborder="0">
         </iframe>
     `);
 
-    static #youtubeTemplate = template(`
+    static #youtubeTemplate = r.template(`
         <div class='video'>
             <a class='glightbox' href='{{ href }}'>
                 <img src='https://i.ytimg.com/vi/{{ ytid }}/hqdefault.jpg'/>
@@ -29,7 +29,7 @@ class CheatSheetRenderer {
         </div>
     `);
 
-    static #sourceTemplate = template(`
+    static #sourceTemplate = r.template(`
         <h1>{{title}}</h1>
 
         {{#if url}}
@@ -46,6 +46,23 @@ class CheatSheetRenderer {
             {{/if}}
         </table>
         {{/if}}
+    `);
+
+    static #tocTemplate = r.template(`
+        {{#* inline "cheatSheetTocNode"}}
+            <li>
+                <a href="/#/FIXME">{{name}}</a>
+                {{#each nodes}}
+                    {{>cheatSheetTocNode}}
+                {{/each}}
+            </li>
+        {{/inline}}
+        <h2>Contents</h2>
+        <ul>
+            {{#each section.nodes}}
+                {{>cheatSheetTocNode}}
+            {{/each}}
+        </ul>
     `);
 
     static async #setup () {
@@ -197,33 +214,8 @@ class CheatSheetRenderer {
         return d;
     }
 
-    static renderToC(s, path) {
-        const subpath = path.replace(/^[^:]+:::/, "");           // lookup in child tree of s happens without section prefix
-        const start = path.indexOf(':::') === -1?s:s.nodes[subpath];    // on lookup fail we assume the whole section toc is to be rendered
-
-        function recursiveRender(parent) {
-            return parent.children.sort().map((id) => {
-                let d = s.nodes[id];
-                if (d.children)
-                    return `
-                        <li>
-                            <a href="/#/${s.name}/${id.replace(/:::/g, '/')}">${d.name}</a>
-                            <ul>
-                                ${recursiveRender(d)}
-                            </ul>
-                        </li>
-                    `;
-                return `
-                    <li>
-                        <a  href="/#/${s.name}/${id.replace(/:::/g, '/')}">${d.name}</a>
-                    </li>`;
-            }).join("");
-        }
-
-        if(start.children)
-            return `<h2>Contents</h2> <ul>${recursiveRender(start)}</ul>`;
-        else
-            return '';        
+    static renderToC(s) {
+        return r.render(this.#tocTemplate, { section: s });
     }
 
     static async load(e, path) {
@@ -238,10 +230,10 @@ class CheatSheetRenderer {
         if (-1 == path.indexOf(':::')) {
             // Load section description
             e.insertAdjacentHTML('afterbegin', this.#sourceTemplate({...s, title: path }));
-            e.innerHTML += this.renderToC(s, path);
+            e.innerHTML += this.renderToC(s);
         } else {
             let d = await this.renderDocument(e, path);
-            e.insertAdjacentHTML('afterbegin', this.renderToC(s, path));
+            e.insertAdjacentHTML('afterbegin', this.renderToC(s));
             if (!d?.data)
                 e.insertAdjacentHTML('beforeend', "No content on this page.");     
 

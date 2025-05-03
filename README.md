@@ -12,8 +12,9 @@ lzone.de is a static PWA with offline content caching, which means it is backend
 ## Configuration
 
 - To customize the PWA edit `www/js/config.js`.
-- To add more CLI commands edit `www/js/command.js`
+- To add/remove CLI commands edit `www/js/command.js`
 - Customize check tools in `www/js/views/Checks.js`
+- Update base URL + title in `www/index.html` and `www/manifest.json`
 
 FIXME: describe how to setup SaaS multi status updating!
 

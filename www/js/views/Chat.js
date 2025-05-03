@@ -3,7 +3,7 @@
 import { Config } from '../config.js';
 import { ContentView } from "../content-view.js";
 import { Client } from "../vendor/gradio-client/index.js";
-import { Settings } from "../settings.js";
+import { Settings } from "../models/settings.js";
 
 export class ChatView {
     static #models = Config.chatBotModels;

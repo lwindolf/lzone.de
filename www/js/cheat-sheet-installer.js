@@ -1,100 +1,59 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from './config.js';
-import { GithubRepo } from './github-repo.js';
-import { Sidebar } from './sidebar.js';
+import { GithubRepo } from './models/github-repo.js';
 import { Search } from './search.js';
-import { Section } from './section.js';
-import { Settings } from './settings.js';
+import { Section } from './models/section.js';
 
 // Installing site and 3rd party cheat sheets from curated sources
 //
 // site cheat sheets:
 // - are linked only, index update on each run
-// - fetched from cheat-sheets.json
+// - fetched from defined index JSON
 //
 // 3rd party cheat sheets:
 // - are downloaded once
-// - fetched from extra-cheat-sheets.json
+// - fetched from 3rd party repo as defined in catalog JSONs
 //
 // For now only Github as source is supported
 
-class CheatSheetInstaller {
-
+export class CheatSheetInstaller {
     static #staticConstructor = (async () => {
-        // Always update site cheat sheets index
-        const response = await fetch(Config.cheatSheetIndexUrl);
-        const repos = await response.json();
-
-        for(const name of Object.keys(repos)) {
-            // Installation without download, here we get a full repo definition
-            // and just need to create documents containing a link. Example repo
-            // definition:
-            //
-            //   "Runbooks": {
-            //      "github": "lwindolf/lzone-cheat-sheets",
-            //      "base": https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/runbooks/";
-            //      "category": "SRE",
-            //      "filePattern": "^runbooks/(.+)\\.md$",
-            //      "documents": [
-            //          {
-            //            "name": "Mail",
-            //            "path": "runbooks/Mail.md"
-            //          },
-            //          {
-            //            "name": "System Log",
-            //            "path": "runbooks/System Log.md"
-            //          },
-            //          [...]
-            //   },
-            let s = {
-                children : [],
-                link     : true,
-                default  : true,
-                homepage : 'https://lzone.de/#/' + name,
-                url      : 'https://github.com/' + repos[name].github,
-                base     : repos[name].base,
-                runbook  : repos[name].runbook
-            };
-            for (const d of repos[name].documents) {
-                let target = d.name.replace(/\//g, ':::');
-
-                // FIXME: set only new/gone childs
-                await Settings.set(`document:::${name}:::${target}`, {
-                    type: 'link',
-                    baseUrl: repos[name].base + d.path,
-                    editUrl: 'https://github.com/' + repos[name].github + '/edit' + repos[name].base.replace(new RegExp('.*'+repos[name].github), '') + d.path
-                });
-                s.children.push(target);
-            }
-            await Section.add(name, s);
-        }
-
-        // Cleanup orphaned default sections
-        for(let s of await Section.getAll()) {
-            if(s.default && repos[s.name])
-                Section.remove(s);
-        }
-
-        // Cleanup orphan documents
-        const sectionNames = await Settings.get('extraSections', []);
-        const req = await Settings.getAllKeys();
-        req.onsuccess = () => {
-            for(const path of req.result) {
-                if(0 == path.indexOf('document:::')) {
-                    const tmp = path.split(/:::/);
-                    if(!sectionNames.includes(tmp[1])) {
-                        console.log(`Dropping orphaned doc: ${path}`);
-                        Settings.remove(path);
-                    }
+        for(const group of Object.keys(Config.indexUrls)) {
+            if(!Config.indexUrls[group].install)
+                    continue;
+            // FIXME: do not fetch on each load!
+            try {                
+                for (const name of Object.keys(Config.indexUrls[group].install)) {
+                    const repo = Config.indexUrls[group].install[name];
+                    await this.install(group, name, repo, undefined, false);
                 }
+
+                // FIXME: Cleanup orphaned default sections
+                /*for(const tree of await Section.getTree()) {
+                    if(s.default && repos[s.name])
+                        Section.remove(group, s);
+                }*/
+
+                // FIXME: Cleanup orphan documents
+                /*const sectionNames = await Settings.get('extraSections', []);
+                const req = await Settings.getAllKeys();
+                req.onsuccess = () => {
+                    for(const path of req.result) {
+                        if(0 == path.indexOf('document:::')) {
+                            const tmp = path.split(/:::/);
+                            if(!sectionNames.includes(tmp[1])) {
+                                console.log(`Dropping orphaned doc: ${path}`);
+                                Settings.remove(path);
+                            }
+                        }
+                    }
+                };*/
+            } catch (e) {
+                console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
             }
-        };
-
-        // FIXME: emit event instead
-        Sidebar.update();
-
-        // FIXME: clean up orphans
+        }
+        document.dispatchEvent(new CustomEvent("sections-updated"));
     })();
 
     static async #documentDownload(section, path, url, editUrl) {
@@ -104,7 +63,7 @@ class CheatSheetInstaller {
         await fetch(url)
             .then((response) => response.text())
             .then(async (data) => {
-                await Settings.set(`document:::${section}:::${path}`, {
+                Section.addDocument(section, path, {
                     data: data,
                     baseName: url.replace(/.*\//, ''),
                     baseUrl: url.replace(/\/[^/]+$/, ''),
@@ -135,8 +94,8 @@ class CheatSheetInstaller {
         return result;
     }
 
-    // Installation with full download
-    static async install(section, repo, e) {
+    // Installation with optional full download
+    static async install(group, section, repo, e = undefined, download = true) {
         const filePattern = repo.filePattern ? repo.filePattern : "^(.+)\\.(md|markdown|rst|adoc|asciidoc)$";
         const re = new RegExp(filePattern);
         let downloads = [];
@@ -144,8 +103,10 @@ class CheatSheetInstaller {
         let info = document.createElement("pre");
         info.class = "note";
         info.innerText = "Fetching content...\n";
-        e.parentNode.append(info);
+        if (e)
+            e.parentNode.append(info);
 
+        console.log(`Fetching ${section} from ${repo.github}...`);
         await GithubRepo.fetch(repo).then(async (result) => {
             var s = result.section;
             s.children = [];
@@ -155,29 +116,28 @@ class CheatSheetInstaller {
                 var m = this.#fileMatch(e.path, repo.folder, re);
                 if (m.target) {
                     m.target = m.target.replace(/\//g, ':::');
-                    downloads.push(this.#documentDownload(section, m.target,
-                        `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
-                        `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`)
-                        .then(() => {
-                            info.innerText += `Download success: ${e.path}\n`;
-                        })
-                    )
+                    if(download)
+                        downloads.push(this.#documentDownload(section, m.target,
+                            `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
+                            `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`)
+                            .then(() => {
+                                info.innerText += `Download success: ${e.path}\n`;
+                            })
+                        )
                     s.children.push(m.target);
                 }
             }
-            await Section.add(section, s);
+            await Section.add(group, section, s);
         });
         return Promise.all(downloads).then(async () => {
+            document.dispatchEvent(new CustomEvent("sections-updated"));
             // FIXME: emit event instead
-            Sidebar.update();
             Search.init();
         });
     }
 
-    static async remove(section) {
-        await Section.remove(section);
-        Sidebar.update();
+    static async remove(group, section) {
+        await Section.remove(group, section);
+        document.dispatchEvent(new CustomEvent("sections-updated"));
     }
 }
-
-export { CheatSheetInstaller };

@@ -1,12 +1,13 @@
 // vim: set ts=4 sw=4:
 
 import { CLI } from './CLI.js';
-import { Sidebar } from './sidebar.js';
+import { Section } from './models/section.js';
+import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
 import { ContentView } from './content-view.js';
 
 import { HomeView } from './views/Home.js';
-import { LWindolfView } from './views/LWindolf.js';
+import { AboutView } from './views/About.js';
 import { SettingsView } from './views/Settings.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetView } from './views/CheatSheet.js';
@@ -17,9 +18,9 @@ export class LZone {
 
     // routes all rendering into #main-content-content
     static #routes = {
-        'lwindolf'          : LWindolfView,
-        'settings'          : SettingsView,
-        'checks'            : ChecksView
+        'about'    : AboutView,
+        'settings' : SettingsView,
+        'checks'   : ChecksView
     };
 
     static #getParams() {
@@ -64,7 +65,7 @@ export class LZone {
                 }
             }
         }
-        console.log("here")
+
         new HomeView(ContentView.switch('content'));
         LZone.#pathChanged('');
     }
@@ -105,6 +106,8 @@ export class LZone {
     static async load() {
         if ('serviceWorker' in navigator)
             navigator.serviceWorker.register('/worker.js');
+
+        await Section.init();
 
         window.addEventListener("hashchange", this.#onLocationHashChange);
         await ContentView.setup('main-content-wrap');
