@@ -91,13 +91,27 @@ export class Section {
     }
 
     static async remove(group, name) {
-        let s = await Section.get(name);
+        let s = this.#sections.nodes[group].nodes[name];
+        if(!s)
+            return;
 
         for(const n of Object.keys(s.nodes))
             Settings.remove(`document:::${name}:::${n}`);
         await Settings.remove(`section:::${name}`);
 
         delete this.#sections.nodes[group].nodes[name];
+        await Settings.set('sections', this.#sections);
+    }
+
+    static async removeGroup(group) {
+        let g = this.#sections.nodes[group];
+        if(!g)
+            return;
+
+        for(const n of Object.keys(g.nodes))
+            await this.remove(group, n);
+
+        delete this.#sections.nodes[group];
         await Settings.set('sections', this.#sections);
     }
 

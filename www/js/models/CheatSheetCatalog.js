@@ -18,13 +18,26 @@ import { Section } from './Section.js';
 // For now only Github as source is supported
 
 export class CheatSheetCatalog {
+    // Fetch the catalog for a group
+    static getInstallable = async (group) => 
+        Config.groups[group]?.catalog
+            ?await fetch(Config.groups[group].catalog)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data)
+                        return data;
+                    else
+                        throw new Error(`Error fetching ${group} catalog`);
+                })
+            :{};
+
     // Updates the index of all installed sections if they need updating
     // Installs default cheat sheets on uninitialized app.
     static async update() {
-        const sections = await Section.getTree();
+        const sections = await Section.getTree();        
 
-        for(const group of Object.keys(Config.indexUrls)) {
-            if(!Config.indexUrls[group].install)
+        for(const group of Object.keys(Config.groups)) {
+            if(!Config.groups[group].install)
                     continue;
 
             // FIXME: do update the index from time to time
@@ -32,8 +45,8 @@ export class CheatSheetCatalog {
                 continue;
                 
             try {                
-                for (const name of Object.keys(Config.indexUrls[group].install)) {
-                    const repo = Config.indexUrls[group].install[name];
+                for (const name of Object.keys(Config.groups[group].install)) {
+                    const repo = Config.groups[group].install[name];
                     await this.install(group, name, repo, undefined, false);
                 }
 
@@ -162,6 +175,7 @@ export class CheatSheetCatalog {
     }
 
     static async remove(group, section) {
+        console.log(`Removing ${section} from ${group}...`);
         await Section.remove(group, section);
         document.dispatchEvent(new CustomEvent("sections-updated"));
     }

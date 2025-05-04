@@ -7,8 +7,7 @@ import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
 
 import { HomeView } from './views/Home.js';
-import { AboutView } from './views/About.js';
-import { SettingsView } from './views/Settings.js';
+import { CatalogView } from './views/Catalog.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetView } from './views/CheatSheet.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
@@ -19,8 +18,7 @@ export class LZone {
 
     // routes all rendering into #main-content-content
     static #routes = {
-        'about'    : AboutView,
-        'settings' : SettingsView,
+        'catalog'  : CatalogView,
         'checks'   : ChecksView
     };
 
@@ -34,8 +32,8 @@ export class LZone {
                 search = /([^&=]+)=?([^&]*)/g,
                 decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); };
 
-            while (match = search.exec(window.location.hash.substring(1)))
-                params[decode(match[1])] = decode(match[2]);
+            while ((match = search.exec(window.location.hash.substring(1))))
+                    params[decode(match[1])] = decode(match[2]);
         } catch (e) {
             console.log("Invalid parameter encoding! " + e);
         }
@@ -53,7 +51,7 @@ export class LZone {
                 const tmp = window.location.hash.split(/\//);
                 if(tmp[1] in LZone.#routes) {
                     LZone.#pathChanged(tmp[1]);
-                    new LZone.#routes[tmp[1]](ContentView.switch('content'));
+                    new LZone.#routes[tmp[1]](ContentView.switch('content'), tmp);
                     return;
                 }
 

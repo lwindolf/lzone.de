@@ -15,12 +15,13 @@ export class Config {
     // Each entry is added to the sidebar with the key as the display name
     // A search index is automatically created or a provided one is used
     //
-    // Allowed fields:
+    // Fields:
     // - `removable`(optional, default: true) if the group can be deactivated
     // - `install` (optional) Github repo definition to install, repo content will be automatically added to the sidebar
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
-    static indexUrls = {
+    static groups = {
         'Lars Windolf': {
+            removable : true,
             install : {
                 'Blogs': {
                     github: 'lwindolf/blogs',
