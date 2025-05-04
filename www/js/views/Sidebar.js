@@ -3,11 +3,15 @@
 import { Section } from "../models/Section.js";
 import { LZone } from "../app.js";
 import * as r from "../helpers/render.js";
+import * as ev from "../helpers/events.js";
+import { debounce } from "../helpers/debounce.js";
 
 /* Dynamic sidebar building for installed content */
 
 export class Sidebar {
-    static #clickHandler;
+    // state
+    #el;
+
     static #template = r.template(`
         {{#* inline "sidebarChildNode"}}
             <li class="nav-list-item" data-path="{{ id }}">
@@ -37,26 +41,29 @@ export class Sidebar {
         {{/each}}
     `);
 
-    static async update() {
-        if(!this.#clickHandler)
-            this.#clickHandler = document.addEventListener('click', (e) => {
-                var target = e.target;
-                while (target && !(target.classList && target.classList.contains('nav-list-expander'))) { 
-                    target = target.parentNode;
-                }
-                if (target) {
-                    e.preventDefault();
-                    target.parentNode.classList.toggle('active');
-                }
-            });
-
-        r.render('#site-nav', this.#template, {
-            tree: await Section.getTree()
-        });
-
+    constructor(el) {
+        this.#el = el;
+        this.#render();
         Sidebar.selectionChanged();
+
+        document.addEventListener("sections-updated", this.#render);
+        document.addEventListener('click', (e) => {
+            var target = e.target;
+            while (target && !(target.classList && target.classList.contains('nav-list-expander'))) { 
+                target = target.parentNode;
+            }
+            if (target) {
+                e.preventDefault();
+                target.parentNode.classList.toggle('active');
+            }
+        });
     }
 
+    #render = async () =>
+        r.renderElement(this.#el, Sidebar.#template, {
+            tree: await Section.getTree()
+        });
+    
     static selectionChanged() {
         const path = LZone.getPath();
         const cssPath = path.replaceAll(/\//g, ":::");
@@ -94,7 +101,3 @@ export class Sidebar {
         siteNav.classList.remove('nav-open');
     }
 }
-
-document.addEventListener('sections-updated', async () => {
-    Sidebar.update();
-});

@@ -12,6 +12,7 @@ export class Section {
         this.#sections = await Settings.get('sections', { nodes: {}});
         console.log("Initializing sections");
         console.log(this.#sections);
+        document.dispatchEvent(new CustomEvent("sections-updated"));
     }
 
     // Helper to convert children path list to a tree
@@ -90,6 +91,12 @@ export class Section {
         return root;
     }
 
+    // persist changes and emit update event
+    static async #update() {
+        await Settings.set('sections', this.#sections);
+        document.dispatchEvent(new CustomEvent("sections-updated"));
+    }
+
     static async remove(group, name) {
         let s = this.#sections.nodes[group].nodes[name];
         if(!s)
@@ -100,7 +107,7 @@ export class Section {
         await Settings.remove(`section:::${name}`);
 
         delete this.#sections.nodes[group].nodes[name];
-        await Settings.set('sections', this.#sections);
+        this.#update();
     }
 
     static async removeGroup(group) {
@@ -112,7 +119,7 @@ export class Section {
             await this.remove(group, n);
 
         delete this.#sections.nodes[group];
-        await Settings.set('sections', this.#sections);
+        this.#update();
     }
 
     // add or update
@@ -120,8 +127,7 @@ export class Section {
         if(!this.#sections.nodes[group])
             this.#sections.nodes[group] = { nodes: {}};
         this.#sections.nodes[group].nodes[name] = Section.#buildTree(group, name, s);
-
-        await Settings.set('sections', this.#sections);
+        this.#update();
     }
 
     // get details of a section

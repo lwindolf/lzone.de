@@ -5,6 +5,7 @@ import { CheatSheetCatalog } from '../models/CheatSheetCatalog.js';
 import { Section } from '../models/Section.js';
 import * as r from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
+import { debounce } from '../helpers/debounce.js';
 
 // A view giving an overview on installed and installable cheat sheets
 // and allows adding/removing cheat sheets
@@ -85,6 +86,8 @@ export class CatalogView {
         this.#el = el;
         this.#group = decodeURI(path[2]);
         this.#render();
+
+        document.addEventListener('sections-updated', this.#render.bind(this));
     }
 
     async #render() {
@@ -99,8 +102,7 @@ export class CatalogView {
             tree       : Section.getTree().nodes[this.#group]
         });
 
-        ev.connect('click', '#customInstall button', async (e) => {
-            var n = document.getElementById('customName').value;
+        ev.connect('click', '#customInstall button', (e) => {
             const repo = {
                 github: document.getElementById('customRepo').value,
                 type: 'github',
@@ -110,31 +112,26 @@ export class CatalogView {
             if (repo.filePattern.length == 0)
                 repo.filePattern = null;
     
-            await CheatSheetCatalog.install(n, repo, e);
-            this.#render();
-            e.preventDefault();
+            CheatSheetCatalog.install(
+                document.getElementById('customName').value,
+                repo,
+                e.target
+            );
         });
 
-        ev.connect('click', 'button#removeFolder', async (e) => {
-            let group = e.getAttribute('data-group');
-            await Section.removeGroup(group);
-            this.#render();
-            e.preventDefault();
-        });
+        ev.connect('click', 'button#removeFolder', (e) =>
+            Section.removeGroup(e.getAttribute('data-group')));
 
-        ev.connect('click', '.installable button', async (e) => {
-            let section = e.getAttribute('data-section');
-            await CheatSheetCatalog.install(this.#group, section, this.#repos[section], e);
-            this.#render();
-            e.preventDefault();
-        });
+        ev.connect('click', '.installable button', (e) =>           
+            CheatSheetCatalog.install(
+                this.#group,
+                e.getAttribute('data-section'),
+                this.#repos[e.getAttribute('data-section')],
+                e
+            ));
 
-        ev.connect('click', '.installed button', async (e) => {
-            let section = e.getAttribute('data-section');
-            await CheatSheetCatalog.remove(this.#group, section);
-            this.#render();
-            e.preventDefault();
-        });
+        ev.connect('click', '.installed button', async (e) =>
+            Section.remove(this.#group, e.getAttribute('data-section')));
     }
 
     async #getDiskUsage() {

@@ -173,10 +173,4 @@ export class CheatSheetCatalog {
             Search.init();
         });
     }
-
-    static async remove(group, section) {
-        console.log(`Removing ${section} from ${group}...`);
-        await Section.remove(group, section);
-        document.dispatchEvent(new CustomEvent("sections-updated"));
-    }
 }

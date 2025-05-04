@@ -106,6 +106,7 @@ export class LZone {
         if ('serviceWorker' in navigator)
             navigator.serviceWorker.register('/worker.js');
 
+        new Sidebar(document.getElementById('site-nav'));
         await Section.init();
         await CheatSheetCatalog.update();
 
