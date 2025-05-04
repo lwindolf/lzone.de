@@ -1,9 +1,11 @@
 // vim: set ts=4 sw=4:
 
+import { App } from '../app.js';
 import { Config } from '../config.js';
 import { GithubRepo } from './GithubRepo.js';
 import { Search } from '../search.js';
 import { Section } from './Section.js';
+import { Settings } from './Settings.js';
 
 // Installing site and 3rd party cheat sheets from curated sources
 //
@@ -34,11 +36,19 @@ export class CheatSheetCatalog {
     // Updates the index of all installed sections if they need updating
     // Installs default cheat sheets on uninitialized app.
     static async update() {
-        const sections = await Section.getTree();        
+        const initialRun = await Settings.get('initialRun', true);
+        if(!initialRun)
+            return;
 
+        console.log(`Initial run. Initializing groups...`);
+        const sections = await Section.getTree();        
         for(const group of Object.keys(Config.groups)) {
             if(!Config.groups[group].install)
-                    continue;
+                continue;
+
+            // A groups needs processing only if
+            // - it is the initial run
+            // - it is installed and needs updating
 
             // FIXME: do update the index from time to time
             if(sections.nodes[group])
@@ -74,7 +84,16 @@ export class CheatSheetCatalog {
                 console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
             }
         }
+
+        await Settings.set('initialRun', false);
+        console.log('Initial run finished');
+
         document.dispatchEvent(new CustomEvent("sections-updated"));
+    }
+
+    static removeGroup(group) {
+        Section.removeGroup(group);
+        App.pathChanged('');
     }
 
     // add a document that is only a link and will only be downloaded on demand

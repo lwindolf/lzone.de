@@ -57,7 +57,7 @@ class Settings {
                     value = evt.target.result.value;
 
                 Settings.values[name] = value;
-                resolve();
+                resolve(value);
             };
             req.onerror = function (evt) {
                 reject(`Error getting setting ${evt.target.errorCode}`);

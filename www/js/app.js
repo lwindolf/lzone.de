@@ -12,16 +12,7 @@ import { ChecksView } from './views/Checks.js';
 import { CheatSheetView } from './views/CheatSheet.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
 
-export class LZone {
-    // state
-    static #path = "";      // currently selected menu path (e.g. 'Examples/Something/Page') empty for Home
-
-    // routes all rendering into #main-content-content
-    static #routes = {
-        'catalog'  : CatalogView,
-        'checks'   : ChecksView
-    };
-
+export class App {
     static #getParams() {
         let params = {};
 
@@ -42,6 +33,11 @@ export class LZone {
 
     // Simple routing based on location hash values
     static #onLocationHashChange() {
+        const routes = {
+            'catalog'  : CatalogView,
+            'checks'   : ChecksView
+        };
+
         if('/' == window.location.pathname) {
             if(window.location.hash.length > 2) {
                 // handle in document anchors
@@ -49,16 +45,16 @@ export class LZone {
                     return;
 
                 const tmp = window.location.hash.split(/\//);
-                if(tmp[1] in LZone.#routes) {
-                    LZone.#pathChanged(tmp[1]);
-                    new LZone.#routes[tmp[1]](ContentView.switch('content'), tmp);
+                if(tmp[1] in routes) {
+                    App.#pathChanged(tmp[1]);
+                    new routes[tmp[1]](ContentView.switch('content'), tmp);
                     return;
                 }
 
                 // URI hash starting with a slash indicates a content load
                 if ('/' == window.location.pathname && '/' == window.location.hash.substring(1, 2)) {
-                    const path = Object.keys(LZone.#getParams())[0].substring(1);
-                    LZone.#pathChanged(path);
+                    const path = Object.keys(App.#getParams())[0].substring(1);
+                    App.#pathChanged(path);
                     new CheatSheetView(ContentView.switch('content'), path);
                     return;
                 }
@@ -66,26 +62,11 @@ export class LZone {
         }
 
         new HomeView(ContentView.switch('content'));
-        LZone.#pathChanged('');
+        App.#pathChanged('');
     }
-
-    static getPath = () => this.#path;
 
     // handle path changes (add bread crumb and sidebar collapsing)
     static #pathChanged(path) {
-        LZone.#path = path;
-
-        // JTD doesn't give us a bread crumb, so add one
-        if (!document.getElementById('breadcrumb-nav'))
-            document.getElementById('main-content-wrap').insertAdjacentHTML("afterbegin",
-            `<nav class="breadcrumb-nav">
-                <ol class="breadcrumb-nav-list" id="breadcrumb-nav">
-                </ol>
-            </nav>`);
-
-        // Close nav on mobile
-        document.getElementById('site-nav').classList.remove('nav-open');
-
         // Add breadcrumb
         if(-1 == path.indexOf('/')) {
             // Hide at 1st level
@@ -99,7 +80,7 @@ export class LZone {
             }).reverse().join(" ");
         }
 
-        Sidebar.selectionChanged();
+        Sidebar.selectionChanged(path);
     }
 
     static async load() {
@@ -107,11 +88,11 @@ export class LZone {
             navigator.serviceWorker.register('/worker.js');
 
         new Sidebar(document.getElementById('site-nav'));
+        new ContentView(document.getElementById('main-content-wrap'));
         await Section.init();
         await CheatSheetCatalog.update();
 
         window.addEventListener("hashchange", this.#onLocationHashChange);
-        await ContentView.setup('main-content-wrap');
         this.#onLocationHashChange();
 
         Search.init();

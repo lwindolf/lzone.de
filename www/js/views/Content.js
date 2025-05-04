@@ -19,37 +19,31 @@ import * as r from "../helpers/render.js";
 // render so we can switch the mode.
 
 export class ContentView {
-    static setup = async (id) => document.getElementById(id).innerHTML = r.template(`
-        <div id="main-content-content" class="main-content-view">
-        </div>
+    constructor(el) {
+        r.renderElement(el, r.template(`       
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list" id="breadcrumb-nav"></ol>
+            </nav>
 
-        <div id="main-content-search" class="main-content-view">
-            <div id="search-results" class="search-results">
-                Loading ...
+            <div id="main-content-content" class="main-content-view">
             </div>
-        </div>
 
-        <div id="main-content-chat" class="main-content-view">
-            <div id="aiChatView">
-                <div class="container">
-                    <div class="content">
-                        {{#compare aiPromptHistory.length '>' 0 }}
-                            Previous chat bot prompts:
-                            <div class="answer">
-                                <ul>
-                                {{#each aiPromptHistory}}
-                                    <li><code>{{.}}</code></li>
-                                {{/each}}
-                                </ul>
-                            </div>
-                        {{/compare}}
+            <div id="main-content-search" class="main-content-view">
+                <div id="search-results" class="search-results">
+                    Loading ...
+                </div>
+            </div>
+
+            <div id="main-content-chat" class="main-content-view">
+                <div id="aiChatView">
+                    <div class="container">
+                        <div class="content">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `)({
-        aiPromptHistory: Settings.get('AIPromptHistory', [])
-    });
+        `), {});
+    }
 
     /* Switch different type of content views and return content element */
     static switch(name) {

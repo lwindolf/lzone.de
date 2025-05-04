@@ -102,6 +102,8 @@ a:not([class]) {
 }
 
 .sidebar {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
         background-color: var(--darkbg);
         border-right: 1px solid #444;
         overflow-x: hidden;

@@ -134,7 +134,7 @@ export class CatalogView {
         });
 
         ev.connect('click', 'button#removeFolder', (e) =>
-            Section.removeGroup(e.getAttribute('data-group')));
+            CheatSheetCatalog.removeGroup(e.getAttribute('data-group')));
 
         ev.connect('click', '.installable button', (e) =>           
             CheatSheetCatalog.install(

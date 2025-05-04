@@ -1,10 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { Section } from "../models/Section.js";
-import { LZone } from "../app.js";
 import * as r from "../helpers/render.js";
-import * as ev from "../helpers/events.js";
-import { debounce } from "../helpers/debounce.js";
 
 /* Dynamic sidebar building for installed content */
 
@@ -44,7 +41,6 @@ export class Sidebar {
     constructor(el) {
         this.#el = el;
         this.#render();
-        Sidebar.selectionChanged();
 
         document.addEventListener("sections-updated", this.#render);
         document.addEventListener('click', (e) => {
@@ -64,11 +60,13 @@ export class Sidebar {
             tree: await Section.getTree()
         });
     
-    static selectionChanged() {
-        const path = LZone.getPath();
+    static selectionChanged(path) {
         const cssPath = path.replaceAll(/\//g, ":::");
 
         try {
+            // Close nav per CSS on mobile
+            document.getElementById('site-nav').classList.remove('nav-open');
+
             // Collapse previous selected
             Array.from(document.getElementsByClassName("active")).forEach((p) => p.classList.remove('active'));
 
@@ -95,9 +93,5 @@ export class Sidebar {
         } catch (e) {
             console.error(`select "${cssPath}" caused: ${e}`);
         }
-
-        // JTD: Auto close nav for small screens
-        const siteNav = document.getElementById('site-nav');
-        siteNav.classList.remove('nav-open');
     }
 }
