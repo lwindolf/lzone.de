@@ -21,7 +21,7 @@ export class CheatSheetCatalog {
     // Fetch the catalog for a group
     static getInstallable = async (group) => 
         Config.groups[group]?.catalog
-            ?await fetch(Config.groups[group].catalog)
+            ?await fetch(Config.groups[group].catalog.source)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data)

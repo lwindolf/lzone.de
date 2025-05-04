@@ -48,7 +48,10 @@ export class Config {
                     filePattern: '^Visual Ops/(.*)\\.md$'
                 }
             },
-            catalog : 'https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/extra-cheat-sheets.json'
+            catalog : {
+                source  : 'https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/extra-cheat-sheets.json',
+                editUrl : 'https://github.com/lwindolf/lzone-cheat-sheets/blob/master/extra-cheat-sheets.json'
+            }
         }
     };
 

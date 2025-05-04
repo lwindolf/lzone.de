@@ -5,7 +5,6 @@ import { CheatSheetCatalog } from '../models/CheatSheetCatalog.js';
 import { Section } from '../models/Section.js';
 import * as r from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
-import { debounce } from '../helpers/debounce.js';
 
 // A view giving an overview on installed and installable cheat sheets
 // and allows adding/removing cheat sheets
@@ -39,7 +38,14 @@ export class CatalogView {
         </p>
 
         {{#if properties.catalog }}
-        <h2> Installable Content</h2>
+        <h2>
+            Installable Content
+            {{#if properties.catalog.editUrl }}
+                <a href="{{ properties.catalog.editUrl }}" target="_blank">
+                    <button>Edit</button>
+                </a>
+            {{/if }}
+        </h2>
 
         <p>
             <div id='installableSections'>
@@ -55,19 +61,27 @@ export class CatalogView {
         <h2>Custom Installation</h2>
         
         <p>
-            If you have a Github repo that is not part of the default list of installable repositories
-            try adding it with this custom form. If it works well consider adding it to
-            the <a href="https://github.com/lwindolf/lzone-cheat-sheets/blob/master/extra-cheat-sheets.json">list here</a>!
+            Add a Github repo of your own to the app:
 
             <div id='customInstall'>
-                    Name:<br/>
-                    <input type='text' id='customName'/><br/>
-                    Repo: (Format: "&lt;user>/&lt;repo>")<br/>
-                    <input type='text' id='customRepo'/><br/>
-                    File Pattern: (optional Regex with exactly one capture group to extract names)<br/>
-                    <input type='text' id='customFilePattern'/> <br/>
-                    <br/>
-                    <button>Add</button><br/>
+                <table>
+                    <tr>
+                        <td>Name:</td>
+                        <td><input type='text' id='customName' placeholder='Title'/></td>
+                    </tr>
+                    <tr>
+                        <td>Repo:</td>
+                        <td><input type='text' id='customRepo' placeholder='<user>/<repo>'/>
+                    </tr>
+                    <tr>
+                        <td>File Pattern: (optional Regex with exactly one capture group to extract names)<br/>
+                        <td><input type='text' id='customFilePattern' placeholder='^path/(.*)\\.md$'/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><button class="btn">Add</button></td>
+                    </tr>
+                <table>
             </div>
         </p>
         {{/if}}

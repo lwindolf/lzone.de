@@ -130,8 +130,16 @@ export class Section {
         this.#update();
     }
 
-    // get details of a section
-    static get = async (name) => this.#sections.nodes[name];
+    // get details of a node by path
+    static async get(path) {
+        let node = this.#sections;
+        for (const p of path.split(/:::/)) {
+            if(!node.nodes[p])
+                return undefined;
+            node = node.nodes[p];
+        }
+        return node;
+    }
 
     // get the tree of all sections
     static getTree = () => this.#sections;

@@ -7,17 +7,11 @@ import * as r from '../helpers/render.js';
 //
 // - supported formats HTML, Markdown, restructured, asciidoc
 // - supports YouTube video embedding
-// - supports JSFiddle embedding
 // - supports Mermaid diagrams
 // - XSS protection using DOMPurify
 
 class CheatSheetRenderer {
     static #converters;
-
-    static #jsfiddleTemplate = r.template(`
-        <iframe width="100%" height="1000" src="//jsfiddle.net/lwindolf/{{jsfiddle}}/embedded/result,js" allowfullscreen="allowfullscreen" frameborder="0">
-        </iframe>
-    `);
 
     static #youtubeTemplate = r.template(`
         <div class='video'>
@@ -30,7 +24,7 @@ class CheatSheetRenderer {
     `);
 
     static #sourceTemplate = r.template(`
-        <h1>{{title}}</h1>
+        <h1>{{ name }}</h1>
 
         {{#if url}}
         <table>
@@ -46,20 +40,20 @@ class CheatSheetRenderer {
             {{/if}}
         </table>
         {{/if}}
-    `);
 
-    static #tocTemplate = r.template(`
         {{#* inline "cheatSheetTocNode"}}
             <li>
-                <a href="/#/FIXME">{{name}}</a>
+                <a href="/#/{{#reSub ':::' '/'}}{{id}}{{/reSub}}">{{name}}</a>
+                <ul>
                 {{#each nodes}}
                     {{>cheatSheetTocNode}}
                 {{/each}}
+                </ul>
             </li>
         {{/inline}}
         <h2>Contents</h2>
         <ul>
-            {{#each section.nodes}}
+            {{#each nodes}}
                 {{>cheatSheetTocNode}}
             {{/each}}
         </ul>
@@ -124,20 +118,6 @@ class CheatSheetRenderer {
         window.GLightbox({ selector: '.main-content .glightbox'});
     }
 
-    // Special jsfiddle rendering based on front matter definitions
-    static #renderJSFiddle(data) {
-        // Example definition (one jsfiddle per page):
-        //
-        //     ---
-        //     jsfiddle: azd0yx3L
-        //     ---
-        //
-        if (typeof data === 'string' && /^[a-zA-Z0-9]+$/.test(data))
-            return this.#jsfiddleTemplate({jsfiddle: data});
-        else
-            return '';
-    }
-
     // Just returns rendered contents for a document (without layout / breadcrumbs ...)
     // Returns document details or undefined if no content was found for the given path
     static async renderDocument(e, path) {
@@ -183,10 +163,6 @@ class CheatSheetRenderer {
             html = 'ERROR: Content rendering error!';
         }
 
-        // Special content after DOMPurify so it does not get stripped
-        if ('jsfiddle' in frontmatter)
-            html += this.#renderJSFiddle(frontmatter.jsfiddle);
-
         // Replace all remaining relative HTML links
         e.innerHTML = html.replace(/(<img[^>]src=["'])\//g, '$1' + baseUrl + '/')
             .replace(/(<img[^>]+src=["'])([^h:][^t][^t][^p])/g, '$1' + baseUrl + '/$2')
@@ -213,10 +189,6 @@ class CheatSheetRenderer {
         return d;
     }
 
-    static renderToC(s) {
-        return r.render(this.#tocTemplate, { section: s });
-    }
-
     static async load(e, path) {
         var tmp = path.split(/\//);
         e.innerHTML = "";
@@ -225,27 +197,24 @@ class CheatSheetRenderer {
         path = tmp.join(":::");
 
         // If it is no special view load the content
-        let s = await Section.get(tmp[0]);
-        console.log(s);
-        if (-1 == path.indexOf(':::')) {
+        let s = await Section.get(path);
+        if (s.nodes && Object.keys(s.nodes).length > 0) {
             // Load section description
-            e.insertAdjacentHTML('afterbegin', this.#sourceTemplate({...s, title: path }));
-            e.innerHTML += this.renderToC(s);
+            e.insertAdjacentHTML('afterbegin', this.#sourceTemplate(s));
         } else {
             let d = await this.renderDocument(e, path);
-            // FIXME: e.insertAdjacentHTML('afterbegin', this.renderToC(s));
             if (!d?.data)
                 e.insertAdjacentHTML('beforeend', "No content on this page.");     
 
             // Add <h1> if markdown didn't provide one
             if (-1 == e.innerHTML.indexOf("<h1"))
-                e.insertAdjacentHTML('afterbegin', `<h1>${tmp[tmp.length - 1]}</h1>`);
+                e.insertAdjacentHTML('afterbegin', `<h1>${s.name}</h1>`);
 
             var h = document.getElementsByTagName('h1')[0];
             if (h && d) {
                 // Add edit button to <h1>
                 if (d?.editUrl)
-                    h.innerHTML += `<button id='editBtn' title='Edit in Github' style="float:right; display:block; background: orange; color: black; margin-left: 6px;" data-edit-url="${d.editUrl}" class="btn fs-4">Edit</button>`;
+                    h.innerHTML += `<button id='editBtn' title='Edit in Github' data-edit-url="${d.editUrl}" class="btn">Edit</button>`;
 
                 // If section has runbook flag add runbook button to <h1>
                 /*

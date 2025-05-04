@@ -404,6 +404,18 @@ a:not([class]) {
         margin: 3px 3px 3px 0 !important;
 }
 
+/* standard button */
+button {
+        background: var(--lightbg);
+        color: var(--text);
+        border: 1px solid var(--darkerbg);
+        border-radius: 4px;
+        padding: 0.4rem 1rem;
+        font-size: 1rem !important;
+        cursor: pointer;
+}
+
+/* larger button */
 button.btn {
         box-sizing: border-box;
         padding-top: .3em;
@@ -421,8 +433,15 @@ button.btn {
         font-size: 1rem !important;
 }
 
+/* edit callout button */
 button#editBtn {
         background: var(--torange);
+        color: black;
+        vertical-align: baseline;
+}
+
+h1 button#editBtn {
+        float: right;
 }
 
 .breadcrumb-nav-list {
@@ -795,4 +814,16 @@ div.output pre {
         margin: 6px 0 32px 0;
         filter: brightness(50%);
         font-size: 0.8rem;
+}
+
+table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 90%;
+}
+
+table td {
+        padding: 0.5rem;
+        border: 1px solid var(--darkerbg);
+        background: var(--lightbg);
 }
