@@ -1,6 +1,3 @@
-[submodule "multi-status"]
-	path = www/multi-status
-	url = https://github.com/lwindolf/multi-status.git
 [submodule "www/multi-status"]
 	path = www/multi-status
 	url = https://github.com/lwindolf/multi-status.git
