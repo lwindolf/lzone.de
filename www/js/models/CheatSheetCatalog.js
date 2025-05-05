@@ -83,6 +83,23 @@ export class CheatSheetCatalog {
             } catch (e) {
                 console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
             }
+
+            try {
+                console.log('Migrate legacy sections');
+                let extraSections = await Settings.get('extraSections', []);
+                if(extraSections.length > 0) {
+                    for(const name of extraSections) {
+                        console.log(`Migrating section ${name}`);
+                        const group = "Cheat Sheets";
+                        const catalog = await this.getInstallable(group);
+                        await this.install(group, name, catalog[name], undefined, false);
+                    }
+                    Settings.remove('extraSections');
+                }
+                console.log('Migrate legacy sections finished');
+            } catch (e) {
+                console.error(`Migrate legacy sections failed: ${e}`);
+            }
         }
 
         await Settings.set('initialRun', false);

@@ -106,7 +106,7 @@ export class CatalogView {
 
     async #render() {
         this.#repos = await CheatSheetCatalog.getInstallable(this.#group);
-        console.log(Section.getTree());
+
         r.renderElement(this.#el, CatalogView.#template, {
             group      : this.#group,
             catalog    : this.#repos,
