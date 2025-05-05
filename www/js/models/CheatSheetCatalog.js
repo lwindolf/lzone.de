@@ -36,7 +36,7 @@ export class CheatSheetCatalog {
     // Updates the index of all installed sections if they need updating
     // Installs default cheat sheets on uninitialized app.
     static async update() {
-        const initialRun = await Settings.get('initialRun', true);
+        const initialRun = await Settings.get('initialRun', false);
         if(!initialRun)
             return;
 
