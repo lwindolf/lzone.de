@@ -3,7 +3,7 @@
 
 var homeRepo = 'https://raw.githubusercontent.com/lwindolf/'
 var cachePrefix = 'lzone-cheat-sheets';
-var cacheVersion = 20250504;
+var cacheVersion = 20250507;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
@@ -29,6 +29,7 @@ var filesToCache = [
   '/js/search.js',
   '/js/helpers/debounce.js',
   '/js/helpers/render.js',
+  '/js/helpers/events.js',
   '/js/models/CheatSheetCatalog.js',
   '/js/models/GithubRepo.js',
   '/js/models/SearchIndex.js',
@@ -42,13 +43,12 @@ var filesToCache = [
   '/js/vendor/purify.es.js',
   '/js/vendor/rst2html.min.js',
   '/js/vendor/showdown.min.js',
-  '/js/views/About.js',
+  '/js/views/Catalog.js',
   '/js/views/Chat.js',
   '/js/views/CheatSheet.js',
   '/js/views/Checks.js',
   '/js/views/Content.js',
   '/js/views/Home.js',
-  '/js/views/Settings.js',
   '/js/views/Sidebar.js'
 ];
 
