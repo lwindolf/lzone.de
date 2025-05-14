@@ -1,9 +1,8 @@
 // vim: set ts=4 sw=4:
 /*jshint esversion: 8 */
 
-var homeRepo = 'https://raw.githubusercontent.com/lwindolf/'
 var cachePrefix = 'lzone-cheat-sheets';
-var cacheVersion = 20250507;
+var cacheVersion = 20250514;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
@@ -27,22 +26,27 @@ var filesToCache = [
   '/js/CLI.js',
   '/js/commands.js',
   '/js/search.js',
+
   '/js/helpers/debounce.js',
   '/js/helpers/render.js',
   '/js/helpers/events.js',
+
   '/js/models/CheatSheetCatalog.js',
   '/js/models/GithubRepo.js',
   '/js/models/SearchIndex.js',
   '/js/models/Section.js',
   '/js/models/Settings.js',
+
   '/js/vendor/asciidoctor.min.js',
   '/js/vendor/glightbox.min.js',
   '/js/vendor/handlebars.min.js',
   '/js/vendor/lunr.min.js',
-  '/js/vendor/mermaid.min.js',
-  '/js/vendor/purify.es.js',
+  '/js/vendor/mermaid.esm.min.mjs',
+  '/js/vendor/purify.es.mjs',
   '/js/vendor/rst2html.min.js',
   '/js/vendor/showdown.min.js',
+  '/js/vendor/split.min.js',
+  '/js/vendor/webamp.bunlde.min.js',
   '/js/views/Catalog.js',
   '/js/views/Chat.js',
   '/js/views/CheatSheet.js',
@@ -59,7 +63,7 @@ self.addEventListener('install', function(e) {
       return cache.addAll(filesToCache).then(() => {
         /* Cleanup deprecated cache versions */
         caches.keys().then((keyList) => {
-          for(k of keyList) {
+          for(const k of keyList) {
             if(0 == k.indexOf(cachePrefix) && k !== cacheName) {
               console.log(`Dropping cache version ${k}`);
               caches.delete(k);
@@ -74,10 +78,9 @@ self.addEventListener('install', function(e) {
 /* Serve cached content when offline */
 self.addEventListener('fetch', async (e) => {
   var pathname = new URL(e.request.url).pathname;
-  /* cache all webapp files and stuff from our github home repo */
-  if(e.request.url.startsWith(homeRepo) ||
-     (0 == e.request.url.indexOf(location.origin) &&
-      pathname.match(/\.(html|js|css|svg|json)$/))) {
+  /* cache all webapp files of the following types (to cache stuff like chunks/images) */
+  if((new URL(e.request.url).host === location.host) &&
+      pathname.match(/\.(mjs|js|css|svg|png|ico)$/)) {
     console.log("cache check for "+pathname);
     e.respondWith(caches.open(cacheName).then((cache) => {
       return cache.match(e.request).then((cachedResponse) => {
