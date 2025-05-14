@@ -13,7 +13,7 @@
                 "mermaid": "^11.6.0",
                 "rst2html": "^1.0.0",
                 "split.js": "^1.6.5",
-                "webamp": "^0.0.0-next-bd2022a8"
+                "webamp": "^0.0.0"
         },
         "devDependencies": {
                 "eslint": "^8.49.0"
