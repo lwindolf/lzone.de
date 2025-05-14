@@ -66,13 +66,16 @@ class CheatSheetRenderer {
 
         const {
             default: DOMPurify
-        } = await import('../vendor/purify.es.js');
+        } = await import('../vendor/purify.es.mjs');
         
         const {
             default: Asciidoctor
         } = await import('../vendor/asciidoctor.min.js');
 
-        await import('../vendor/mermaid.min.js');
+        const {
+            default: Mermaid
+        } = await import('../vendor/mermaid.esm.min.mjs');
+
         await import('../vendor/rst2html.min.js');
 
         // Configure stuff
@@ -85,15 +88,16 @@ class CheatSheetRenderer {
         md.setFlavor('github');
         md.setOption('simpleLineBreaks', false);
 
-        window.mermaid.initialize({
+        Mermaid.initialize({
             startOnLoad: false,
-            logLevel: "error"
+            securityLevel: 'antiscript',
+            logLevel: 'error'
         });
 
         csr.#converters = {
             // general
             DOMPurify,
-            mermaid: window.mermaid,
+            Mermaid,
 
             // by file extension
             rst  : window.rst2html,
@@ -182,8 +186,8 @@ class CheatSheetRenderer {
         });
 
         // Finally render mermaid diagrams
-        await this.#converters['mermaid'].run({
-            querySelector: '.main-content .mermaid'
+        await this.#converters['Mermaid'].run({
+            querySelector: '.main-content-view .mermaid'
         });
 
         return d;

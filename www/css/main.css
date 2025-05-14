@@ -6,8 +6,7 @@
         --code: #eee;
         --darkerbg: #ddd;
         --darkbg: #f5f5f5;
-        --lightbg: #fff;
-        --whitebg: #eee;
+        --lightbg: #fafafa;
         --sidebarWidth: 18rem;
         --border-radius: 4px;
 
@@ -25,7 +24,6 @@
                 --darkerbg: #202020;
                 --darkbg: #27262b;
                 --lightbg: #37363b;
-                --whitebg: #eee;
         }
 }
 
@@ -153,7 +151,7 @@ a:not([class]) {
 
 #main-content-wrap {
         flex: 1;
-        background-color: var(--darkbg);
+        background-color: var(--lightbg);
         padding: 1rem 2rem;
         overflow-x: hidden;
         width: auto;
@@ -837,5 +835,10 @@ table {
 table td {
         padding: 0.5rem;
         border: 1px solid var(--darkerbg);
-        background: var(--lightbg);
+        background: var(--darkbg);
+}
+
+input {
+        font-size: 100%;
+        padding: 6px;
 }

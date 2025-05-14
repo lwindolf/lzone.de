@@ -152,7 +152,7 @@ export class Commands {
 					div.id = 'webampApp';
 					document.body.appendChild(div);
 
-					import("https://unpkg.com/webamp").then(() => {
+					import("./vendor/webamp.bundle.min.js").then(() => {
 						const app = document.getElementById("webampApp")
 						// eslint-disable-next-line no-undef
 						window.webamp = new Webamp();

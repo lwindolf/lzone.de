@@ -127,6 +127,7 @@ export class CatalogView {
                 repo.filePattern = null;
     
             CheatSheetCatalog.install(
+                this.#group,
                 document.getElementById('customName').value,
                 repo,
                 e.target

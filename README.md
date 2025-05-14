@@ -26,4 +26,4 @@ FIXME: describe how to setup SaaS multi status updating!
 
 ## Updating Dependencies
 
-    npm run installDeps
+    npm run build
