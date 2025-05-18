@@ -34,6 +34,10 @@ export class CLI {
                 // Reset prompt field
                 input.value = "";
                 event.preventDefault();
+            } else if (event.key === 'Escape' || event.keyCode === 27) {
+                // Close search results and show content again
+                document.getElementById('search-results').style.display = 'none';
+                ContentView.switch('content');
             } else {
                 if ((input.value.length > 1) &&
                     (input.value[0] != '!') &&

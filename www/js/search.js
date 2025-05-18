@@ -323,6 +323,7 @@ class Search {
             if (active.parentElement.previousSibling) {
               var previous = active.parentElement.previousSibling.querySelector('.search-result');
               previous.classList.add('active');
+              previous.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
           }
           return;
@@ -334,6 +335,7 @@ class Search {
               var next = active.parentElement.nextSibling.querySelector('.search-result');
               active.classList.remove('active');
               next.classList.add('active');
+              next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
           } else {
             var next = document.querySelector('.search-result');
