@@ -11,7 +11,7 @@ cp \
 	glightbox/dist/js/glightbox.min.js \
 	lunr/lunr.min.js \
 	mermaid/dist/mermaid.esm.min.mjs \
-	split.js/dist/split.min.js \
+	split.js/dist/split.es.js \
 	rst2html/dist/rst2html.min.js \
 	../www/js/vendor
 

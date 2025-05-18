@@ -1,7 +1,7 @@
 :root {
         --text: #37363b;
         --tblue: #2c84fa;
-        --torange: #eb8100;
+        --torange: #ffbc40;
         --tred: #c36;
         --code: #eee;
         --darkerbg: #ddd;
@@ -114,6 +114,10 @@ a:not([class]) {
         flex: 0 0 var(--sidebarWidth);
         height: 100vh;
         line-height: 1.5rem;
+}
+
+.drag-over {
+        opacity: 0.5;
 }
 
 .main {
@@ -492,7 +496,7 @@ h1 button#editBtn {
         min-height: 2rem;
         line-height: 1.5rem;
         padding-right: 2rem;
-        padding-left: 2rem;
+        padding-left:  1rem;
         padding-top: .25rem;
         padding-bottom: .25rem;
 }

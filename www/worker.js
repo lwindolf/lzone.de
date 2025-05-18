@@ -45,13 +45,17 @@ var filesToCache = [
   '/js/vendor/purify.es.mjs',
   '/js/vendor/rst2html.min.js',
   '/js/vendor/showdown.min.js',
-  '/js/vendor/split.min.js',
-  '/js/vendor/webamp.bunlde.min.js',
+  '/js/vendor/split.es.js',
+  '/js/vendor/webamp.bundle.min.js',
+
+  '/js/views/renderers/CheatSheet.js',
+  '/js/views/renderers/Pdf.js',
+
   '/js/views/Catalog.js',
   '/js/views/Chat.js',
-  '/js/views/CheatSheet.js',
   '/js/views/Checks.js',
   '/js/views/Content.js',
+  '/js/views/FeedReader.js',
   '/js/views/Home.js',
   '/js/views/Sidebar.js'
 ];

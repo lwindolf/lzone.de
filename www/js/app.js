@@ -7,6 +7,7 @@ import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
+import { FeedReader } from './feedreader/feedreader.js';
 
 export class App {
     static #getParams() {
@@ -81,5 +82,7 @@ export class App {
         Search.init();
         new CLI('search-input');
         new ChecksView(document.getElementById('toolpanel'));
+
+        window.FeedReader = new FeedReader();
     }
 }

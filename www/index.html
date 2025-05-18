@@ -9,6 +9,7 @@
     <title>LZone</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/feedreader.css">
 
     <script type="text/javascript" src="js/vendor/lunr.min.js"></script>
     <script type="module"> import { App } from "./js/app.js"; App.load(); </script>
@@ -79,6 +80,8 @@
             </nav>
         </section>
         <div class="main">
+            <div id="feedreader" class="main-content-view">
+            </div>
             <div id="main-content-wrap" class="main-content-wrap">
                 <!-- this gets overwritten by ContentView -->
                 <p><a style="display:none" rel="me" href="https://mas.to/@lwindolf">Mastodon</a></p>

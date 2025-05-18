@@ -11,6 +11,7 @@
                 "handlebars": "^4.7.8",
                 "lunr": "^2.3.6",
                 "mermaid": "^11.6.0",
+                "pdfjs": "^2.5.3",
                 "rst2html": "^1.0.0",
                 "split.js": "^1.6.5",
                 "webamp": "^1.5.0"

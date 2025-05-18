@@ -1,7 +1,10 @@
+// vim: set ts=4 sw=4:
+
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
 import { CatalogView } from './Catalog.js';
 import { FolderView } from './Folder.js';
+import { FeedReaderView } from './FeedReader.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
 import { PdfRenderer } from './renderers/Pdf.js';
 import * as r from "../helpers/render.js";
@@ -73,6 +76,12 @@ export class ContentView {
             return;
         }
 
+        // Special case FeedReader
+        if(path.indexOf('Feed/') == 0) {
+            new FeedReaderView(ContentView.switch('feedreader'));
+            return;
+        }
+
         ContentView.switch('content');
 
         const id = path.replace(/\//g, ':::');
@@ -108,7 +117,15 @@ export class ContentView {
     static switch(name) {
         let el;
 
+        if(name === 'feedreader') {
+            document.getElementById('main-content-wrap').style.display = 'none';
+            el = document.getElementById('feedreader');
+            el.style.display = 'block';
+            return el;
+        }
+
         [...document.querySelectorAll('.main-content-view')].forEach((el) => el.style.display = 'none');
+        document.getElementById('main-content-wrap').style.display = 'block';
         el = document.getElementById(`main-content-${name}`);
         el.style.display = 'block';
 
