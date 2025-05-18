@@ -35,7 +35,7 @@ export class ChatView {
         answer.appendChild(pre)
         div.appendChild(answer);
         output.appendChild(div);
-        output.scrollTop = output.scrollHeight;
+        output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
     static addHTMLResult(title, html) {
@@ -45,7 +45,7 @@ export class ChatView {
 
         div.innerHTML = `<p>${title}</p>${html}`;
         output.appendChild(div);
-        output.scrollTop = output.scrollHeight;
+        output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
     static async submitAIPrompt(prompt) {
@@ -56,7 +56,6 @@ export class ChatView {
 
         // Scroll down chat view first
         const output = chat.querySelector('.content');
-        output.scrollTop = output.scrollHeight;
 
         if(!ChatView.#gradioClient) {
             output.innerHTML += `<div class="loading"><i>Connecting ...</i></div>`;
@@ -67,6 +66,7 @@ export class ChatView {
             <div class="question"><p>${prompt}</p></div>
             <div class="loading"><i>Processing ...</i></div>
         `;
+        output.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
         if(!ChatView.#showdown)
             ChatView.#showdown = new showdown.Converter();

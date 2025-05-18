@@ -11,6 +11,8 @@ export class CLI {
         input.focus();
         input.addEventListener('keydown', async (event) => {           
             if (event.key === 'Enter' || event.keyCode === 13) {
+                window.location.hash = '/CLI';
+
                 // Decide what the user want
                 //
                 // 1. Check if user wants to run a command (prefix "!")
@@ -59,8 +61,5 @@ export class CLI {
 
     static #focusSearch = () => document.getElementById('search-input').focus();
 
-    static async #runCommand(str) {
-        window.location.hash = '/CLI';
-        ChatView.addToolResult("$ " + str, await Commands.run(str));
-    }
+    static #runCommand = async (str) => ChatView.addToolResult("$ " + str, await Commands.run(str));
 }
