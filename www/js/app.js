@@ -50,16 +50,16 @@ export class App {
 
     static getPath = () =>  Object.keys(App.#getParams())[0].substring(1);
 
-    // handle path changes (add bread crumb and trigger sidebar collapsing)
-    static #pathChanged(path) {
-        // Add breadcrumb
+    static #setBreadcrumb = (path) =>         
         document.getElementById('breadcrumb-nav').innerHTML = `<li class="breadcrumb-nav-list-item"><a href="/"><svg viewBox="0 0 24 24"><use xlink:href="#svg-home"></use></svg></a></li>` + path.split(/\//).reverse().map((p, i, arr) => {
             if (0 == i)
                 return `<li class="breadcrumb-nav-list-item"><span>${decodeURIComponent(p)}</span></li>`;
             else
                 return `<li class="breadcrumb-nav-list-item"><a href="#/${path.split(/\//).slice(0, arr.length-i).join('/')}">${decodeURIComponent(p)}</a></li>`;
-        }).reverse().join(" ");
+        }).reverse().join(" ");      
 
+    static #pathChanged(path) {
+        this.#setBreadcrumb(path);
         Sidebar.selectionChanged(path);
     }
 

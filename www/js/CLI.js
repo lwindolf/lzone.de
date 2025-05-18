@@ -55,5 +55,8 @@ export class CLI {
 
     static #focusSearch = () => document.getElementById('search-input').focus();
 
-    static #runCommand = async (str) => ChatView.addToolResult("$ " + str, await Commands.run(str));
+    static async #runCommand(str) {
+        window.location.hash = '/CLI';
+        ChatView.addToolResult("$ " + str, await Commands.run(str));
+    }
 }

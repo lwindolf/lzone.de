@@ -5,7 +5,6 @@ import { FolderView } from './Folder.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
 import { PdfRenderer } from './renderers/Pdf.js';
 import * as r from "../helpers/render.js";
-import { Ca } from '../vendor/chunks/mermaid.esm.min/chunk-ZKYS2E5M.mjs';
 
 // Viewing different types of content
 //
@@ -67,6 +66,13 @@ export class ContentView {
     // render content using a file extension based renderer into #main-content-content
     static async render(path) {
         const el = document.getElementById('main-content-content');
+
+        // Special case CLI
+        if(path === 'CLI') {
+            ContentView.switch('chat');            
+            return;
+        }
+
         ContentView.switch('content');
 
         const id = path.replace(/\//g, ':::');

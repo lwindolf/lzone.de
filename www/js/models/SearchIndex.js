@@ -6,10 +6,9 @@ import { Settings } from "./Settings.js";
 // Persistent index of all installed documents. Cached to avoid recomputing
 
 export class SearchIndex {
-    static #cacheName = 'SearchCache';
+    static #cacheName = 'SearchIndexCache';
 
     static async getCache() {
-        return undefined;
         return await Settings.get(SearchIndex.#cacheName, undefined);
     }
 

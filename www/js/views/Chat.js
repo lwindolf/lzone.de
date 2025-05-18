@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { App } from '../app.js';
 import { Config } from '../config.js';
 import { ContentView } from "./Content.js";
 import { Client } from "../vendor/gradio-client/index.js";
