@@ -132,7 +132,7 @@ class Search {
 
         var resultLink = document.createElement('a');
         resultLink.classList.add('search-result');
-        resultLink.setAttribute('href', doc.url);
+        resultLink.setAttribute('href', doc.relUrl);
         resultsListItem.appendChild(resultLink);
 
         var resultTitle = document.createElement('div');
@@ -385,36 +385,13 @@ class Search {
     // or build it
     try {
       console.log("Building search index...");
-      this.updateIndex();
+      const result = await SearchIndex.update();
+      Search.jtdSearchLoaded(result.index, result.docs);
       console.log("Building search index done.");
     } catch (e) {
+      console.error("Building search index failed.");
       console.error(e);
     }
-  }
-
-  static async updateIndex() {
-    // Merge all extra cheat sheet sections with 1st level childs too
-    const docs = { ...(await SearchIndex.getDefault()), ...(await SearchIndex.getDocs()) };
-
-    const index = lunr(function () {
-      this.ref('id');
-      this.field('title', { boost: 200 });
-      this.field('content', { boost: 2 });
-      this.field('relUrl');
-      this.metadataWhitelist = ['position']
-
-      for (let id in docs) {
-        this.add({
-          id,
-          title: docs[id].title,
-          content: docs[id].content,
-          relUrl: docs[id].relUrl
-        });
-      }
-    });
-
-    Search.jtdSearchLoaded(index, docs);
-    SearchIndex.setCache({ index: JSON.stringify(index), docs });
   }
 
   static updateForSection(name) {

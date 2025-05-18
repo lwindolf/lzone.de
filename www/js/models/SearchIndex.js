@@ -1,6 +1,5 @@
 // vim: set ts=4 sw=4:
 
-import { Config } from "../config.js";
 import { Section } from "./Section.js";
 import { Settings } from "./Settings.js";
 
@@ -10,7 +9,8 @@ export class SearchIndex {
     static #cacheName = 'SearchCache';
 
     static async getCache() {
-        return await Settings.get(SearchIndex.#cacheName, undefined);
+        return undefined;
+        //return await Settings.get(SearchIndex.#cacheName, undefined);
     }
 
     static async setCache(cache) {
@@ -21,49 +21,65 @@ export class SearchIndex {
         await Settings.delete(SearchIndex.#cacheName);
     }
 
-    // Load search index for site specific cheat sheets
-    // Automatically cached by PWA worker
-    static async getDefault() {
-        return await fetch(Config.cheatSheetIndexUrl)
-            .then((response) => response.json());
-    }
-
     static async getDocs() {
-        let sections = await Section.getAll();
+        const tree = Section.getTree()
         let docs = {};
 
-        for (const s of sections) {
-            docs = { ...docs, ...this.#index_section(s) };
-        }
+        // Create index for all group childs
+        if (tree.nodes)
+            Object.values(tree.nodes).forEach((node) => {
+                docs = { ...docs, ...SearchIndex.#index(node) };
+            });
+
         return docs;
     }
 
-    // Create lunr index for a section
-    static #index_section(s) {
+    // Create lunr index for a node
+    static #index(node) {
         let docs = {};
 
-        // Add entry for section title
-        const spath = `/#/${s.name}`;
-        docs[spath] = {
-            doc: s.name,
-            id: spath,
-            title: s.name,
-            content: "",
-            relUrl: spath
-        }
+        if(node.nodes)
+            Object.values(node.nodes).forEach((s) => {
+                console.log(`Adding index for ${s.id}`);
+                // Add entry for section title
+                const path = `${s.id.replace(/:::/g, '/')}`;
+                docs[path] = {
+                    doc: path,
+                    id: s.id,
+                    title: s.name,
+                    content: s.content,
+                    relUrl: '#/'+path
+                }
 
-        // Add 1st level child entries
-        s?.children.forEach((c) => {
-            const path = `/#/${s.name}/${c}`;
-            docs[path] = {
-                doc: s.name,
-                id: path,
-                title: c,
-                content: "",
-                relUrl: path
-            }
-        });
+                // Recursion
+                docs = { ...docs, ...SearchIndex.#index(s) };
+            });
 
         return docs;
     }
+
+    static async update() {
+        const docs = await SearchIndex.getDocs();
+        let results = {
+            docs,
+            index: lunr(function () {
+                this.ref('id');
+                this.field('title', { boost: 200 });
+                this.field('content', { boost: 2 });
+                this.field('relUrl');
+                this.metadataWhitelist = ['position']
+          
+                for (let id in docs) {
+                  this.add({
+                    id,
+                    title: docs[id].title,
+                    content: docs[id].content,
+                    relUrl: docs[id].relUrl
+                  });
+                }
+            })
+        };
+        SearchIndex.setCache({ index: JSON.stringify(results.index), docs: results.docs });
+        return results;
+      }
 }
