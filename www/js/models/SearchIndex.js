@@ -9,6 +9,7 @@ export class SearchIndex {
     static #cacheName = 'SearchCache';
 
     static async getCache() {
+        return undefined;
         return await Settings.get(SearchIndex.#cacheName, undefined);
     }
 
@@ -47,7 +48,7 @@ export class SearchIndex {
                     id: s.id,
                     title: s.name,
                     content: s.content,
-                    relUrl: '#/'+path
+                    relUrl: '/#/'+path
                 }
 
                 // Recursion

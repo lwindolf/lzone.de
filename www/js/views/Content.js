@@ -71,7 +71,6 @@ export class ContentView {
 
         const id = path.replace(/\//g, ':::');
         const s = await Section.get(id);
-console.log("path=", path, "id=", id, "s=", s);
         // if it has nodes it is a section and we should render an overview
         if (s.nodes && Object.keys(s.nodes).length > 0) {
             if (-1 == id.indexOf(':::'))

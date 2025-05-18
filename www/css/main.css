@@ -220,6 +220,10 @@ a:not([class]) {
         font-size: 14px !important;
 }
 
+.search-result-doc-title {
+        display: none;
+}
+
 @media (min-width: 31.25rem) {
         .search-results-list {
                 font-size: 16px !important;
