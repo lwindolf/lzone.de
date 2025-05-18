@@ -9,8 +9,7 @@ export class SearchIndex {
     static #cacheName = 'SearchCache';
 
     static async getCache() {
-        return undefined;
-        //return await Settings.get(SearchIndex.#cacheName, undefined);
+        return await Settings.get(SearchIndex.#cacheName, undefined);
     }
 
     static async setCache(cache) {

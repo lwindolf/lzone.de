@@ -24,7 +24,7 @@ export class Sidebar {
         {{#each tree.nodes }}
             <ul class="nav-list">
                     <li class="nav-list-item" data-path="settings">
-                            <a class="nav-list-link pwa-title" data-path="catalog:::{{ @key }}" href="/#/catalog/{{ @key }}">
+                            <a class="nav-list-link pwa-title" data-path="{{ @key }}" href="/#/{{ @key }}">
                                     {{ @key }}
                                     <span class="pwa-settings">⚙</span>
                             </a>

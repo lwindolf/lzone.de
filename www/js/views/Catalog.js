@@ -98,7 +98,7 @@ export class CatalogView {
 
     constructor(el, path) {
         this.#el = el;
-        this.#group = decodeURI(path[2]);
+        this.#group = decodeURI(path);
         this.#render();
 
         document.addEventListener('sections-updated', this.#render.bind(this));

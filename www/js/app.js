@@ -5,11 +5,7 @@ import { Section } from './models/Section.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
-
-import { HomeView } from './views/Home.js';
-import { CatalogView } from './views/Catalog.js';
 import { ChecksView } from './views/Checks.js';
-import { CheatSheetView } from './views/CheatSheet.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
 
 export class App {
@@ -33,52 +29,36 @@ export class App {
 
     // Simple routing based on location hash values
     static #onLocationHashChange() {
-        const routes = {
-            'catalog'  : CatalogView,
-            'checks'   : ChecksView
-        };
-
         if('/' == window.location.pathname) {
             if(window.location.hash.length > 2) {
                 // handle in document anchors
                 if(window.location.hash[1] != '/')
                     return;
 
-                const tmp = window.location.hash.split(/\//);
-                if(tmp[1] in routes) {
-                    App.#pathChanged(tmp[1]);
-                    new routes[tmp[1]](ContentView.switch('content'), tmp);
-                    return;
-                }
-
                 // URI hash starting with a slash indicates a content load
                 if ('/' == window.location.pathname && '/' == window.location.hash.substring(1, 2)) {
-                    const path = Object.keys(App.#getParams())[0].substring(1);
+                    const path = App.getPath();
                     App.#pathChanged(path);
-                    new CheatSheetView(ContentView.switch('content'), path);
+                    ContentView.render(path);
                     return;
                 }
             }
         }
 
-        new HomeView(ContentView.switch('content'));
         App.#pathChanged('');
     }
 
-    // handle path changes (add bread crumb and sidebar collapsing)
+    static getPath = () =>  Object.keys(App.#getParams())[0].substring(1);
+
+    // handle path changes (add bread crumb and trigger sidebar collapsing)
     static #pathChanged(path) {
         // Add breadcrumb
-        if(-1 == path.indexOf('/')) {
-            // Hide at 1st level
-            document.getElementById('breadcrumb-nav').innerHTML = '';
-        } else {
-            document.getElementById('breadcrumb-nav').innerHTML = `<li class="breadcrumb-nav-list-item"><a href="/"><svg viewBox="0 0 24 24"><use xlink:href="#svg-home"></use></svg></a></li>` + path.split(/\//).reverse().map((p, i, arr) => {
-                if (0 == i)
-                    return `<li class="breadcrumb-nav-list-item"><span>${decodeURIComponent(p)}</span></li>`;
-                else
-                    return `<li class="breadcrumb-nav-list-item"><a href="#/${path.split(/\//).slice(0, arr.length-i).join('/')}">${decodeURIComponent(p)}</a></li>`;
-            }).reverse().join(" ");
-        }
+        document.getElementById('breadcrumb-nav').innerHTML = `<li class="breadcrumb-nav-list-item"><a href="/"><svg viewBox="0 0 24 24"><use xlink:href="#svg-home"></use></svg></a></li>` + path.split(/\//).reverse().map((p, i, arr) => {
+            if (0 == i)
+                return `<li class="breadcrumb-nav-list-item"><span>${decodeURIComponent(p)}</span></li>`;
+            else
+                return `<li class="breadcrumb-nav-list-item"><a href="#/${path.split(/\//).slice(0, arr.length-i).join('/')}">${decodeURIComponent(p)}</a></li>`;
+        }).reverse().join(" ");
 
         Sidebar.selectionChanged(path);
     }

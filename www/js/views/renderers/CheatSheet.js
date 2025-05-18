@@ -1,16 +1,15 @@
 // vim: set ts=4 sw=4:
 
-import { Section } from '../models/Section.js';
-import * as r from '../helpers/render.js';
+import * as r from '../../helpers/render.js';
 
-// Rendering markup & HTML cheat sheet content
+// Rendering markdown & HTML cheat sheet content
 //
 // - supported formats HTML, Markdown, restructured, asciidoc
 // - supports YouTube video embedding
 // - supports Mermaid diagrams
 // - XSS protection using DOMPurify
 
-class CheatSheetRenderer {
+export class CheatSheetRenderer {
     static #converters;
 
     static #youtubeTemplate = r.template(`
@@ -23,42 +22,6 @@ class CheatSheetRenderer {
         </div>
     `);
 
-    static #sourceTemplate = r.template(`
-        <h1>{{ name }}</h1>
-
-        {{#if url}}
-        <table>
-            {{#if author}}
-                <tr><td>Author</td><td>{{author}}</td></tr>
-            {{/if}}
-            {{#if homepage}}
-                <tr><td>Homepage</td><td><a href="{{homepage}}">{{homepage}}</a></td></tr>
-            {{/if}}
-            <tr><td>Source</td><td><a href="{{url}}">{{url}}</a></td></tr>
-            {{#if license}}
-                <tr><td>License</td><td><a href="{{license.url}}">{{license.name}}</td></tr>
-            {{/if}}
-        </table>
-        {{/if}}
-
-        {{#* inline "cheatSheetTocNode"}}
-            <li>
-                <a href="/#/{{#reSub ':::' '/'}}{{id}}{{/reSub}}">{{name}}</a>
-                <ul>
-                {{#each nodes}}
-                    {{>cheatSheetTocNode}}
-                {{/each}}
-                </ul>
-            </li>
-        {{/inline}}
-        <h2>Contents</h2>
-        <ul>
-            {{#each nodes}}
-                {{>cheatSheetTocNode}}
-            {{/each}}
-        </ul>
-    `);
-
     static async #setup () {
         let csr = CheatSheetRenderer;
 
@@ -66,17 +29,17 @@ class CheatSheetRenderer {
 
         const {
             default: DOMPurify
-        } = await import('../vendor/purify.es.mjs');
+        } = await import('../../vendor/purify.es.mjs');
         
         const {
             default: Asciidoctor
-        } = await import('../vendor/asciidoctor.min.js');
+        } = await import('../../vendor/asciidoctor.min.js');
 
         const {
             default: Mermaid
-        } = await import('../vendor/mermaid.esm.min.mjs');
+        } = await import('../../vendor/mermaid.esm.min.mjs');
 
-        await import('../vendor/rst2html.min.js');
+        await import('../../vendor/rst2html.min.js');
 
         // Configure stuff
 
@@ -124,11 +87,8 @@ class CheatSheetRenderer {
 
     // Just returns rendered contents for a document (without layout / breadcrumbs ...)
     // Returns document details or undefined if no content was found for the given path
-    static async renderDocument(e, path) {
+    static async renderDocument(e, d) {
         let baseUrl;
-        let d = await Section.getDocument(path);
-        if (!d)
-            return undefined;
 
         if(!this.#converters)
             await this.#setup();
@@ -193,59 +153,26 @@ class CheatSheetRenderer {
         return d;
     }
 
-    static async load(e, path) {
-        var tmp = path.split(/\//);
-        e.innerHTML = "";
+    static async load(e, d) {
+        if (!d?.data)
+            e.insertAdjacentHTML('beforeend', "No content on this page.");     
 
-        // continue with ::: instead of / for separator as this is better for CSS selectors
-        path = tmp.join(":::");
+        await this.renderDocument(e, d);
 
-        // If it is no special view load the content
-        let s = await Section.get(path);
-        if (s.nodes && Object.keys(s.nodes).length > 0) {
-            // Load section description
-            e.insertAdjacentHTML('afterbegin', this.#sourceTemplate(s));
-        } else {
-            let d = await this.renderDocument(e, path);
-            if (!d?.data)
-                e.insertAdjacentHTML('beforeend', "No content on this page.");     
+        // Add <h1> if markdown didn't provide one
+        if (-1 == e.innerHTML.indexOf("<h1"))
+            e.insertAdjacentHTML('afterbegin', `<h1>${d.baseName.split(/\./)[0]}</h1>`);
 
-            // Add <h1> if markdown didn't provide one
-            if (-1 == e.innerHTML.indexOf("<h1"))
-                e.insertAdjacentHTML('afterbegin', `<h1>${s.name}</h1>`);
+        var h = document.getElementsByTagName('h1')[0];
+        if (h && d) {
+            // Add edit button to <h1>
+            if (d?.editUrl)
+                h.innerHTML += `<button id='editBtn' title='Edit in Github' data-edit-url="${d.editUrl}" class="btn">Edit</button>`;
 
-            var h = document.getElementsByTagName('h1')[0];
-            if (h && d) {
-                // Add edit button to <h1>
-                if (d?.editUrl)
-                    h.innerHTML += `<button id='editBtn' title='Edit in Github' data-edit-url="${d.editUrl}" class="btn">Edit</button>`;
-
-                // If section has runbook flag add runbook button to <h1>
-                /*
-                if (s.runbook === "true") {
-                    h.innerHTML += `<button id='runbookBtn' title="Turn to Runbook that let's you run code blocks via WurmTerm" style="float: right; display: block; background: rgb(44, 132, 250); color: white; margin-left: 6px;" class="btn fs-4">Runbook</button>`;
-
-                    document.getElementById('runbookBtn').onclick = (el) => {
-                        Runbook.enable(document.querySelector('#main-content'));
-                        el.target.remove();
-                    };
-                }*/
-
-                if (d?.editUrl)
-                    document.getElementById('editBtn').onclick = (el) => {
-                        window.open(el.target.dataset['editUrl'], "_blank");
-                    };
-            }
+            if (d?.editUrl)
+                document.getElementById('editBtn').onclick = (el) => {
+                    window.open(el.target.dataset['editUrl'], "_blank");
+                };
         }
-
-        // Scroll to content top
-        // FIXME: should be a ContentView method
-        document.querySelector(`#main-content-content h1`).scrollIntoView({ block: "nearest" });
     }
-}
-
-export class CheatSheetView {
-        constructor(el, path) {
-                CheatSheetRenderer.load(el, path)
-        }
 }
