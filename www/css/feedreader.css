@@ -165,7 +165,7 @@ header .title {
 }
 
 .item {
-        padding: 1rem;
+        padding: 0.7rem 1rem;
         border-bottom: 1px solid var(--box-bg);
 }
 

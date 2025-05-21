@@ -132,13 +132,18 @@ export class ItemList {
         ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(el.dataset.feed, el.dataset.id));
 
         // handle cursor keys
-        ev.keydown('#itemlist', (e) => e.key === 'ArrowDown', (e) => {
-            document.querySelector('.item.selected').nextElementSibling?.click();
-            e.preventDefault();
-        });
-        ev.keydown('#itemlist', (e) => e.key === 'ArrowUp', (e) => {
-            document.querySelector('.item.selected').previousElementSibling?.click();
-            e.preventDefault();
+        document.addEventListener('keydown', (e) => {
+            if(!e.target.id === 'itemlist')
+                return;
+            
+            if(e.key === 'ArrowDown') {
+                document.querySelector('.item.selected').nextElementSibling?.click();
+                e.preventDefault();
+            }
+            if(e.key === 'ArrowUp') {
+                document.querySelector('.item.selected').previousElementSibling?.click();
+                e.preventDefault();   
+            }
         });
     }
 }

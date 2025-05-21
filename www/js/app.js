@@ -71,8 +71,10 @@ export class App {
         if ('serviceWorker' in navigator)
             navigator.serviceWorker.register('/worker.js');
 
+        window.FeedReader = new FeedReader();
         new Sidebar(document.getElementById('site-nav'));
         new ContentView(document.getElementById('main-content-wrap'));
+
         await Section.init();
         await CheatSheetCatalog.update();
 
@@ -82,7 +84,5 @@ export class App {
         Search.init();
         new CLI('search-input');
         new ChecksView(document.getElementById('toolpanel'));
-
-        window.FeedReader = new FeedReader();
     }
 }

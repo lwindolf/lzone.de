@@ -64,8 +64,8 @@ export class Sidebar {
         <div id="feedlist">
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
-                    <li class='nav-list-item' data-id='{{id}}'>
-                        <a data-path="{{ id }}" class="nav-list-link" href="/#/Feed/{{id}}">
+                    <li class='nav-list-item' data-path='Feed:::{{id}}'>
+                        <a data-path="Feed:::{{id}}" class="nav-list-link" href="/#/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
                             </div>
