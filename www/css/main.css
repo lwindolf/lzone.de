@@ -524,6 +524,12 @@ h1 button#editBtn {
         text-decoration: none;
 }
 
+/* Group title color */
+a[data-path]:not([data-path*=":::"]) {
+        font-weight: bold;
+        color: var(--text)
+}
+
 .nav-list .nav-list-item>.nav-list .nav-list-item .nav-list-link {
         color: #959396;
 }
