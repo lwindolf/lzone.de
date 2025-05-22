@@ -47,6 +47,11 @@ export class Feed {
             // feed provided favicon should always win
             if (f.icon)
                 this.icon = f.icon;
+
+            // FIXME: folder recursion
+            this.unreadCount = this.items.filter((i) => {
+                return (i.read === false);
+            }).length;
         }
 
         this.last_updated = f.last_updated;

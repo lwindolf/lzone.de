@@ -52,6 +52,13 @@ export class Config {
                 source  : 'https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/extra-cheat-sheets.json',
                 editUrl : 'https://github.com/lwindolf/lzone-cheat-sheets/blob/master/extra-cheat-sheets.json'
             }
+        },
+        'Feeds': {
+            removable : false,
+            defaultFeeds: [
+                { title: "LZone Blog",       source: "https://lzone.de/feed/devops.xml" },
+                { title: "Liferea Blog",     source: "https://lzone.de/liferea/blog/feed.xml" }
+            ]
         }
     };
 

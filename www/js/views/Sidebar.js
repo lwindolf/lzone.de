@@ -64,7 +64,7 @@ export class Sidebar {
         <div id="feedlist">
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
-                    <li class='nav-list-item' data-path='Feed:::{{id}}'>
+                    <li class='nav-list-item' data-id='{{id}}'>
                         <a data-path="Feed:::{{id}}" class="nav-list-link" href="/#/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
@@ -88,6 +88,7 @@ export class Sidebar {
 
         // Listen for feed updates
         document.addEventListener('nodeUpdated', this.#render);
+
         document.addEventListener("sections-updated", this.#render);
         document.addEventListener('click', (e) => {
             var target = e.target;

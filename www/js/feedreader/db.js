@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-/* Persistent feedlist using IndexedDB */
+/* Persistent feed list using IndexedDB */
 
 class DB {
     // state
@@ -22,7 +22,7 @@ class DB {
         await new Promise((resolve, reject) => {
             let s = this;
 
-            let req = indexedDB.open("newsagain", 1);
+            let req = indexedDB.open("feedreader", 1);
             req.onsuccess = function () {
                 s.db = this.result;
                 resolve();
@@ -36,7 +36,7 @@ class DB {
             req.onupgradeneeded = function (evt) {
                 s.db = evt.currentTarget.result;
                 console.log("IndexedDB onupgradeneeded");
-                s.db.createObjectStore("settings", { keyPath: 'id', autoIncrement: true });
+                s.db.createObjectStore("feedlist", { keyPath: 'id', autoIncrement: true });
             };
         });
 
@@ -60,7 +60,7 @@ class DB {
                     value = evt.target.result.value;
 
                 DB.values[storeName + "_" + name] = value;
-                resolve();
+                resolve(value);
             };
             req.onerror = function (evt) {
                 reject(`Error getting '${name}' from store '${storeName}' ${evt.target.errorCode}`);
@@ -81,8 +81,13 @@ class DB {
         await new Promise((resolve, reject) => {
             var store = db.transaction(storeName, "readwrite").objectStore(storeName);
             try {
-                store.put({ id: name, "value": value });
-                resolve();
+                const res = store.put({ id: name, "value": value });
+                res.onsuccess = function () {
+                    resolve();
+                }
+                res.onerror = function (evt) {
+                    reject(`Error saving '${name}' in store '${storeName}': ${evt.target.errorCode}`);
+                }
             } catch (e) {
                 reject(`Error saving '${name}' in store '${storeName}': ${e}`);
             }

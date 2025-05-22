@@ -3,10 +3,9 @@
 // Managing a tree of folders and feeds that are served by different
 // subscriptions (e.g. local, Google Reader API, ...)
 
+import { Config } from '../config.js';
 import { DB } from './db.js'
 import { Feed } from './feed.js';
-import { SimpleSubscriptionDialog } from './dialogs/simpleSubscription.js';
-import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
 export class FeedList {
@@ -20,13 +19,13 @@ export class FeedList {
     static #selected;
 
     // currently known max feed id
-    static maxId = 0;
+    static maxId = 1;
 
     // Return selected node id
     static getSelectedId = () => FeedList.#selected.id;
 
     // Return node by id
-    static getNodeById = (id) =>id?FeedList.#nodeById[id]:undefined;
+    static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
 
     // Return the next unread node after the given node id
     static getNextUnreadNode(id) {
@@ -45,20 +44,16 @@ export class FeedList {
         return this.root.children.find((n) => n.unreadCount > 0);
     }
 
-    static #nodeUpdated(feed) {
-        // FIXME: folder recursion
-        feed.unreadCount = feed.items.filter((i) => {
-            return (i.read === false);
-        }).length;
-
-        render(`.feed[data-id="${feed.id}"]`, FeedList.feedTemplate, { feed: feed });
-        DB.set('settings', 'feedlist', this.root);
+    static #save() {
+        DB.set('feedlist', 'tree', FeedList.root.children);
     }
 
     // Add a new node (e.g. on subscribing)
-    static add(f, update = true) {
+    static async add(f, update = true) {
         this.root.children.push(f);
 
+        if(!f.id)
+            f.id = FeedList.maxId + 1;
         if(f.id > FeedList.maxId)
             FeedList.maxId = f.id;
 
@@ -70,7 +65,7 @@ export class FeedList {
         }
 
         if(update)
-            f.update();
+            await f.update();
     }
 
     // recursively mark all read on node and its children
@@ -100,23 +95,13 @@ export class FeedList {
         ev.dispatch('feedSelected', { id });
     }
 
-    static #getDefaultFeeds() {
-        return {
-            children: [
-                { id: 0, title: "LZone Blog",       source: "https://lzone.de/feed/devops.xml" },
-                { id: 1, title: "Liferea Blog",     source: "https://lzone.de/liferea/blog/feed.xml" }
-            ]
-        };
-    }
-
     // Load folders/feeds from DB
     static async setup() {
-        for(const f of (await DB.get('settings', 'feedlist', this.#getDefaultFeeds())).children) {
-            this.add(new Feed(f), false);
-        }
+        document.addEventListener('nodeUpdated', FeedList.#save);
 
-        // Run initial fetch
-        this.update();
+        for(const f of (await DB.get('feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
+            await this.add(new Feed(f), true);
+        }
     }
 
     constructor() {

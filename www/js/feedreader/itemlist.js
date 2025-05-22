@@ -65,6 +65,7 @@ export class ItemList {
 
     // select an item
     static select(feedId, id) {
+        console.log(`ItemList.select(${feedId}, ${id})`);
         let node = FeedList.getNodeById(feedId);
         let item = node.getItemById(id);
 
