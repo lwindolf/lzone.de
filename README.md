@@ -1,5 +1,7 @@
 # lzone.de
 
+A backend less content aggregator. Collect and hoard knowledge like in the 90s!
+
 ## What is this?
 
 On the functional side this web app
