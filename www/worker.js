@@ -1,8 +1,8 @@
 // vim: set ts=4 sw=4:
 /*jshint esversion: 8 */
 
-var cachePrefix = 'lzone-cheat-sheets';
-var cacheVersion = 20250514;
+var cachePrefix = 'lzone';
+var cacheVersion = 20250523;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',

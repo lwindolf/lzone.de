@@ -3,6 +3,7 @@
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
 import { CatalogView } from './Catalog.js';
+import { FeedsView } from './Feeds.js';
 import { FolderView } from './Folder.js';
 import { FeedReaderView } from './FeedReader.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
@@ -77,6 +78,12 @@ export class ContentView {
         }
 
         // Special case FeedReader
+        if(path === 'Feeds') {
+            ContentView.switch('content');
+            console.log('Rendering feeds');
+            new FeedsView(el);
+            return;
+        }
         if(path.indexOf('Feed/') == 0) {
             new FeedReaderView(ContentView.switch('feedreader'));
             return;

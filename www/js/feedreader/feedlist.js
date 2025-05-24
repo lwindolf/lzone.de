@@ -48,6 +48,13 @@ export class FeedList {
         DB.set('feedlist', 'tree', FeedList.root.children);
     }
 
+    static #nodeUpdated(feed) {
+        // FIXME: folder recursion
+        feed.unreadCount = feed.items.filter((i) => {
+            return (i.read === false);
+        }).length;
+    }
+
     // Add a new node (e.g. on subscribing)
     static async add(f, update = true) {
         this.root.children.push(f);
@@ -66,6 +73,8 @@ export class FeedList {
 
         if(update)
             await f.update();
+
+        ev.dispatch('fedelistUpdated', undefined);
     }
 
     // recursively mark all read on node and its children
@@ -97,7 +106,8 @@ export class FeedList {
 
     // Load folders/feeds from DB
     static async setup() {
-        document.addEventListener('nodeUpdated', FeedList.#save);
+        document.addEventListener('feedlistUpdated', FeedList.#save);
+        document.addEventListener('nodeUpdated', (e) => FeedList.#nodeUpdated(e.detail));
 
         for(const f of (await DB.get('feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
             await this.add(new Feed(f), true);
