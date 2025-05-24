@@ -1,6 +1,21 @@
 # lzone.de
 
-lzone.de is a static PWA with offline content caching, which means it is backend-less and you can host a copy of it whereever you want.
+## What is this?
+
+On the functional side this web app
+
+- allows you to install hundreds of cheat sheets from a curated catalog
+- read your installed cheat sheets offline
+- "own" the content forever if needed
+- search it using the app, stop googling
+- embedded feed reader
+
+On the technical side
+
+- Vanilla JS progressive web app with minimal dependencies
+- using Cloudflare CORS proxy for RSS
+- backend-less offline content caching app
+- for now: Web only (mobile is not focus)
 
 ## Setup
 
