@@ -18,13 +18,11 @@ export class FeedsView {
 
         <p>
             <div id='installedSections'>
-            {{#each tree.children }}
-                {{#if this.title}}
+            {{#each tree }}
                     <div class='installed'>
                         <button data-section='{{ this.id }}'>Remove</button>
                         <a href="{{ this.orig_source }}">{{ this.title }}</a>
                     </div>
-                {{/if}}
             {{/each}}
             </div>
         </p>
@@ -63,8 +61,9 @@ export class FeedsView {
     }
 
     async #render() {
+        console.log(FeedList.root);
         r.renderElement(this.#el, FeedsView.#template, {
-            tree       : FeedList.root
+            tree       : FeedList.root.children
         });
 
         ev.connect('click', '#customInstall button', (e) => {

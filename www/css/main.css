@@ -759,3 +759,71 @@ input {
         font-size: 100%;
         padding: 6px;
 }
+
+.app-catalog .app:hover {
+        background-color: var(--darkbg);
+}
+
+.app-catalog .app {
+        padding: 1rem;
+        clear: both;
+}
+
+.app-catalog .app button {
+        float: right;
+}
+
+.app-catalog .app .title {
+        font-weight: bold;
+        color: var(--text);
+        font-size: 1.2rem;
+}
+.app-catalog .app .description {
+        font-size: 0.8rem;
+}
+
+.apps-pinned {
+        min-height: 96px;
+        width: 100%;
+}
+
+.app-catalog .app a.favicon,
+.apps-pinned .app a.favicon {
+        display: block;
+        float: left;
+        cursor: pointer;
+}
+
+.app-catalog .app img.favicon,
+.apps-pinned .app img.favicon {
+        width: 48px;
+        height: 48px;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        vertical-align: middle;
+}
+
+.apps-pinned .add:hover {
+        color: var(--tblue);
+        border: 1px dashed var(--tblue);
+}
+
+.apps-pinned .add {
+        display: flex;
+        text-decoration: none;
+        color: var(--darkerbg);
+        border: 1px dashed var(--darkerbgborder);
+        width: 48px;
+        height: 48px;
+        float: left;
+        padding:0;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+.app-catalog .app img.favicon {
+        filter: brightness(80%);
+}
+}

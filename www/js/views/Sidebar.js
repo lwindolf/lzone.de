@@ -40,11 +40,12 @@ export class Sidebar {
         {{/each}}
 
         {{#* inline "sidebarChildFeed"}}
-            {{#if feed.icon}}
-                <img class='icon' src='{{feed.icon}}'/>
-            {{/if}}
             {{#if feed.error}}
-            ⛔&nbsp;
+                ⛔&nbsp;
+            {{else}}
+                {{#if feed.icon}}
+                    <img class='icon' src='{{feed.icon}}'/>
+                {{/if}}
             {{/if}}
             <span class='title'>
                 {{{feed.title}}}

@@ -68,8 +68,10 @@ function template(str) {
 function renderElement(e, template, params, append = false) {
     let result;
 
-    if (!e)
+    if (!e) {
+        console.warn(`renderElement() nothing found for selector: ${e}`);
         return;
+    }
 
     try {
         result = template(params);

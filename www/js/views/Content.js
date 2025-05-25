@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { AppCatalogView } from './AppCatalog.js';
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
 import { CatalogView } from './Catalog.js';
@@ -74,6 +75,13 @@ export class ContentView {
         // Special case CLI
         if(path === 'CLI') {
             ContentView.switch('chat');            
+            return;
+        }
+
+        // Special case app catalog
+        if(path === 'AppCatalog') {
+            ContentView.switch('content');
+            new AppCatalogView(el);
             return;
         }
 

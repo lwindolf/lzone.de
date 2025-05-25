@@ -45,6 +45,7 @@ export class FeedList {
     }
 
     static #save() {
+        console.log("Saving feed list to DB");
         DB.set('feedlist', 'tree', FeedList.root.children);
     }
 
@@ -112,6 +113,8 @@ export class FeedList {
         for(const f of (await DB.get('feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
             await this.add(new Feed(f), true);
         }
+
+        FeedList.#save();
     }
 
     constructor() {

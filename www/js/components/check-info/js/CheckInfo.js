@@ -8,6 +8,7 @@
 import "../../dns-checker/js/DnsChecker.js";
 import "../../saas-multi-status/js/MultiStatusCloud.js";
 
+// FIXME move to config.js
 const monitoringTools = {
     saasMultiStatus: {
         tag         : 'x-multistatus-cloud',

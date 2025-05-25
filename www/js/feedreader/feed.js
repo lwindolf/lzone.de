@@ -11,6 +11,7 @@ export class Feed {
     orig_source;
     last_updated;
     etag;
+    corsProxyAllowed;       // whether the user allowed CORS proxy for this feed
 
     // feed content
     title;
@@ -29,10 +30,13 @@ export class Feed {
 
     constructor(defaults) {
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
+
+        // Ensure we do not loose the original source URL on bogus HTTP redirects
+        this.orig_source = this.source;
     }
 
     async update() {
-        const f = await FeedUpdater.fetch(this.source);
+        const f = await FeedUpdater.fetch(this.source, this.corsProxyAllowed);
         if (Feed.ERROR_NONE == f.error) {
             this.title = f.title;
             this.source = f.source;

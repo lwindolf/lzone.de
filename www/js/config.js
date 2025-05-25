@@ -62,8 +62,111 @@ export class Config {
         }
     };
 
+    // Apps for the app menu, for each URL the manifest.json is loaded
+    // to gather app name and icon
+    static apps = {
+        'Development': {
+            'Regex101': {
+                url         : 'https://regex101.com/',
+                description : 'Test regex, get regex explanations'
+            },
+            'REPL JS': {
+                url         : 'https://repljs.com/',
+                favicon     : 'https://repljs.com/android-icon-192x192.png',
+                description : 'Javascript console'
+            },
+            'HoppScotch.io': {
+                url         : 'https://hoppscotch.io/',
+                description : 'API request tester'
+            }
+        },
+        'DevOps - Playgrounds': {
+            'awk, sed, grep': {
+                url          : 'https://sandbox.bio/playgrounds/',
+                favicon      : 'https://sandbox.bio/favicon.ico',
+                description  : 'Sandbox for awk, grep, sed'
+            },
+            'jq': {
+                url          : 'https://play.jqlang.org/',
+                favicon      : 'https://play.jqlang.org/favicon.svg',
+                description  : 'Official jq playground'
+            },
+            'Helm': {
+                url          : 'https://helm-playground.org/',
+                favicon      : 'https://helm-playground.org/icons/favicon.ico',
+                description  : 'Play with Helm charts'
+            },
+            'OPA Rego': {
+                url          : 'https://play.openpolicyagent.org/',
+                favicon      : 'https://play.openpolicyagent.org/images/favicon.ico',
+                description  : 'Play with OPA Rego policies'
+            },
+            'Killercoda k8s': {
+                url          : 'https://killercoda.com/playgrounds/kubernetes',
+                favicon      : 'https://killercoda.com/favicon.ico',
+                description  : 'Play with Kubernetes in your browser'
+            },
+            'Openshift Sandbox': {
+                url          : 'https://console.redhat.com/openshift/sandbox',
+                favicon      : 'https://access.redhat.com/webassets/avalon/g/favicon.ico',
+                description  : 'Ad-hoc Openshift instances'
+            },
+            'iximiuz': {
+                url          : 'https://labs.iximiuz.com/playgrounds',
+                favicon      : 'https://iximiuz.com/favicon.ico',
+                description  : 'VM, Docker, Podman, containerd, Ubuntu, k8s instances'
+            }
+        },
+        'Networking': {
+            'ipinfo.io': {
+                url          : 'https://ipinfo.io/what-is-my-ip',
+                favicon      : 'https://ipinfo.io/favicon.ico',
+                description  : 'Get your public IP address'
+            },
+            'Qualys SSL Labs': {
+                url          : 'https://www.ssllabs.com/ssltest/',
+                favicon      : 'https://www.ssllabs.com/favicon.ico',
+                description  : 'Test SSL/TLS configuration of a server'
+            },
+            'mxtoolbox': {
+                url          : 'https://mxtoolbox.com/',
+                description  : 'Domain info lookup'
+            },
+            'BGP4.AS': {
+                url          : 'https://www.bgp4.as/looking-classes/',
+                favicon      : 'https://images.secdns.com/owl.gif',
+                description  : 'BGP AS looking class index'
+            },
+            'traceroute': {
+                url          : 'https://www.uptrends.com/tools/traceroute',
+                favicon      : 'https://www.uptrends.com/favicon.svg',
+                description  : 'uptrends.com traceroute from 30+ locations'
+            },
+            'speedtest': {
+                url          : 'https://www.speedtest.net/',
+                favicon      : 'https://b.cdnst.net/images/favicons/favicon-180.png',
+                description  : 'Test your internet connection speed'
+            },
+            'Cloudping': {
+                url          : 'https://www.cloudping.cloud/',
+                favicon      : 'https://cf.feitsui.com/icon/192x192.png',
+                description  : 'HTTP Ping CDNs and AWS regions'
+            },
+            'Azure Speed Test': {
+                url          : 'https://azurespeed.com/',
+                favicon      : 'https://azurespeed.com/favicon.ico',
+                description  : 'Test Azure region latency'
+            },
+            'GCP Ping': {
+                url          : 'https://gcping.com/',
+                favicon      : 'https://gcping.com/icon.662224a4.png',
+                description  : 'Test GCP region latency'
+            },
+        }
+    };
+
     // Huggingface spaces for chat bot models
-    // Note: first definition is always or default model
+    // Note: first definition is always our default model
     static chatBotModels = {
         "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", { message: prompt }),
         "Qwen/Qwen1.5-110B-Chat-demo": async (client, prompt) => await client.predict("/model_chat", [

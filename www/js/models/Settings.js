@@ -3,15 +3,13 @@
 /* Persistent settings using IndexedDB */
 
 class Settings {
-
+    // state
     static db;
     static values = {};    // value cache
 
     static async #getDB() {
-        var s = this;
-
-        if (s.db)
-            return s.db;
+        if (this.db)
+            return this.db;
 
         await new Promise((resolve, reject) => {
             var s = this;
@@ -34,7 +32,7 @@ class Settings {
             };
         });
 
-        return s.db;
+        return this.db;
     }
 
     static async getAllKeys() {
@@ -67,7 +65,7 @@ class Settings {
         return Settings.values[name];
     }
 
-    static async set(name, value) {
+    static async set(name, value, event = true) {
         var db = await Settings.#getDB();
 
         Settings.values[name] = value;
@@ -76,6 +74,8 @@ class Settings {
             var store = db.transaction("settings", "readwrite").objectStore("settings");
             try {
                 store.put({ id: name, "value": value });
+                if (event)
+                    document.dispatchEvent(new CustomEvent('settings-changed', { detail: { name, value } }));
                 resolve();
             } catch (e) {
                 reject(`Error saving setting ${name}: ${e}`);
