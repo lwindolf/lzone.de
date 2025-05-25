@@ -811,6 +811,7 @@ input {
         text-decoration: none;
         color: var(--darkerbg);
         border: 1px dashed var(--darkerbgborder);
+        border-radius: 0.4rem;
         width: 48px;
         height: 48px;
         float: left;

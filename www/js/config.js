@@ -23,8 +23,9 @@ export class Config {
         'Lars Windolf': {
             removable : true,
             install : {
-                'Blogs': {
+                'About': {
                     github: 'lwindolf/blogs',
+                    filePattern: '^About/(.*)\\.md$'
                 }
             }
         },

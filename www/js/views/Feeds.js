@@ -14,6 +14,8 @@ export class FeedsView {
     static #template = r.template(`
         <h1>Folder "Feeds"</h1>
 
+        FIXME: 🚧 This page is work in progress, it does not work yet!
+
         <h2>Subscriptions</h2>
 
         <p>
