@@ -13,7 +13,9 @@ export class Sidebar {
     static #template = r.template(`
         {{#* inline "sidebarChildNode"}}
             <li class="nav-list-item" data-path="{{ id }}">
-                <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
+                {{#notEmpty nodes}}
+                    <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
+                {{/notEmpty}}
                 <a data-path="{{ id }}" class="nav-list-link" href="/#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">{{ name }}</a>
                 <ul data-path="{{ id }}" class="nav-list">
                     {{#each nodes }}

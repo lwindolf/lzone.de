@@ -18,6 +18,13 @@ window.Handlebars.registerHelper("eachSorted", function (obj, options) {
     return result;
 });
 
+window.Handlebars.registerHelper('notEmpty', function (v1, options) {
+    if(v1 && Object.keys(v1).length > 0)
+        return options.fn(this);
+    
+    return options.inverse(this);
+});
+
 window.Handlebars.registerHelper('reSub', function (regex, replacement, options) {
     let str = options.fn(this);
     if (typeof str !== 'string') {
