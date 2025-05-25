@@ -160,7 +160,7 @@ export class CheatSheetRenderer {
 
         // Add <h1> if markdown didn't provide one
         if (-1 == e.innerHTML.indexOf("<h1"))
-            e.insertAdjacentHTML('afterbegin', `<h1>${d.baseName.split(/\./)[0]}</h1>`);
+            e.insertAdjacentHTML('afterbegin', `<h1>${d.baseName.replace(/\.[^.]*$/, "")}</h1>`);
 
         var h = document.getElementsByTagName('h1')[0];
         if (h && d) {
