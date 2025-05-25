@@ -6,8 +6,8 @@ var cacheVersion = 20250523;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
-  '/css/glightbox.min.css',
   '/css/main.css',
+  '/css/feedreader.css',
 
   '/js/components/check-info/js/CheckInfo.js',
 
@@ -38,7 +38,6 @@ var filesToCache = [
   '/js/models/Settings.js',
 
   '/js/vendor/asciidoctor.min.js',
-  '/js/vendor/glightbox.min.js',
   '/js/vendor/handlebars.min.js',
   '/js/vendor/lunr.min.js',
   '/js/vendor/mermaid.esm.min.mjs',
@@ -51,11 +50,14 @@ var filesToCache = [
   '/js/views/renderers/CheatSheet.js',
   '/js/views/renderers/Pdf.js',
 
+  '/js/views/AppCatalog.js',
   '/js/views/Catalog.js',
   '/js/views/Chat.js',
   '/js/views/Checks.js',
   '/js/views/Content.js',
   '/js/views/FeedReader.js',
+  '/js/views/Feeds.js',
+  '/js/views/Folder.js',
   '/js/views/Home.js',
   '/js/views/Sidebar.js'
 ];

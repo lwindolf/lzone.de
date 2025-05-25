@@ -69,7 +69,7 @@ export class CheatSheetRenderer {
         };
     }
 
-    // In-place replaces all Youtube video links found with a glightbox embed
+    // In-place replaces all Youtube video links found with a image link
     static #embedVideos(e) {
         const regex = new RegExp("^https://www\\.youtube\\.com/watch\\?v=");
         e.querySelectorAll('a[href*="https://www.youtube.com/watch?v="]').forEach((e) => {
@@ -82,7 +82,6 @@ export class CheatSheetRenderer {
                 caption : text[1]
             });
         });
-        window.GLightbox({ selector: '.main-content .glightbox'});
     }
 
     // Just returns rendered contents for a document (without layout / breadcrumbs ...)

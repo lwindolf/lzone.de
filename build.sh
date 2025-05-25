@@ -8,7 +8,6 @@ cp \
 	dompurify/dist/purify.es.mjs \
 	handlebars/dist/handlebars.min.js \
 	webamp/built/webamp.bundle.min.js \
-	glightbox/dist/js/glightbox.min.js \
 	lunr/lunr.min.js \
 	mermaid/dist/mermaid.esm.min.mjs \
 	split.js/dist/split.es.js \
@@ -18,5 +17,3 @@ cp \
 # Mermaid has chunks it wants to load
 test -d ../www/js/vendor/chunks || mkdir ../www/js/vendor/chunks
 cp -r mermaid/dist/chunks/mermaid.esm.min ../www/js/vendor/chunks
-
-cp glightbox/dist/css/glightbox.min.css ../www/css
