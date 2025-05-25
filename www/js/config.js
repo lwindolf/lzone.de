@@ -132,9 +132,8 @@ export class Config {
                 url          : 'https://mxtoolbox.com/',
                 description  : 'Domain info lookup'
             },
-            'BGP4.AS': {
-                url          : 'https://www.bgp4.as/looking-classes/',
-                favicon      : 'https://images.secdns.com/owl.gif',
+            'Lookingglass': {
+                url          : 'https://lookinglass.org/',
                 description  : 'BGP AS looking class index'
             },
             'traceroute': {
@@ -162,6 +161,11 @@ export class Config {
                 favicon      : 'https://gcping.com/icon.662224a4.png',
                 description  : 'Test GCP region latency'
             },
+            'PeeringDB': {
+                url          : 'https://www.peeringdb.com/',
+                favicon      : 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
+                description  : 'PeeringDB is a database of networks, exchanges, and data centers'
+            }
         }
     };
 

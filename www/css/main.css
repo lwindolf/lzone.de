@@ -760,12 +760,7 @@ input {
         padding: 6px;
 }
 
-.app-catalog .app:hover {
-        background-color: var(--darkbg);
-}
-
 .app-catalog .app {
-        padding: 1rem;
         clear: both;
 }
 
@@ -801,6 +796,9 @@ input {
         margin-right: 0.5rem;
         margin-bottom: 0.5rem;
         vertical-align: middle;
+        padding: 0.4rem;
+        background-color: var(--darkerbg);
+        border-radius: 0.4rem;
 }
 
 .apps-pinned .add:hover {

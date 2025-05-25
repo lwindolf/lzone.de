@@ -18,6 +18,29 @@ export class AppCatalogView {
 
     async render() {
         r.renderElement(this.#el, r.template(`
+            {{#* inline "app" }}
+                <div class="app">
+                    <a class="favicon" href="{{url}}" target="_blank">
+                    {{#if favicon}}
+                            <img class="favicon" src="{{favicon}}">
+                    {{else}}
+                            <img class="favicon" src="{{url}}/favicon.ico">
+                    {{/if}}
+                    </a>
+                    <div class="title">
+                        <a href="{{url}}">{{@key}}</a>
+                        <button data-name="{{@key}}">
+                            {{#if pinned }}
+                                Unpin
+                            {{else}}
+                                Pin
+                            {{/if}}
+                        </button>
+                    </div>
+                    <div class="description">{{description}}</div>
+                </div>
+            {{/inline}}
+
             <h1>App Catalog</h1>
 
             <p>
@@ -26,33 +49,21 @@ export class AppCatalogView {
             </p>
 
             <div class="app-catalog">
-            {{#each apps}}
-                <h2>{{@key}}</h2>
-                <div class="group" data-group="{{@key}}">
-                {{#each .}}                   
-                    <div class="app">
-                        <a class="favicon">
-                        {{#if favicon}}
-                                <img class="favicon" src="{{favicon}}">
-                        {{else}}
-                                <img class="favicon" src="{{url}}/favicon.ico">
-                        {{/if}}
-                        </a>
-                        <div class="title">
-                            <a href="{{url}}">{{@key}}</a>
-                            <button data-name="{{@key}}">
-                                {{#if (lookup ../../pinnedApps @key) }}
-                                    Unpin
-                                {{else}}
-                                    Pin
-                                {{/if}}
-                            </button>
-                        </div>
-                        <div class="description">{{description}}</div>
+                <h2>Pinned</h2>
+                {{#each pinnedApps}}
+                    {{> app pinned=true }}
+                {{/each}}
+
+                {{#each apps}}
+                    <h2>{{@key}}</h2>
+                    <div class="group" data-group="{{@key}}">
+                    {{#each .}}
+                        {{#unless (lookup ../../pinnedApps @key) }}
+                            {{> app }}
+                        {{/unless}}
+                    {{/each}}
                     </div>
                 {{/each}}
-                </div>
-            {{/each}}
             </div>
         `), {
             apps: Config.apps,
@@ -61,13 +72,13 @@ export class AppCatalogView {
 
         ev.connect('click', '.app-catalog .app button', async (el) => {
             const name = el.getAttribute('data-name');
-            const group = el.closest('.group').getAttribute('data-group');
-            if (name && group) {
+            if (name) {
                 let pinnedApps = await Settings.get('pinnedApps', {});
                 if (name in pinnedApps) {
                     delete pinnedApps[name];
                     el.innerText = 'Pin';
                 } else {
+                    const group = el.closest('.group').getAttribute('data-group');
                     pinnedApps[name] = Config.apps[group][name];
                     el.innerText = 'Unpin';
                 }
