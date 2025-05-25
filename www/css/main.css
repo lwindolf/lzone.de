@@ -827,6 +827,13 @@ input {
 }
 }
 
+.check {
+        border: 1px solid var(--lightbgborder);
+        border-radius: 0.4rem;
+        background: var(--lightbg);
+        padding: 0.5rem 1rem;
+}
+
 .probe {
         margin: .2rem .1rem;
         padding: 0 .4rem;

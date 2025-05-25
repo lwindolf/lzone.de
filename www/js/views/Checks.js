@@ -31,10 +31,14 @@ export class ChecksView {
         r.renderElement(el, r.template(`
             <div class="checks">
                 <h3>SaaS Outages</h3>
-                <x-multistatus-cloud data-path="/js/components/saas-multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>
+                <div class="check">
+                    <x-multistatus-cloud data-path="/js/components/saas-multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>
+                </div>
 
                 <h3>DNS Change Detector</h3>
-                <x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>
+                <div class="check">
+                    <x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>
+                </div>
 
                 <div class="apps-pinned">
                     <h3>Pinned Apps</h3>
