@@ -1,6 +1,6 @@
 # lzone.de
 
-A backend less content aggregator. Collect and hoard knowledge like in the 90s!
+A backend less content aggregator for Markdown and RSS. Collect and hoard knowledge like in the 90s!
 
 ## What is this?
 
