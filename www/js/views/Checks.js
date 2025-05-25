@@ -12,19 +12,21 @@ export class ChecksView {
     }
 
     static async renderApps() {
-        r.render('.checks .apps-pinned .apps', r.template(`
-            {{#each pinnedApps}}
-                <div class="app">
-                    <a class="favicon" href="{{url}}" target="_blank" rel="noopener noreferrer" title="{{@key}} ({{description}})">
-                    {{#if favicon}}
-                            <img class="favicon" src="{{favicon}}">
-                    {{else}}
-                            <img class="favicon" src="{{url}}/favicon.ico">
-                    {{/if}}
-                    </a>
-                </div>
-            {{/each}}
-        `), { pinnedApps: await Settings.get('pinnedApps', {})});
+        document.querySelectorAll('.checks .apps-pinned .apps').forEach(async (el) => {
+            r.renderElement(el, r.template(`
+                {{#each pinnedApps}}
+                    <div class="app">
+                        <a class="favicon" href="{{url}}" target="_blank" rel="noopener noreferrer" title="{{@key}} ({{description}})">
+                        {{#if favicon}}
+                                <img class="favicon" src="{{favicon}}">
+                        {{else}}
+                                <img class="favicon" src="{{url}}/favicon.ico">
+                        {{/if}}
+                        </a>
+                    </div>
+                {{/each}}
+            `), { pinnedApps: await Settings.get('pinnedApps', {})});
+        });
     }
 
     static async render(el) {
