@@ -241,7 +241,7 @@ class DnsChecker extends HTMLElement {
         this.#results.innerHTML = '';
 
 		this.#updated = await settingsGet('domainsLastUpdated', 0);
-		this.#domains = await settingsGet('domainList', [ 'alicewindolf.de', 'lzone.de']);
+		this.#domains = await settingsGet('domainList', [ 'lzone.de']);
         this.#domains.forEach((d) => {
 			var e = document.createElement('span');
 			e.className = 'domain';
