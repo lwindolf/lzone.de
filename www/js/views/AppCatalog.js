@@ -76,13 +76,12 @@ export class AppCatalogView {
                 let pinnedApps = await Settings.get('pinnedApps', {});
                 if (name in pinnedApps) {
                     delete pinnedApps[name];
-                    el.innerText = 'Pin';
                 } else {
                     const group = el.closest('.group').getAttribute('data-group');
                     pinnedApps[name] = Config.apps[group][name];
-                    el.innerText = 'Unpin';
                 }
-                Settings.set('pinnedApps', pinnedApps);
+                await Settings.set('pinnedApps', pinnedApps);
+                this.render();
             }
         });
     }
