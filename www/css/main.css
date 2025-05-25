@@ -769,9 +769,8 @@ input {
 }
 
 .app-catalog .app .title {
-        font-weight: bold;
-        color: var(--text);
         font-size: 1.2rem;
+        text-decoration: none;
 }
 .app-catalog .app .description {
         font-size: 0.8rem;
@@ -787,6 +786,7 @@ input {
         display: block;
         float: left;
         cursor: pointer;
+        text-decoration: none;
 }
 
 .app-catalog .app img.favicon,

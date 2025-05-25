@@ -28,7 +28,7 @@ export class AppCatalogView {
                     {{/if}}
                     </a>
                     <div class="title">
-                        <a href="{{url}}">{{@key}}</a>
+                        <a class="title" href="{{url}}">{{@key}}</a>
                         <button data-name="{{@key}}">
                             {{#if pinned }}
                                 Unpin
@@ -84,5 +84,7 @@ export class AppCatalogView {
                 this.render();
             }
         });
+
+        ev.connect('click', '#editBtn', (el) => window.open(el.dataset['url'], "_blank"));
     }
 }
