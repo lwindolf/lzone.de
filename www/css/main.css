@@ -826,3 +826,36 @@ input {
         filter: brightness(80%);
 }
 }
+
+.probe {
+        margin: .2rem .1rem;
+        padding: 0 .4rem;
+        white-space: nowrap;
+        display: inline-block;
+        cursor: pointer;
+        color: #777;
+        border: 1px solid #777;
+        border-radius: .2rem;
+        font-size: 1rem;
+}
+
+.probe_critical {
+        background: var(--tred);
+        color: #fff;
+        border: 1px solid #c36;
+}
+
+.probe_warning {
+        background: var(--torange);
+        color: #000;
+        border: 1px solid var(--torange);
+}
+
+.probe_normal {
+        color: #2c84fa;
+        border: 1px solid #2c84fa;
+}
+
+.probe_details {
+        display: none;
+}
