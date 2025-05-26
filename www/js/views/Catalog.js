@@ -42,7 +42,7 @@ export class CatalogView {
             Installable Content
             {{#if properties.catalog.editUrl }}
                 <a href="{{ properties.catalog.editUrl }}" target="_blank">
-                    <button>Edit</button>
+                    <button id="editBtn" class="btn">Edit</button>
                 </a>
             {{/if }}
         </h2>
