@@ -866,3 +866,7 @@ input {
 .probe_details {
         display: none;
 }
+
+#viewerContainer a {
+        background-image: none;
+}
