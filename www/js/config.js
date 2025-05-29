@@ -1,5 +1,7 @@
 // vim: set ts=4 sw=4:
 
+import { fa } from "./vendor/chunks/mermaid.esm.min/chunk-ZKYS2E5M.mjs";
+
 // app customization
 
 export class Config {
@@ -166,6 +168,18 @@ export class Config {
                 url          : 'https://www.peeringdb.com/',
                 favicon      : 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
                 description  : 'PeeringDB is a database of networks, exchanges, and data centers'
+            }
+        },
+        'Chat': {
+            'Cinny': {
+                url          : 'https://app.cinny.in/',
+                favicon      : 'https://app.cinny.in/assets/favicon-5KspoOBy.ico',
+                description  : 'Matrix client'
+            },
+            'KiwiIRC': {
+                url          : 'https://kiwiirc.com/nextclient/',
+                favicon      : 'https://kiwiirc.com/favicon.ico',
+                description  : 'IRC client'
             }
         }
     };
