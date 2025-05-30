@@ -1,7 +1,5 @@
 // vim: set ts=4 sw=4:
 
-import { fa } from "./vendor/chunks/mermaid.esm.min/chunk-ZKYS2E5M.mjs";
-
 // app customization
 
 export class Config {
@@ -168,6 +166,28 @@ export class Config {
                 url          : 'https://www.peeringdb.com/',
                 favicon      : 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
                 description  : 'PeeringDB is a database of networks, exchanges, and data centers'
+            }
+        },
+        'Diagram Tools': {
+            'ASCII Flow': {
+                url          : 'https://asciiflow.com',
+                favicon      : 'https://asciiflow.com/public/favicon.png',
+                description  : 'Draw ASCII boxes+arrows'
+            },
+            'Mermaid': {
+                url          : 'https://mermaid.live',
+                favicon      : 'https://mermaid.live/favicon.svg',
+                description  : 'Draw Flowcharts, Sequence, ER, UML, Gantt, Mindmaps'
+            },
+            'draw.io': {
+                url          : 'https://draw.io',
+                favicon      : 'https://app.diagrams.net/favicon.ico',
+                description  : 'Good old SVG drawing tool by Sun Microsystems'
+            },
+            'Wardley Maps': {
+                url          : 'https://onlinewardleymaps.com/',
+                favicon      : 'https://onlinewardleymaps.com/favicon.ico',
+                description  : 'Value chain strategy maps'
             }
         },
         'Chat': {
