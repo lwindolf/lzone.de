@@ -289,6 +289,13 @@ header .title {
 
 /* content formatting */
 
+#itemViewContent pre, code {
+        overflow: auto;
+        padding: 0.5rem;
+        background: var(--darkbg);
+}
+
+#itemViewContent h1,
 #itemViewContent section,
 #itemViewContent svg,
 #itemViewContent img {
@@ -349,9 +356,13 @@ header .title {
 
 #itemlistViewContent,
 #itemViewContent {
-        overflow: auto;
         height: 100%;
         width: 100%;
+}
+
+#itemView,
+#itemlistViewContent {
+        overflow: auto;
 }
 
 #itemlist:focus,
