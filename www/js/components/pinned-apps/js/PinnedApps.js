@@ -45,6 +45,7 @@ class PinnedApps extends HTMLElement {
                     </a>
                 </div>
             {{/each}}
+            <a href="/#/-/Settings/Tools/Pinned Apps" class="add">+</a>
             </div>
         `), { pinnedApps: await Settings.get('pinnedApps', {})});
     }
