@@ -16,7 +16,7 @@ import { SearchIndex } from "./models/SearchIndex.js"
 // - index created in user browser with init() method
 // - index for headings only
 //
-// Loads an optionally cached SearchIndex into lunr and triggers
+// Loads an optionally cached SearchIndex into window.lunr and triggers
 // the Just-the-Docs search method.
 
 class Search {
@@ -31,8 +31,6 @@ class Search {
   }
 
   static jtdSearchLoaded = function (index, docs) {
-    var index = index;
-    var docs = docs;
     var searchInput = document.getElementById('search-input');
     var searchResults = document.getElementById('search-results');
     var currentInput;
@@ -72,17 +70,17 @@ class Search {
       }
 
       var results = index.query(function (query) {
-        var tokens = lunr.tokenizer(input)
+        var tokens = window.lunr.tokenizer(input)
         query.term(tokens, {
           boost: 10
         });
         query.term(tokens, {
-          wildcard: lunr.Query.wildcard.TRAILING
+          wildcard: window.lunr.Query.wildcard.TRAILING
         });
       });
 
       if ((results.length == 0) && (input.length > 2)) {
-        var tokens = lunr.tokenizer(input).filter(function (token, i) {
+        var tokens = window.lunr.tokenizer(input).filter(function (token) {
           return token.str.length < 20;
         })
         if (tokens.length > 0) {
@@ -165,22 +163,22 @@ class Search {
         for (var j in metadata) {
           var meta = metadata[j];
           if (meta.title) {
-            var positions = meta.title.position;
-            for (var k in positions) {
+            let positions = meta.title.position;
+            for (let k in positions) {
               titlePositions.push(positions[k]);
             }
           }
           if (meta.content) {
-            var positions = meta.content.position;
-            for (var k in positions) {
+            let positions = meta.content.position;
+            for (let k in positions) {
               var position = positions[k];
               var previewStart = position[0];
               var previewEnd = position[0] + position[1];
               var ellipsesBefore = true;
               var ellipsesAfter = true;
-              for (var k = 0; k < 5; k++) {
-                var nextSpace = doc.content.lastIndexOf(' ', previewStart - 2);
-                var nextDot = doc.content.lastIndexOf('. ', previewStart - 2);
+              for (let k = 0; k < 5; k++) {
+                let nextSpace = doc.content.lastIndexOf(' ', previewStart - 2);
+                let nextDot = doc.content.lastIndexOf('. ', previewStart - 2);
                 if ((nextDot >= 0) && (nextDot > nextSpace)) {
                   previewStart = nextDot + 1;
                   ellipsesBefore = false;
@@ -193,9 +191,9 @@ class Search {
                 }
                 previewStart = nextSpace + 1;
               }
-              for (var k = 0; k < 10; k++) {
-                var nextSpace = doc.content.indexOf(' ', previewEnd + 1);
-                var nextDot = doc.content.indexOf('. ', previewEnd + 1);
+              for (let k = 0; k < 10; k++) {
+                let nextSpace = doc.content.indexOf(' ', previewEnd + 1);
+                let nextDot = doc.content.indexOf('. ', previewEnd + 1);
                 if ((nextDot >= 0) && (nextDot < nextSpace)) {
                   previewEnd = nextDot;
                   ellipsesAfter = false;
@@ -232,7 +230,7 @@ class Search {
             ellipsesBefore: contentPosition.ellipsesBefore, ellipsesAfter: contentPosition.ellipsesAfter
           };
           var previewPositions = [previewPosition];
-          for (var j = 1; j < contentPositions.length; j++) {
+          for (let j = 1; j < contentPositions.length; j++) {
             contentPosition = contentPositions[j];
             if (previewPosition.previewEnd < contentPosition.previewStart) {
               previewPosition = {
@@ -253,8 +251,8 @@ class Search {
           resultLink.appendChild(resultPreviews);
 
           var content = doc.content;
-          for (var j = 0; j < Math.min(previewPositions.length, 3); j++) {
-            var position = previewPositions[j];
+          for (let j = 0; j < Math.min(previewPositions.length, 3); j++) {
+            let position = previewPositions[j];
 
             var resultPreview = document.createElement('div');
             resultPreview.classList.add('search-result-preview');
@@ -279,8 +277,8 @@ class Search {
       function addHighlightedText(parent, text, start, end, positions) {
         var index = start;
         for (var i in positions) {
-          var position = positions[i];
-          var span = document.createElement('span');
+          let position = positions[i];
+          let span = document.createElement('span');
           span.innerHTML = text.substring(index, position[0]);
           parent.appendChild(span);
           index = position[0] + position[1];
@@ -314,10 +312,11 @@ class Search {
     });
 
     Search.addEvent(searchInput, 'keydown', function (e) {
+      let active;
       switch (e.keyCode) {
         case 38: // arrow up
           e.preventDefault();
-          var active = document.querySelector('.search-result.active');
+          active = document.querySelector('.search-result.active');
           if (active) {
             active.classList.remove('active');
             if (active.parentElement.previousSibling) {
@@ -329,7 +328,7 @@ class Search {
           return;
         case 40: // arrow down
           e.preventDefault();
-          var active = document.querySelector('.search-result.active');
+          active = document.querySelector('.search-result.active');
           if (active) {
             if (active.parentElement.nextSibling) {
               var next = active.parentElement.nextSibling.querySelector('.search-result');
@@ -338,7 +337,7 @@ class Search {
               next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
           } else {
-            var next = document.querySelector('.search-result');
+            let next = document.querySelector('.search-result');
             if (next) {
               next.classList.add('active');
             }
@@ -346,7 +345,7 @@ class Search {
           return;
         case 13: // enter
           e.preventDefault();
-          var active = document.querySelector('.search-result.active');
+          active = document.querySelector('.search-result.active');
           if (active) {
             active.click();
           } else {
@@ -367,7 +366,7 @@ class Search {
   }
 
   static async init() {
-    lunr.tokenizer.separator = /[\s\-/]+/;
+    window.lunr.tokenizer.separator = /[\s\-/]+/;
 
     // Try to load from cache
     try {
@@ -375,8 +374,8 @@ class Search {
       if (cache && cache.index && cache.docs) {
         console.log("Load search index from cache...");
 
-        // https://lunrjs.com/guides/index_prebuilding.html
-        let index = lunr.Index.load(JSON.parse(cache.index));
+        // https://window.lunrjs.com/guides/index_prebuilding.html
+        let index = window.lunr.Index.load(JSON.parse(cache.index));
         Search.jtdSearchLoaded(index, cache.docs);
         return;
       }

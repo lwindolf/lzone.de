@@ -51,4 +51,4 @@ export class FolderView {
             url: path,
             section: await Section.get(path.replace(/\//g, ':::'))
         });
-};
+}

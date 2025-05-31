@@ -68,7 +68,7 @@ export class ChatView {
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
         if(!ChatView.#showdown)
-            ChatView.#showdown = new showdown.Converter();
+            ChatView.#showdown = new window.showdown.Converter();
         
         // Add prompt to history
         Settings.get('AIPromptHistory', []).then((promptHistory) => {
