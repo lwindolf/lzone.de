@@ -256,4 +256,74 @@ class DnsChecker extends HTMLElement {
     }
 }
 
+export class DnsCheckerSettings extends HTMLElement {
+    // state
+    #div;
+
+    constructor() {
+        super();
+
+        this.attachShadow({ mode: 'open' });
+        this.#div = document.createElement('div');
+
+        // inherit style from root document
+        const linkElem = document.createElement("link");
+        linkElem.setAttribute("rel", "stylesheet");
+        linkElem.setAttribute("href", "../../../../css/main.css");
+
+        this.shadowRoot.appendChild(linkElem);
+        this.shadowRoot.append(this.#div);
+        this.render();
+    }
+
+    async render() {
+		const domains = await settingsGet('domainList', [ 'lzone.de']);
+		this.#div.innerHTML = `
+		    <p>
+		    	Note: you currently have to refresh the page to see the changes take effect
+		    	in the DNS Checker widget.
+		    </p>
+
+			<p>
+				<b>Important: Checks will be performed with the help of an external service
+		    	(<a href="https://crt.sh">crt.sh</a>) which may log your queries. Do not use with care!</b>
+			</p>
+
+			<h3>Currently Checked Domains</h3>
+
+			${domains.map((d) => `
+				<div data-domain="${d}">
+					<button data-domain="${d}">Remove</button>
+					<span class="domain">${d}</span>
+				</div>
+			`).join('')}
+
+			<h3>Add Domain</h3>
+
+			<div>
+				<input type="text" id="domain" placeholder="Domain to check">
+				<button id="addDomain">Add</button>
+			</div>
+		`;
+
+		this.#div.querySelectorAll('button[data-domain]').forEach((e) => {
+			e.addEventListener('click', async (ev) => {
+				const domain = ev.target.dataset.domain;
+				if(domain) {
+					await settingsSet('domainList', domains.filter((d) => d !== domain));
+					this.#div.querySelector(`div[data-domain="${domain}"]`).remove();
+				}
+			});
+		});
+
+		this.#div.querySelector('#addDomain').addEventListener('click', async (ev) => {
+			const domain = this.#div.querySelector('#domain').value.trim();
+			if(domain)
+				await settingsSet('domainList', [ ...domains, domain ]);
+			this.render();
+		});
+    }
+}
+
 customElements.define('x-dns-checker', DnsChecker);
+customElements.define('x-dns-checker-settings', DnsCheckerSettings);

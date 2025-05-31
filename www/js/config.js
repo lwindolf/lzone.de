@@ -129,6 +129,11 @@ export class Config {
                 favicon      : 'https://www.ssllabs.com/favicon.ico',
                 description  : 'Test SSL/TLS configuration of a server'
             },
+            'crt.sh': {
+                url          : 'https://crt.sh/',
+                favicon      : 'https://crt.sh/favicon.ico',
+                description  : 'Certificate Transparency log search'
+            },
             'mxtoolbox': {
                 url          : 'https://mxtoolbox.com/',
                 description  : 'Domain info lookup'
@@ -243,7 +248,8 @@ export class Config {
         },
         'DNS Change Detector': {
             import     : '/js/components/dns-checker/js/DnsChecker.js',
-            embed      : `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`
+            embed      : `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
+            settings   : `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`
         },
         'Pinned Apps': {
             import     : '/js/components/pinned-apps/js/PinnedApps.js',
