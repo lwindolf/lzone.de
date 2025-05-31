@@ -2,6 +2,8 @@
 
 // Managing a tree of folders and feeds that are served by different
 // subscriptions (e.g. local, Google Reader API, ...)
+//
+// FIXME: implement the tree (currently only flat list of feeds) 
 
 import { Config } from '../config.js';
 import { DB } from './db.js'

@@ -126,7 +126,9 @@ export class CheatSheetCatalog {
 
     static async documentDownload(group, section, path, url, editUrl) {
         // on first download ask user about persistance
-        navigator.storage.persist();
+        if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist();
+        }
 
         await fetch(url)
             .then((response) => response.text())

@@ -33,11 +33,10 @@ export class FeedsView {
             </div>
         </p>
 
-        <h2>Add new feed</h2>
+        <h2>Add subscription</h2>
         
         <p>
-            Either drag&drop a link into the feed list or provide the feed / 
-            website URL:
+            Please provide the feed / website URL:
 
             <div id='customInstall'>
                 <table>

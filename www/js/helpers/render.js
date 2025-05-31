@@ -46,6 +46,12 @@ window.Handlebars.registerHelper('ifFalse', function (v1, options) {
     return options.inverse(this);
 });
 
+window.Handlebars.registerHelper('contains', function (needle, haystack, options) {
+    needle = window.Handlebars.escapeExpression(needle);
+    haystack = window.Handlebars.escapeExpression(haystack);
+    return (haystack.indexOf(needle) > -1) ? options.fn(this) : options.inverse(this);
+});
+
 window.Handlebars.registerHelper('compare', function (v1, operator, v2, options) {
     var operators = {
         '==': v1 == v2 ? true : false,

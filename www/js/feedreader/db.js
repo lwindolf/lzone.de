@@ -5,7 +5,7 @@
 class DB {
     // state
     static db;
-    static values = {};    // value cache
+    static values = {};    // value cache for test mode only
 
     // flags
     static testDisable = false;     // if true no DB actions will be performed (for test code), FIXME: properly mock IndexDB
@@ -73,15 +73,15 @@ class DB {
     static async set(storeName, name, value) {
         var db = await DB.#getDB();
 
-        DB.values[storeName + "_" + name] = value;
-
-        if (this.testDisable)
+        if (this.testDisable) {
+            DB.values[storeName + "_" + name] = value;
             return;
+        }
 
         await new Promise((resolve, reject) => {
             var store = db.transaction(storeName, "readwrite").objectStore(storeName);
             try {
-                const res = store.put({ id: name, "value": value });
+                const res = store.put({ id: name, value });
                 res.onsuccess = function () {
                     resolve();
                 }
@@ -97,10 +97,10 @@ class DB {
     static async remove(storeName, name) {
         var db = await DB.#getDB();
 
-        DB.values[storeName + "_" + name] = undefined;
-
-        if (this.testDisable)
+        if (this.testDisable) {
+            delete DB.values[storeName + "_" + name];
             return;
+        }
 
         await new Promise((resolve, reject) => {
             var store = db.transaction(storeName, "readwrite").objectStore(storeName);
