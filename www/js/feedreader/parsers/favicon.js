@@ -33,12 +33,12 @@ class Favicon {
         { type: "Apple small",      order: 7, xpath: "/html/head/link[@rel='apple-touch-icon' or @rel='apple-touch-icon-precomposed'][@sizes]/@href" }
     ].sort((a, b) => (a.order - b.order));
 
-    static async discover(url) {
+    static async discover(url, corsProxyAllowed = false) {
         let result;
 
         try {
             // Parse HTML
-            let doc = await pfetch(url)
+            let doc = await pfetch(url, {}, corsProxyAllowed)
                 .then((response) => response.text())
                 .then((str) => {
                     return new DOMParser().parseFromString(str, 'text/html');
@@ -66,7 +66,7 @@ class Favicon {
 
         // If nothing found see if there is a 'favicon.ico' on the homepage
         if(!result)
-            result = await pfetch(url + '/favicon.ico')
+            result = await pfetch(url + '/favicon.ico', {}, corsProxyAllowed)
                 .then((response) => response.text())
                 .then(() => url + '/favicon.ico');
 

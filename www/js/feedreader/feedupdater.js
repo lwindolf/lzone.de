@@ -33,7 +33,7 @@ export class FeedUpdater {
 
                 if(!feed.icon && feed.homepage)
                     try {
-                        feed.icon = await Favicon.discover(feed.homepage);
+                        feed.icon = await Favicon.discover(feed.homepage, corsProxyAllowed);
                     } catch(e) { 
                         // ignore
                     }
