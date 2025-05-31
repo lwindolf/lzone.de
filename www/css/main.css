@@ -838,6 +838,7 @@ input {
         background: var(--lightbg);
         padding: 0.7rem;
         clear: both;
+        overflow: auto;
 }
 
 .checks h3 a.settings {

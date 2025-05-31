@@ -91,6 +91,7 @@ export class Sidebar {
 
         // Listen for feed updates
         document.addEventListener('nodeUpdated', this.#render);
+        document.addEventListener('nodeRemoved', this.#render);
 
         document.addEventListener("sections-updated", this.#render);
         document.addEventListener('click', (e) => {

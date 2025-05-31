@@ -18,7 +18,7 @@ export class FeedsView {
     static #template = r.template(`
         <h1>Folder "Feeds"</h1>
 
-        FIXME: 🚧 This page is work in progress, it does not work yet!
+        FIXME: 🚧 This page is work in progress, it does not work yet completely!
 
         <h2>Subscriptions</h2>
 
@@ -26,7 +26,7 @@ export class FeedsView {
             <div id='installedSections'>
             {{#each tree }}
                     <div class='installed'>
-                        <button data-section='{{ this.id }}'>Remove</button>
+                        <button data-id='{{ this.id }}'>Remove</button>
                         <a href="{{ this.orig_source }}">{{ this.title }}</a>
                     </div>
             {{/each}}
@@ -76,8 +76,10 @@ export class FeedsView {
             this.#subscribe(url);
         });
 
-        ev.connect('click', '.installed button', async (e) =>
-            FeedList.remove(e.getAttribute('data-id')));
+        ev.connect('click', '.installed button', async (e) => {
+            FeedList.remove(e.getAttribute('data-id'));
+            this.#render();
+        });
     }
 
     static #subscribeTemplate = r.template(`

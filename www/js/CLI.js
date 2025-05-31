@@ -11,7 +11,7 @@ export class CLI {
         input.focus();
         input.addEventListener('keydown', async (event) => {           
             if (event.key === 'Enter' || event.keyCode === 13) {
-                window.location.hash = '/CLI';
+                window.location.hash = '/-/CLI';
 
                 // Decide what the user want
                 //

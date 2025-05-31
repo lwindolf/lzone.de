@@ -66,6 +66,7 @@ export class FeedList {
             FeedList.maxId = f.id;
 
         FeedList.#nodeById[f.id] = f;
+        f.parent = FeedList.root; // set parent to root
 
         // FIXME: belong into DB mapper code
         for(const i of f.items) {
@@ -75,7 +76,23 @@ export class FeedList {
         if(update)
             await f.update();
 
-        ev.dispatch('fedelistUpdated', undefined);
+        ev.dispatch('feedlistUpdated', undefined);
+    }
+
+    static remove(id) {
+        let node = FeedList.getNodeById(id);
+        if(!node)
+            return;
+
+        if(node === FeedList.#selected)
+            FeedList.select(undefined);
+
+        node.parent.children = node.parent.children.filter((n) => n.id !== id);
+
+        delete FeedList.#nodeById[id];
+        FeedList.#save();
+
+        ev.dispatch('nodeRemoved', id);
     }
 
     // recursively mark all read on node and its children
@@ -98,11 +115,8 @@ export class FeedList {
     static select(id) {
         FeedList.#selected = FeedList.getNodeById(id);
 
-        [...document.querySelectorAll('.feed.selected')]
-            .forEach((n) => n.classList.remove('selected'));
-        document.querySelector(`.feed[data-id="${id}"]`).classList.add('selected');
-
-        ev.dispatch('feedSelected', { id });
+        if(id)
+            ev.dispatch('feedSelected', { id });
     }
 
     // Load folders/feeds from DB
