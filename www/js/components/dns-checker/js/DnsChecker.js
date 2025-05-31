@@ -280,13 +280,17 @@ export class DnsCheckerSettings extends HTMLElement {
 		const domains = await settingsGet('domainList', [ 'lzone.de']);
 		this.#div.innerHTML = `
 		    <p>
-		    	Note: you currently have to refresh the page to see the changes take effect
+		    	FIXME: you currently have to refresh the page to see the changes take effect
 		    	in the DNS Checker widget.
 		    </p>
 
 			<p>
-				<b>Important: Checks will be performed with the help of an external service
-		    	(<a href="https://crt.sh">crt.sh</a>) which may log your queries. Do not use with care!</b>
+				<b>Important: Checks will be performed with the help of external services</b>
+				<ul>
+					<li><a href="https://crt.sh">crt.sh</a> for subdomain enumeration</li>
+					<li><a href="https://cloudflare-dns.com">cloudflare-dns.com</a> for DNS queries</li>
+				</ul>
+				which may both log your domain queries. Do use with care!
 			</p>
 
 			<h3>Currently Checked Domains</h3>
