@@ -97,6 +97,11 @@ export class ContentView {
 
         if(0 == path.indexOf('-/')) {
             const name = path.split('/')[1];
+            if(!Object.keys(internalRoutes).includes(name)) {
+                ContentView.switch('content').innerHTML = `ERROR: No internal route for ${name}`;
+                return;
+            }
+
             const target = ContentView.switch(internalRoutes[name].switch);
             if (internalRoutes[name].view)
                 new internalRoutes[name].view(target, path);

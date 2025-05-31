@@ -56,6 +56,8 @@ export class App {
             document.getElementById('breadcrumb-nav').innerHTML = ""
         :    
             document.getElementById('breadcrumb-nav').innerHTML = `<li class="breadcrumb-nav-list-item"><a href="/"><svg viewBox="0 0 24 24"><use xlink:href="#svg-home"></use></svg></a></li>` + path.split(/\//).reverse().map((p, i, arr) => {
+                if (p === '-')
+                    return '';
                 if (0 == i)
                     return `<li class="breadcrumb-nav-list-item"><span>${decodeURIComponent(p)}</span></li>`;
                 else
