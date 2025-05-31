@@ -289,7 +289,8 @@ header .title {
 
 /* content formatting */
 
-#itemViewContent pre, code {
+#itemViewContent pre,
+#itemViewContent code {
         overflow: auto;
         padding: 0.5rem;
         background: var(--darkbg);

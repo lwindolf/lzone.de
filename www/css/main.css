@@ -181,7 +181,6 @@ a:not([class]) {
         border-bottom: 1px solid var(--darkerbgborder);
         border-top: 1px solid var(--darkerbgborder);
         background: var(--darkerbg);
-        padding: 0.25rem;
 }
 
 .search-input-wrap input {
@@ -189,9 +188,8 @@ a:not([class]) {
         border: 0;
         margin: 0;
         padding: 0;
-        border: 1px solid var(--darkerbg);
-        background: none;
         width: 100%;
+        height: 100%;
         color: var(--text);
         font-size: 100%;
         padding: 0.25rem 0.75rem;
@@ -199,8 +197,7 @@ a:not([class]) {
 }
 
 .search-input-wrap input:focus {
-        border: 1px solid var(--torange);
-        outline: 0;
+
 }
 
 .search-results {
