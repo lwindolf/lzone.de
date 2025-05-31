@@ -778,7 +778,13 @@ input {
 
 .apps-pinned {
         display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         width: 100%;
+}
+
+.app-catalog .app a.favicon {
+        margin: 0 0.5rem;
 }
 
 .app-catalog .app a.favicon,
@@ -793,11 +799,10 @@ input {
 .apps-pinned .app img.favicon {
         width: 48px;
         height: 48px;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
         vertical-align: middle;
         padding: 0.4rem;
         background-color: var(--darkerbg);
+        border: 1px solid var(--darkerbg);
         border-radius: 0.4rem;
 }
 
