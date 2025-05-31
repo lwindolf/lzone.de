@@ -164,7 +164,7 @@ export class Commands {
 		}
 	};
 
-	static isValid = (str) => Commands.commands.hasOwnProperty(str.split(/\s+/)[0])
+	static isValid = (str) => Object.hasOwn(Commands.commands, str.split(/\s+/)[0])
 	static help = () => 'Syntax:\n\n' + 
 						'    <query>             # Search all cheat sheets\n' +
 						'    <query>?            # Perform a chat bot query\n' +

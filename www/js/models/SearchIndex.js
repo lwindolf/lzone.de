@@ -61,7 +61,7 @@ export class SearchIndex {
         const docs = await SearchIndex.getDocs();
         let results = {
             docs,
-            index: lunr(function () {
+            index: window.lunr(function () {
                 this.ref('id');
                 this.field('title', { boost: 200 });
                 this.field('content', { boost: 2 });

@@ -320,7 +320,7 @@ export class DnsCheckerSettings extends HTMLElement {
 			});
 		});
 
-		this.#div.querySelector('#addDomain').addEventListener('click', async (ev) => {
+		this.#div.querySelector('#addDomain').addEventListener('click', async () => {
 			const domain = this.#div.querySelector('#domain').value.trim();
 			if(domain)
 				await settingsSet('domainList', [ ...domains, domain ]);
