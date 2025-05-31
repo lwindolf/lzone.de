@@ -836,7 +836,7 @@ input {
         border: 1px solid var(--lightbgborder);
         border-radius: 0.4rem;
         background: var(--lightbg);
-        padding: 0.5rem 1rem;
+        padding: 0.7rem;
         clear: both;
 }
 
