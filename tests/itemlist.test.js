@@ -57,7 +57,6 @@ test('Itemlist.nextUnread', () => {
 
     FeedList.add(mockFeeds[0], false /* update */);
     FeedList.add(mockFeeds[1], false /* update */);
-    FeedList.render(FeedList.root);
 
     document.dispatchEvent(new CustomEvent("feedSelected", { detail: { id: 2 } }));
     setTimeout(() => {
