@@ -9,7 +9,8 @@ import * as ev from '../helpers/events.js';
 
 export class ItemList {
     // state
-    selected;       // selected item (or undefined)
+    displayedFeedId;    // id of the feed that is currently displayed
+    selected;           // selected item (or undefined)
 
     static #headerTemplate = template(`
         <span class='switchView' data-view='{{view}}'>&lt;</span>
@@ -41,6 +42,7 @@ export class ItemList {
     // load all items from the given node id
     static #loadFeed(id) {
         let node = FeedList.getNodeById(id);
+        ItemList.displayedFeedId = id;
 
         // FIXME: handle folders
 
@@ -126,6 +128,10 @@ export class ItemList {
     constructor() {
         document.addEventListener('itemUpdated',  (e) => ItemList.#itemUpdated(e.detail));
         document.addEventListener('feedSelected', (e) => ItemList.#loadFeed(e.detail.id));
+        document.addEventListener('itemsAdded',   (e) => {
+            if(e.detail.id == ItemList.displayedFeedId)
+                ItemList.#loadFeed(e.detail.id)
+        });
 
         // handle mouse events
         ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(el.dataset.feed, el.dataset.id), (e) => e.button == 1);

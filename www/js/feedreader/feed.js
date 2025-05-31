@@ -61,6 +61,7 @@ export class Feed {
         this.last_updated = f.last_updated;
         this.error = f.error;
         document.dispatchEvent(new CustomEvent('nodeUpdated', { detail: this }));
+        document.dispatchEvent(new CustomEvent('itemsAdded', { detail: this }));
     }
 
     // Return the next unread item after the given id

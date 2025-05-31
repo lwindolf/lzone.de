@@ -11,6 +11,9 @@ import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
 export class FeedInfo {
+    // state
+    #displayedId;   // id of the feed that is currently displayed
+
     static #errorTemplate = template(`
         {{#if feed.error}}
             <div class='feedInfoErrorBox'>
@@ -55,6 +58,10 @@ export class FeedInfo {
         <h1 id='itemViewContentTitle'>
             <a target='_system' href='{{feed.homepage}}'>{{feed.title}}</a>
         </h1>
+
+        <p>
+            Source: <a target='_system' href='{{feed.source}}'>{{feed.source}}</a><br>
+        </p>
     
         <p>{{{feed.description}}}</p>
 
@@ -62,20 +69,27 @@ export class FeedInfo {
     `);
 
     constructor() {
-        document.addEventListener('feedSelected', (e) => {
-            let feed = FeedList.getNodeById(e.detail.id);
+        document.addEventListener('nodeUpdated', (e) => {
+            if (e.detail.id == this.#displayedId)
+                this.#render(e.detail.id)
+        });
+        document.addEventListener('feedSelected', (e) => this.#render(e.detail.id));
+    }
 
-            render('#itemViewContent', FeedInfo.#contentTemplate, { feed });
-            render('#itemViewContent .feedInfoError', FeedInfo.#errorTemplate, { feed });
-            
-            ev.connect('click', '.btn#enableCors', async () => {
-                feed.corsProxyAllowed = true;
-                await feed.update();
-            });
-            ev.connect('click', '.btn#enableCorsGlobal', async () => {
-                await DB.set('config', 'corsProxyAllowed', true);
-                await feed.update();
-            });
+    #render(id) {
+        let feed = FeedList.getNodeById(id);
+        this.#displayedId = id;
+
+        render('#itemViewContent', FeedInfo.#contentTemplate, { feed });
+        render('#itemViewContent .feedInfoError', FeedInfo.#errorTemplate, { feed });
+        
+        ev.connect('click', '.btn#enableCors', async () => {
+            FeedList.allowCorsProxy(feed.id, true);
+            await feed.update();
+        });
+        ev.connect('click', '.btn#enableCorsGlobal', async () => {
+            await DB.set('config', 'corsProxyAllowed', true);
+            await feed.update();
         });
     }
 }

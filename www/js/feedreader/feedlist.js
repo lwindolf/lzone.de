@@ -58,6 +58,11 @@ export class FeedList {
         }).length;
     }
 
+    static allowCorsProxy(id, allow) {
+        FeedList.#nodeById[id].corsProxyAllowed = allow;
+        FeedList.#save();
+    }
+
     // Add a new node (e.g. on subscribing)
     static async add(f, update = true) {
         this.root.children.push(f);
