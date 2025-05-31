@@ -2,7 +2,7 @@
 /*jshint esversion: 8 */
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20250523;
+var cacheVersion = 20250601;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
