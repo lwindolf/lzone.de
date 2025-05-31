@@ -58,7 +58,7 @@ export class Sidebar {
         <!-- FeedReader section -->
         <ul class="nav-list">
                 <li class="nav-list-item" data-path="settings">
-                        <a class="nav-list-link pwa-title" data-path="feeds" href="/#/Feeds">
+                        <a class="nav-list-link pwa-title" data-path="feeds" href="/#/-/Feeds">
                                 Feeds
                                 <span class="pwa-settings">⚙</span>
                         </a>
@@ -68,7 +68,7 @@ export class Sidebar {
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
                     <li class='nav-list-item' data-id='{{id}}'>
-                        <a data-path="Feed:::{{id}}" class="nav-list-link" href="/#/Feed/{{id}}">
+                        <a data-path="Feed:::{{id}}" class="nav-list-link" href="/#/-/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
                             </div>
@@ -135,6 +135,11 @@ export class Sidebar {
     
     static selectionChanged(path) {
         const cssPath = path.replaceAll(/\//g, ":::");
+
+        // ignore internal routes as they have no representation in the 
+        // sidebar content tree
+        if (path.startsWith('-/'))
+            return;
 
         try {
             // Close nav per CSS on mobile

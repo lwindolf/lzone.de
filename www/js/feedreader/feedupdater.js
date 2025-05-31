@@ -23,9 +23,10 @@ export class FeedUpdater {
                     return new Feed({ error: Feed.ERROR_DISCOVER });
 
                 let feed = parser.parse(str);
-                if(!feed)
+                if(!feed) {
+                    console.error(`Failed to parse feed from ${url}`);
                     return new Feed({ error: Feed.ERROR_XML });
-
+                }
                 feed.source = url;
                 feed.last_updated = Date.now() / 1000;
                 feed.error = Feed.ERROR_NONE;

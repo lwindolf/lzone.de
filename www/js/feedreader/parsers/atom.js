@@ -60,6 +60,7 @@ class AtomParser {
                 let feed = new Feed({
                         error       : XPath.lookup(root, '/parsererror'),
                         title       : XPath.lookup(root, '/ns:feed/ns:title'),
+                        icon        : XPath.lookup(root, '/ns:feed/ns:icon'),
                         description : XPath.lookup(root, '/ns:feed/ns:summary'),
                         homepage    : XPath.lookup(root, "/ns:feed/ns:link[@rel='alternate']/@href") ||
                                       XPath.lookup(root, "/ns:feed/ns:link/@href")

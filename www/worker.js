@@ -9,7 +9,8 @@ var filesToCache = [
   '/css/main.css',
   '/css/feedreader.css',
 
-  '/js/components/check-info/js/CheckInfo.js',
+  '/js/components/pinned-apps/js/PinnedApps.js',
+  '/js/components/pinned-apps/js/PinnedAppsSettings.js',
 
   '/js/components/dns-checker/js/DnsChecker.js',
   '/js/components/dns-checker/js/settings.js',
@@ -50,7 +51,6 @@ var filesToCache = [
   '/js/views/renderers/CheatSheet.js',
   '/js/views/renderers/Pdf.js',
 
-  '/js/views/AppCatalog.js',
   '/js/views/Catalog.js',
   '/js/views/Chat.js',
   '/js/views/Checks.js',

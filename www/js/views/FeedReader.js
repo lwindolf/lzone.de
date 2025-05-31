@@ -24,6 +24,6 @@ export class FeedReaderView {
                 });
                 const feedViewSplit = el.querySelector('.feedViewSplit');
                 feedViewSplit.style.height = '100%';
-                ev.dispatch('feedSelected', { id: App.getPath().split('/')[1] });
+                ev.dispatch('feedSelected', { id: App.getPath().split('/')[2] });
         }
 }

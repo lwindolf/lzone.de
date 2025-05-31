@@ -1,12 +1,12 @@
 // vim: set ts=4 sw=4:
 
-import { AppCatalogView } from './AppCatalog.js';
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
 import { CatalogView } from './Catalog.js';
 import { FeedsView } from './Feeds.js';
 import { FolderView } from './Folder.js';
 import { FeedReaderView } from './FeedReader.js';
+import { SettingsView } from './Settings.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
 import { PdfRenderer } from './renderers/Pdf.js';
 import * as r from "../helpers/render.js";
@@ -68,37 +68,42 @@ export class ContentView {
         new HomeView(ContentView.switch('content'));
     }
 
-    // render content using a file extension based renderer into #main-content-content
+    // Render all content that needs to be shown in #main-content-content
+    //
+    // Routing schema:
+    // - for internal navigation   -/<route>
+    // - for installed content     <group>/[<folder>/[...]]<file>
+    //
+    // For installed content a file extension based renderer will be used.
     static async render(path) {
-        const el = document.getElementById('main-content-content');
+        const internalRoutes = {
+            CLI      : {
+                switch : 'chat',
+                view   : undefined
+            },
+            Feeds    : {
+                switch : 'content',
+                view   : FeedsView
+            },
+            Feed     : {
+                switch : 'feedreader',
+                view   : FeedReaderView
+            },
+            Settings : {
+                switch : 'content',
+                view   : SettingsView
+            },
+        };
 
-        // Special case CLI
-        if(path === 'CLI') {
-            ContentView.switch('chat');            
+        if(0 == path.indexOf('-/')) {
+            const name = path.split('/')[1];
+            const target = ContentView.switch(internalRoutes[name].switch);
+            if (internalRoutes[name].view)
+                new internalRoutes[name].view(target, path);
             return;
         }
 
-        // Special case app catalog
-        if(path === 'AppCatalog') {
-            ContentView.switch('content');
-            new AppCatalogView(el);
-            return;
-        }
-
-        // Special case FeedReader
-        if(path === 'Feeds') {
-            ContentView.switch('content');
-            console.log('Rendering feeds');
-            new FeedsView(el);
-            return;
-        }
-        if(path.indexOf('Feed/') == 0) {
-            new FeedReaderView(ContentView.switch('feedreader'));
-            return;
-        }
-
-        ContentView.switch('content');
-
+        const el = ContentView.switch('content');
         const id = path.replace(/\//g, ':::');
         const s = await Section.get(id);
         // if it has nodes it is a section and we should render an overview

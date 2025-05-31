@@ -777,7 +777,7 @@ input {
 }
 
 .apps-pinned {
-        min-height: 96px;
+        display: flex;
         width: 100%;
 }
 
@@ -832,6 +832,21 @@ input {
         border-radius: 0.4rem;
         background: var(--lightbg);
         padding: 0.5rem 1rem;
+        clear: both;
+}
+
+.checks h3 a.settings {
+        visibility: hidden;
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+        text-decoration: none;
+        color: var(--text);
+
+}
+
+.checks h3:hover a.settings {
+        visibility: visible;
 }
 
 .probe {
