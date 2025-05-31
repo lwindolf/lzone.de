@@ -240,21 +240,25 @@ export class Config {
     // - `import`   (mandatory) where to load the component from
     // - `embed`    (mandatory) HTML for embedding
     // - `settings` (optional)  HTML for embedding the settings component
+    // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
             import     : '/js/components/saas-multi-status/js/MultiStatusCloud.js',
             embed      : `<x-multistatus-cloud data-path="/js/components/saas-multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
-            settings   : `<x-multistatus-settings data-path="/js/components/saas-multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`
+            settings   : `<x-multistatus-settings data-path="/js/components/saas-multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
+            enabled    : true
         },
         'DNS Change Detector': {
             import     : '/js/components/dns-checker/js/DnsChecker.js',
             embed      : `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
-            settings   : `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`
+            settings   : `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
+            enabled    : false
         },
         'Pinned Apps': {
             import     : '/js/components/pinned-apps/js/PinnedApps.js',
             embed      : `<x-pinned-apps>ERROR when embedding Pinned Apps</x-pinned-apps>`,
-            settings   : `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`
+            settings   : `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
+            enabled    : true
         },
     };
 
