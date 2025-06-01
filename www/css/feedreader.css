@@ -131,6 +131,7 @@ header .title {
 
 .feed {
         display: flex;
+        align-items: center;
 }
 
 .feed img {
@@ -149,9 +150,16 @@ header .title {
 
 .feed .count {
         background: var(--darkerbg);
-        padding: 0.2rem 0.4rem;
+        padding: 0.1rem 0.4rem;
         color: var(--text);
+        font-size: 80%;
+        font-weight: 600;
         border-radius: 0.2rem;
+}
+
+.selected .feed .count,
+.feed:hover .count {
+        background: hsl(from var(--darkerbg) h s calc(l - 10));
 }
 
 .feed .count[data-count="0"] {

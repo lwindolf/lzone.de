@@ -110,8 +110,8 @@ a:not([class]) {
 }
 
 .sidebar {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+        padding: 2rem 0.5rem;
+        
         background-color: var(--darkbg);
         overflow-x: hidden;
         height: 100vh;
@@ -148,6 +148,14 @@ a:not([class]) {
         display: none;
         overflow-x: auto;
 }
+
+.main-content-view:focus {
+        border: 1px solid var(--focusborder);
+}
+.main-content-view:not(:focus) {
+        border: 1px solid rgba(0, 0, 0, 0);
+}
+
 
 .search-input-wrap {
         height: 2.2rem;
@@ -456,16 +464,6 @@ h1 button#editBtn {
         content: "/";
 }
 
-.breadcrumb-nav-list-item:last-child::after {
-        content: "";
-}
-
-@media (min-width: 31.25rem) {
-        .breadcrumb-nav-list-item {
-                font-size: 12px !important;
-        }
-}
-
 .nav-list-link {
         min-height: 2rem;
         line-height: 1.5rem;
@@ -482,6 +480,11 @@ h1 button#editBtn {
 .nav-list-item {
         padding-left: 0.75rem;
         position: relative;
+}
+
+/* First level of nav-list-item should have no padding */
+nav#site-nav > ul > .nav-list-item {
+        padding-left: 0;
 }
 
 .nav-list {
@@ -529,6 +532,13 @@ a[data-path]:not([data-path*=":::"]) {
 
 .nav-list ul {
         display: none;
+}
+
+#feedlist .nav-list-link {
+        padding-right: 0.2rem;
+}
+#feedlist .nav-list-item {
+        padding: 0;
 }
 
 .pwa-title {
