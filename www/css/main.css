@@ -11,7 +11,6 @@
         --focusborder: #bbb;
         --lightbg: #fafafa;
         --lightbgborder: #dadada;
-        --sidebarWidth: 18rem;
         --border-radius: 4px;
 
         color-scheme: light dark;
@@ -98,7 +97,6 @@ a:not([class]) {
 }
 
 #toolpanel {
-        flex: 1 1 300px;
         background-color: var(--darkbg);
         overflow-x: hidden;
         height: 100vh;
@@ -113,7 +111,6 @@ a:not([class]) {
         background-color: var(--darkbg);
         border-right: 1px solid var(--darkbgborder);
         overflow-x: hidden;
-        flex: 0 0 var(--sidebarWidth);
         height: 100vh;
         line-height: 1.5rem;
 }
@@ -122,7 +119,7 @@ a:not([class]) {
         opacity: 0.5;
 }
 
-.main {
+#main {
         display: flex;
         flex-direction: column;
         height: 100vh;
@@ -135,39 +132,12 @@ a:not([class]) {
         }
 }
 
-@media (max-width: 640px) {
-        .sidebar {
-                display: none;
-        }
-}
-
-@media (max-width: 1024px) {
-        .main {
-                flex: 2 1 auto;
-        }
-}
-
-@media (min-width: 1200px) {
-        #toolpanelHome {
-                display: none;
-        }
-
-        #toolpanel {
-                display: block;
-        }
-
-        .main {
-                width: 1024px;
-        }
-}
-
 #main-content-wrap {
         flex: 1;
         background-color: var(--lightbg);
         padding: 1rem 2rem;
         overflow-x: hidden;
-        width: auto;
-        max-width: 1024px;
+        width:100%;
         line-height: 1.6rem;
         position: relative;
 }
