@@ -102,7 +102,8 @@ header .title {
 }
 
 #itemViewContent {
-        padding: 0 0.8rem;
+        padding: 0.8rem;
+        padding-top: 0.01rem;
 
         max-width: 800px;
         margin: 0 auto;
@@ -111,9 +112,11 @@ header .title {
 }
 #itemViewContent h1 {
         line-height: 1.4;
+        margin-bottom: 0.2rem;
 }
 #itemViewContent h1 a {
         background:none;
+        color: var(--text);
 }
 
 .feed,

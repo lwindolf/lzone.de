@@ -68,7 +68,7 @@ export class Sidebar {
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
                     <li class='nav-list-item' data-id='{{id}}'>
-                        <a data-path="Feed:::{{id}}" class="nav-list-link" href="/#/-/Feed/{{id}}">
+                        <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="/#/-/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
                             </div>
@@ -95,6 +95,8 @@ export class Sidebar {
 
         document.addEventListener("sections-updated", this.#render);
         document.addEventListener('click', (e) => {
+            this.#el.focus();
+
             var target = e.target;
             while (target && !(target.classList && target.classList.contains('nav-list-expander'))) { 
                 target = target.parentNode;
@@ -137,38 +139,36 @@ export class Sidebar {
     static selectionChanged(path) {
         const cssPath = path.replaceAll(/\//g, ":::");
 
-        // ignore internal routes as they have no representation in the 
-        // sidebar content tree
-        if (path.startsWith('-/'))
-            return;
-
         try {
-            // Close nav per CSS on mobile
-            document.getElementById('site-nav').classList.remove('nav-open');
-
+            const sidebar = document.getElementById('sidebar');
+            
             // Collapse previous selected
-            Array.from(document.getElementsByClassName("active")).forEach((p) => p.classList.remove('active'));
+            Array.from(sidebar.getElementsByClassName("active")).forEach((p) => p.classList.remove('active'));
+            // Remove previous selection marker
+            Array.from(sidebar.getElementsByClassName("selected")).forEach((p) => p.classList.remove('selected'));
 
             if("" === path)
                 return;
 
             // Open section
-            document.querySelector(`li[data-path="${cssPath.replace(/:::.*/, "")}"]`)?.classList.add('active');
+            sidebar.querySelector(`li[data-path="${cssPath.replace(/:::.*/, "")}"]`)?.classList.add('active');
 
             // Open sub entries
             let tmp = cssPath;
             while (tmp.indexOf(':::') !== -1) {
-                Array.from(document.querySelectorAll(`li[data-path="${tmp}"]`)).forEach(
+                Array.from(sidebar.querySelectorAll(`li[data-path="${tmp}"]`)).forEach(
                     (p) => p.classList.add('active')
                 );
                 tmp = tmp.replace(/:::[^:]+$/, "");
             }
 
             // Selection marker
-            document.querySelector(`a[data-path="${cssPath}"]`).classList.add('active');
+            const target = sidebar.querySelector(`a[data-path="${cssPath}"]`);
+            target?.classList.add('active');
+            target?.classList.add('selected');
 
             // Scroll to selected menu
-            document.querySelector(`li[data-path="${cssPath}"]`).scrollIntoView({ block: "nearest" });
+            target?.scrollIntoView({ block: "nearest" });
         } catch (e) {
             console.error(`select "${cssPath}" caused: ${e}`);
         }

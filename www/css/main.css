@@ -113,10 +113,14 @@ a:not([class]) {
         padding-top: 2rem;
         padding-bottom: 2rem;
         background-color: var(--darkbg);
-        border-right: 1px solid var(--darkbgborder);
         overflow-x: hidden;
         height: 100vh;
         line-height: 1.5rem;
+        border: 1px solid rgba(0, 0, 0, 0);
+        border-right: 1px solid var(--darkbgborder);
+}
+.sidebar:focus {
+        border: 1px solid var(--focusborder);
 }
 
 .drag-over {

@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 // Managing a list of currently visible items
+// for simplicity combined view and model
 
 import { FeedList } from './feedlist.js';
 import { template, render } from '../helpers/render.js';

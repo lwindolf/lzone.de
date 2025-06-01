@@ -33,7 +33,7 @@ export class ItemView {
 
         render('#itemViewContent', ItemView.#contentTemplate, { item: item, time: DateParser.getShortDateStr(item.time) });
 
-        document.getElementById('itemViewContentTitle').scrollIntoView({ block: 'start' });
+        document.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
     }
 
     constructor() {
