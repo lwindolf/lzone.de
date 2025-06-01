@@ -5,16 +5,6 @@ import { Settings } from './Settings.js';
 /* Handling the installed cheat sheet sections tree and documents leaves in IndexedDB */
 
 export class Section {
-    static #sections;
-
-    static async init() {
-        // FIXME: schema migration
-        this.#sections = await Settings.get('sections', { nodes: {}});
-        console.log("Initializing sections");
-        console.log(this.#sections);
-        document.dispatchEvent(new CustomEvent("sections-updated"));
-    }
-
     // Helper to convert children path list to a tree
     // Takes a section object + name and creates a document tree from it
     static #buildTree(group, name, s) {
@@ -92,13 +82,14 @@ export class Section {
     }
 
     // persist changes and emit update event
-    static async #update() {
-        await Settings.set('sections', this.#sections);
+    static async #update(root) {
+        await Settings.set('sections', root);
         document.dispatchEvent(new CustomEvent("sections-updated"));
     }
 
     static async remove(group, name) {
-        let s = this.#sections.nodes[group].nodes[name];
+        let root = await this.getTree();
+        let s = root.nodes[group].nodes[name];
         if(!s)
             return;
 
@@ -106,33 +97,35 @@ export class Section {
             Settings.remove(`document:::${name}:::${n}`);
         await Settings.remove(`section:::${name}`);
 
-        delete this.#sections.nodes[group].nodes[name];
-        this.#update();
+        delete root.nodes[group].nodes[name];
+        this.#update(root);
     }
 
     static async removeGroup(group) {
-        let g = this.#sections.nodes[group];
+        let root = await this.getTree();
+        let g = root.nodes[group];
         if(!g)
             return;
 
         for(const n of Object.keys(g.nodes))
             await this.remove(group, n);
 
-        delete this.#sections.nodes[group];
-        this.#update();
+        delete root.nodes[group];
+        this.#update(root);
     }
 
     // add or update
     static async add(group, name, s) {
-        if(!this.#sections.nodes[group])
-            this.#sections.nodes[group] = { nodes: {}};
-        this.#sections.nodes[group].nodes[name] = Section.#buildTree(group, name, s);
-        this.#update();
+        let root = await this.getTree();
+        if(!root.nodes[group])
+            root.nodes[group] = { nodes: {}};
+        root.nodes[group].nodes[name] = Section.#buildTree(group, name, s);
+        this.#update(root);
     }
 
     // get details of a node by path
     static async get(path) {
-        let node = this.#sections;
+        let node = await this.getTree();
         for (const p of path.split(/:::/)) {
             if(!node.nodes[p])
                 return undefined;
@@ -142,7 +135,7 @@ export class Section {
     }
 
     // get the tree of all sections
-    static getTree = () => this.#sections;
+    static getTree = async () => await Settings.get('sections', { nodes: {}});
 
     // get document details
     static getDocument = (path) => Settings.get(`document:::${path}`, {});

@@ -96,6 +96,10 @@ a:not([class]) {
 
 }
 
+#home-content {
+        display: none;
+}
+
 #toolpanel {
         background-color: var(--darkbg);
         overflow-x: hidden;
@@ -124,12 +128,6 @@ a:not([class]) {
         flex-direction: column;
         height: 100vh;
         width: 100%;
-}
-
-@media (min-width: 640px) {
-        #home-content {
-                display: none;
-        }
 }
 
 #main-content-wrap {

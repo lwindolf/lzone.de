@@ -79,7 +79,6 @@ export class App {
         new Sidebar(document.getElementById('site-nav'));
         new ContentView(document.getElementById('main-content-wrap'));
 
-        await Section.init();
         await CheatSheetCatalog.update();
 
         window.addEventListener("hashchange", this.#onLocationHashChange);

@@ -28,17 +28,23 @@ export class Layout {
                         this.#split.setSizes([5, 70, 25]);
                         document.getElementById('toolpanel').style.display = 'block';
                         document.getElementById('sidebar').style.display = 'block';
+                        if(document.getElementById('home-content'))
+                                document.getElementById('home-content').style.display = 'none';
                 } else if(window.innerWidth > 640) {
                         this.#split.setSizes([5, 95, 0]);
                         this.#split.collapse(2); // collapse tool panel
                         document.getElementById('toolpanel').style.display = 'none';
                         document.getElementById('sidebar').style.display = 'block';
+                        if(document.getElementById('home-content'))
+                                document.getElementById('home-content').style.display = 'none';
                 } else {
                         this.#split.setSizes([0, 100, 0]);
                         this.#split.collapse(1); // collapse sidebar
                         this.#split.collapse(2); // collapse tool panel
                         document.getElementById('toolpanel').style.display = 'none';
                         document.getElementById('sidebar').style.display = 'none';
+                        if(document.getElementById('home-content'))
+                                document.getElementById('home-content').style.display = 'block';
                 }
 
         }

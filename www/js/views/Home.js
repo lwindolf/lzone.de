@@ -7,18 +7,26 @@ import * as r from "../helpers/render.js";
 
 export class HomeView {
     constructor(el) {
+        this.#render(el);
+    }
+
+    async #render(el) {
         el.innerHTML = r.template(`
             <div class="about">
                     {{{ welcome }}}
 
                     <div id='home-content'>
-                            <h2>Content</h2>
+                            <h3>Content</h3>
 
                             <div>
-                                    {{#each sections}}
-                                            <button onclick="document.location.hash='/{{this.name}}'" class="homeViewCheatSheetBtn btn fs-4">
-                                                    {{ this.name }}
-                                            </button>
+                                    {{#each sections.nodes as |groups groupId| }}
+                                        <div>
+                                            <b>{{ @key }}</b>:
+                                            {{#each nodes}}
+                                                &nbsp;
+                                                <a href="/#/{{ groupId }}/{{ @key }}">{{ @key }}</a>
+                                            {{/each}}
+                                        </div>
                                     {{/each}}
                             </div>
                     </div>
@@ -27,9 +35,10 @@ export class HomeView {
             <div id="toolpanelHome"></div>    
         `)({
             welcome: Config.welcome,
-            sections: Section.getTree()
+            sections: await Section.getTree()
         });
-
+        console.log("HomeView rendered");
+        console.log(await Section.getTree());
         // Is not always visible depends on CSS
         new ChecksView(document.getElementById('toolpanelHome'));
     }
