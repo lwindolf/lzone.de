@@ -144,16 +144,22 @@ export class ItemList {
             if(!e.target.id === 'itemlist')
                 return;
             
+            const selected = document.querySelector('.item.selected');
             if(e.key === 'ArrowDown') {
-                document.querySelector('.item.selected').nextElementSibling?.click();
+                if(selected)
+                    selected.nextElementSibling?.click();
+                else
+                    document.querySelector('.item')?.click();
                 e.preventDefault();
             }
             if(e.key === 'ArrowUp') {
-                document.querySelector('.item.selected').previousElementSibling?.click();
+                if(selected)
+                    selected.previousElementSibling?.click();
+                else
+                    document.querySelector('.item')?.click();
                 e.preventDefault();   
             }
             if(e.key === 'Enter') {
-                let selected = document.querySelector('.item.selected');
                 if(selected) {
                     ItemList.#openItemLink(selected.dataset.feed, selected.dataset.id);
                     e.preventDefault();

@@ -22,8 +22,6 @@ export class Layout {
         }
 
         #update() {
-                //document.getElementById('sidebar').style.width = 300 + 'px';
-
                 if(window.innerWidth > 1200) {
                         this.#split.setSizes([5, 70, 25]);
                         document.getElementById('toolpanel').style.display = 'block';
