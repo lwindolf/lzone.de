@@ -46,9 +46,15 @@ export class SettingsView {
 
                 <h3>Feed Reader</h3>
 
-                <p>
+                <div>
+                    <input type="checkbox" name="{{name}}" {{#if enabled}}checked{{/if}}> Show favicons
+                </div>
+                <div>
+                    <input type="checkbox" name="{{name}}" {{#if enabled}}checked{{/if}}> Update all feeds on startup
+                </div>
+                <div>
                     Default update interval <input id="refreshInterval" type="number" value="24" size="1" min="1"> hours
-                </p>
+                </div>
 
                 <h3>More Settings</h3>
                 <ul>

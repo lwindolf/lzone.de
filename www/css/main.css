@@ -8,6 +8,7 @@
         --darkerbgborder: #bbb;
         --darkbg: #f5f5f5;
         --darkbgborder: #d5d5d5;
+        --focusborder: #bbb;
         --lightbg: #fafafa;
         --lightbgborder: #dadada;
         --sidebarWidth: 18rem;
@@ -28,6 +29,7 @@
                 --darkerbgborder: #303030;
                 --darkbg: #27262b;
                 --darkbgborder: #37363b;
+                --focusborder: #777;
                 --lightbg: #37363b;
                 --lightbgborder: #44434d;
         }
@@ -197,7 +199,10 @@ a:not([class]) {
 }
 
 .search-input-wrap input:focus {
-
+        border: 1px solid var(--focusborder);
+}
+.search-input-wrap input:not(:focus) {
+        border: 1px solid rgba(0, 0, 0, 0);
 }
 
 .search-results {

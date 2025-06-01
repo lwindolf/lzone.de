@@ -67,7 +67,6 @@ export class ItemList {
 
     // select an item
     static select(feedId, id) {
-        console.log(`ItemList.select(${feedId}, ${id})`);
         let node = FeedList.getNodeById(feedId);
         let item = node.getItemById(id);
 
@@ -140,6 +139,8 @@ export class ItemList {
 
         // handle cursor keys
         document.addEventListener('keydown', (e) => {
+            if(document.activeElement.id !== 'itemlist')
+                return;
             if(!e.target.id === 'itemlist')
                 return;
             
@@ -150,6 +151,13 @@ export class ItemList {
             if(e.key === 'ArrowUp') {
                 document.querySelector('.item.selected').previousElementSibling?.click();
                 e.preventDefault();   
+            }
+            if(e.key === 'Enter') {
+                let selected = document.querySelector('.item.selected');
+                if(selected) {
+                    ItemList.#openItemLink(selected.dataset.feed, selected.dataset.id);
+                    e.preventDefault();
+                }
             }
         });
     }

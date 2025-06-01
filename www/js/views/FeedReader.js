@@ -8,14 +8,14 @@ export class FeedReaderView {
         constructor(el) {
                 el.innerHTML = `
                 <div class="feedViewSplit">
-                        <div id="itemlist">
+                        <div id="itemlist" tabindex="1">
                                 <div id="itemlistViewContent"></div>
                         </div>
-                        <div id="itemView">
+                        <div id="itemview" tabindex="2">
                                 <div id="itemViewContent"></div>
                         </div>
                 </div>`;
-                Split(['#itemlist', '#itemView'], {
+                Split(['#itemlist', '#itemview'], {
                         sizes: [30, 70],
                         minSize: [100, 100],
                         gutterSize: 3,
