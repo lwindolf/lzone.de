@@ -109,6 +109,24 @@ a:not([class]) {
         border-left: 1px solid var(--darkbgborder);
 }
 
+#toolpanelHome {
+        display: block;
+}
+@media (min-width: 1200px) {
+#toolpanelHome {
+        display: none;
+}
+}
+
+#home-content {
+        display: none;
+}
+@media (max-width: 640px) {
+#home-content {
+        display: block;
+}
+}
+
 .sidebar {
         padding: 2rem 0.5rem;
         
