@@ -10,8 +10,7 @@ var filesToCache = [
   '/css/feedreader.css',
 
   '/js/components/pinned-apps/js/PinnedApps.js',
-  '/js/components/pinned-apps/js/PinnedAppsSettings.js',
-
+  
   '/js/components/dns-checker/js/DnsChecker.js',
   '/js/components/dns-checker/js/settings.js',
   '/js/components/dns-checker/css/style.css',
@@ -99,4 +98,17 @@ self.addEventListener('fetch', async (e) => {
   } else {
     return;
   }
+});
+
+self.addEventListener('message', (event) => {
+    if (event.data === 'clearCache') {
+        caches.keys().then((keyList) => {
+            keyList.forEach((key) => {
+                if (key.startsWith(cachePrefix)) {
+                    console.log(`Clearing cache: ${key}`);
+                    caches.delete(key);
+                }
+            });
+        });
+    }
 });

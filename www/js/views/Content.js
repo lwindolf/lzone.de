@@ -66,6 +66,10 @@ export class ContentView {
             </div>
         `), {});
         new HomeView(ContentView.switch('content'));
+        Array.from(document.getElementsByClassName('main-content-view')).forEach((el) => {
+            el.onclick = () => el.focus();
+        });
+
     }
 
     // Render all content that needs to be shown in #main-content-content

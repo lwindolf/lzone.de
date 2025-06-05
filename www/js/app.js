@@ -72,7 +72,13 @@ export class App {
 
     static async load() {
         if ('serviceWorker' in navigator)
-            navigator.serviceWorker.register('/worker.js');
+            navigator.serviceWorker.register('/worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(error => {
+                console.error('ServiceWorker registration failed: ', error);
+            });
 
         new Layout();
         window.FeedReader = new FeedReader();
