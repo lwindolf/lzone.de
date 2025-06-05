@@ -2,7 +2,6 @@
 
 import { CLI } from './CLI.js';
 import { Layout } from './layout.js';
-import { Section } from './models/Section.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
