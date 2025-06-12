@@ -893,3 +893,8 @@ input {
 #viewerContainer a {
         background-image: none;
 }
+
+iframe {
+        background: white;
+        border: 1px solid var(--darkbgborder);
+}

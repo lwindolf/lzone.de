@@ -13,6 +13,12 @@
             "type": "image/png"
         }
     ],
+    "ProtocolHandlers": [
+        {
+          "protocol": "feed",
+          "url": "/"
+        }
+    ],
     "theme_color": "#f0e8e8",
     "background_color": "#f0e8e8",
     "display": "standalone",
