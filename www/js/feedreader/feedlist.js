@@ -6,7 +6,7 @@
 // FIXME: implement the tree (currently only flat list of feeds) 
 
 import { Config } from '../config.js';
-import { DB } from './db.js'
+import { DB } from '../models/DB.js'
 import { Feed } from './feed.js';
 import * as ev from '../helpers/events.js';
 
@@ -48,7 +48,7 @@ export class FeedList {
 
     static #save() {
         console.log("Saving feed list to DB");
-        DB.set('feedlist', 'tree', FeedList.root.children);
+        DB.set('feedreader', 'feedlist', 'tree', FeedList.root.children);
     }
 
     static #nodeUpdated(feed) {
@@ -131,7 +131,7 @@ export class FeedList {
         document.addEventListener('feedlistUpdated', FeedList.#save);
         document.addEventListener('nodeUpdated', (e) => FeedList.#nodeUpdated(e.detail));
 
-        for(const f of (await DB.get('feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
+        for(const f of (await DB.get('feedreader', 'feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
             await this.add(new Feed(f), true);
         }
 

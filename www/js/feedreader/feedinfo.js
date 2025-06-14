@@ -5,7 +5,7 @@
 // - single pane layout: as an error box on top of the item list
 // - 3 pane layout: in the item view
 
-import { DB } from './db.js';
+import { Settings } from '../models/Settings.js';
 import { FeedList } from './feedlist.js';
 import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
@@ -88,7 +88,7 @@ export class FeedInfo {
             await feed.update();
         });
         ev.connect('click', '.btn#enableCorsGlobal', async () => {
-            await DB.set('config', 'corsProxyAllowed', true);
+            await Settings.set('corsProxyAllowed', true);
             await feed.update();
         });
     }

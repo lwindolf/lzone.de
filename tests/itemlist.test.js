@@ -7,7 +7,7 @@ const { Feed } = require('../www/js/feedreader/feed');
 const { Item } = require('../www/js/feedreader/item');
 const { FeedList } = require('../www/js/feedreader/feedlist');
 const { ItemList } = require('../www/js/feedreader/itemlist');
-const { DB } = require('../www/js/feedreader/db');
+const { DB } = require('../www/js/models/DB');
 
 const mockFeeds = [
     new Feed({ title: 'abc', id: 1, unreadCount: 0, items: []}),

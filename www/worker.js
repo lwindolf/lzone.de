@@ -32,6 +32,7 @@ var filesToCache = [
   '/js/helpers/events.js',
 
   '/js/models/CheatSheetCatalog.js',
+  '/js/models/DB.js',
   '/js/models/GithubRepo.js',
   '/js/models/SearchIndex.js',
   '/js/models/Section.js',

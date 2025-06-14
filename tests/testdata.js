@@ -1,4 +1,4 @@
-import { DB } from '../www/js/feedreader/db';
+import { DB } from '../www/js/models/DB';
 import { Feed } from '../www/js/feedreader/feed';
 
 DB.testDisable = true;  // DB won't do anything
