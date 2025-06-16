@@ -30,7 +30,7 @@ export class CatalogView {
                 {{#if this.name}}
                     <div class='installed'>
                         <button data-section='{{ this.name }}'>Remove</button>
-                        <a href="https://github.com/{{ this.github }}">{{ this.name }}</a>
+                        <a href="{{ this.url }}">{{ this.name }}</a>
                     </div>
                 {{/if}}
             {{/each }}

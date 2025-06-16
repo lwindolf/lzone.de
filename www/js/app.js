@@ -30,19 +30,17 @@ export class App {
 
     // Simple routing based on location hash values
     static #onLocationHashChange() {
-        if('/' == window.location.pathname) {
-            if(window.location.hash.length > 2) {
-                // handle in document anchors
-                if(window.location.hash[1] != '/')
-                    return;
+        if(window.location.hash.length > 2) {
+            // everything that does not start with / we treat as document anchors
+            if(window.location.hash[1] != '/')
+                return;
 
-                // URI hash starting with a slash indicates a content load
-                if ('/' == window.location.pathname && '/' == window.location.hash.substring(1, 2)) {
-                    const path = App.getPath();
-                    App.#pathChanged(path);
-                    ContentView.render(path);
-                    return;
-                }
+            // URI hash starting with a slash indicates a content load
+            if ('/' == window.location.pathname && '/' == window.location.hash.substring(1, 2)) {
+                const path = App.getPath();
+                App.#pathChanged(path);
+                ContentView.render(path);
+                return;
             }
         }
 
