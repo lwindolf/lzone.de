@@ -47,7 +47,7 @@ export class SearchIndex {
                     id: s.id,
                     title: s.name,
                     content: s.content,
-                    relUrl: '/#/'+path
+                    relUrl: '#/'+path
                 }
 
                 // Recursion

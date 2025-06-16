@@ -16,7 +16,7 @@ export class Sidebar {
                 {{#notEmpty nodes}}
                     <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
                 {{/notEmpty}}
-                <a data-path="{{ id }}" class="nav-list-link" href="/#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">{{ name }}</a>
+                <a data-path="{{ id }}" class="nav-list-link" href="#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">{{ name }}</a>
                 <ul data-path="{{ id }}" class="nav-list">
                     {{#each nodes }}
                         {{> sidebarChildNode }}
@@ -28,7 +28,7 @@ export class Sidebar {
         {{#each tree.nodes }}
             <ul class="nav-list">
                     <li class="nav-list-item" data-path="settings">
-                            <a class="nav-list-link pwa-title" data-path="{{ @key }}" href="/#/{{ @key }}">
+                            <a class="nav-list-link pwa-title" data-path="{{ @key }}" href="#/{{ @key }}">
                                     {{ @key }}
                                     <span class="pwa-settings">⚙</span>
                             </a>
@@ -58,7 +58,7 @@ export class Sidebar {
         <!-- FeedReader section -->
         <ul class="nav-list">
                 <li class="nav-list-item" data-path="settings">
-                        <a class="nav-list-link pwa-title" data-path="feeds" href="/#/-/Feeds">
+                        <a class="nav-list-link pwa-title" data-path="feeds" href="#/-/Feeds">
                                 Feeds
                                 <span class="pwa-settings">⚙</span>
                         </a>
@@ -68,7 +68,7 @@ export class Sidebar {
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
                     <li class='nav-list-item' data-id='{{id}}'>
-                        <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="/#/-/Feed/{{id}}">
+                        <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
                             </div>

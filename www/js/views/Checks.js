@@ -19,7 +19,7 @@ export class ChecksView {
                     <h3>
                         {{@key}}
                         {{#if settings}}
-                            <a href="/#/-/Settings/Tools/{{@key}}" class="settings">⚙</a>
+                            <a href="#/-/Settings/Tools/{{@key}}" class="settings">⚙</a>
                         {{/if}}
                     </h3>
                     <div class="check">

@@ -24,7 +24,7 @@ export class HomeView {
                                             <b>{{ @key }}</b>:
                                             {{#each nodes}}
                                                 &nbsp;
-                                                <a href="/#/{{ groupId }}/{{ @key }}">{{ @key }}</a>
+                                                <a href="#/{{ groupId }}/{{ @key }}">{{ @key }}</a>
                                             {{/each}}
                                         </div>
                                     {{/each}}

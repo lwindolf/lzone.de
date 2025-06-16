@@ -25,7 +25,7 @@ export class FolderView {
 
         {{#* inline "cheatSheetTocNode"}}
             <li>
-                <a href="/#/{{#reSub ':::' '/'}}{{id}}{{/reSub}}">{{name}}</a>
+                <a href="#/{{#reSub ':::' '/'}}{{id}}{{/reSub}}">{{name}}</a>
                 <ul>
                 {{#each nodes}}
                     {{>cheatSheetTocNode}}
