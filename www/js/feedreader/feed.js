@@ -9,6 +9,7 @@
 import { AggregatorNode } from '../models/AggregatorNode.js';
 import { DB } from '../models/DB.js';
 import { FeedUpdater } from './feedupdater.js';
+import { Item } from './item.js';
 import * as ev from '../helpers/events.js';
 
 export class Feed extends AggregatorNode {
@@ -109,7 +110,9 @@ export class Feed extends AggregatorNode {
         this.update();
     }
 
-    getItems = async () => await DB.getByIndexOnly('aggregator', 'items', 'nodeId', this.id);
+    getItems = async () => 
+        (await DB.getByIndexOnly('aggregator', 'items', 'nodeId', this.id))
+        .map((i) => new Item(i.value));
 
     // Return the next unread item after the given id
     async getNextUnread(id) {

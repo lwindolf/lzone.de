@@ -24,7 +24,7 @@ export class ItemList {
 
     static #listTemplate = template(`
         {{#each items}}
-            <div class='item' data-id='{{value.id}}' data-feed='{{value.nodeId}}'></div>
+            <div class='item' data-id='{{id}}' data-feed='{{nodeId}}'></div>
         {{/each}}
     `);
 
@@ -55,7 +55,7 @@ export class ItemList {
 
         render('#itemlistViewTitle', ItemList.#headerTemplate, { node, view: 'feedlist' });
         render('#itemlistViewContent', ItemList.#listTemplate, { node, items });
-        items.forEach((i) => ItemList.#itemUpdated(i.value));
+        items.forEach((i) => ItemList.#itemUpdated(i));
     }
 
     // toggle read status
