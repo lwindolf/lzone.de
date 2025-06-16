@@ -138,8 +138,8 @@ export class Section {
     static getTree = async () => await Settings.get('sections', { nodes: {}});
 
     // get document details
-    static getDocument = (path) => Settings.get(`document:::${path}`, {});
+    static getDocument = async (path) => await Settings.get(`document:::${path}`, {});
 
     // add or update a document
-    static addDocument = (group, section, path, data) => Settings.set(`document:::${group}:::${section}:::${path}`, data);
+    static addDocument = async (group, section, path, data) => await Settings.set(`document:::${group}:::${section}:::${path}`, data);
 }

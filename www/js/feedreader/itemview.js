@@ -3,7 +3,7 @@
 // Item rendering view
 
 import { DateParser } from './parsers/date.js';
-import { FeedList } from './feedlist.js';
+import { Item } from './item.js';
 import { template, render } from '../helpers/render.js';
 
 export class ItemView {
@@ -27,9 +27,8 @@ export class ItemView {
     `);
 
     // load content of a single item
-    static #loadItem(feedId, id) {
-        let node = FeedList.getNodeById(feedId);
-        let item = node.getItemById(id);
+    static async #loadItem(feedId, id) {
+        let item = await Item.getById(id);
 
         render('#itemViewContent', ItemView.#contentTemplate, { item: item, time: DateParser.getShortDateStr(item.time) });
 

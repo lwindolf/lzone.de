@@ -4,6 +4,7 @@
 // for simplicity combined view and model
 
 import { FeedList } from './feedlist.js';
+import { Item } from './item.js';
 import { template, render } from '../helpers/render.js';
 import { DateParser } from './parsers/date.js';
 import * as ev from '../helpers/events.js';
@@ -22,8 +23,8 @@ export class ItemList {
     `);
 
     static #listTemplate = template(`
-        {{#each node.items}}
-            <div class='item' data-id='{{id}}' data-feed='{{node.id}}'></div>
+        {{#each items}}
+            <div class='item' data-id='{{value.id}}' data-feed='{{value.nodeId}}'></div>
         {{/each}}
     `);
 
@@ -41,8 +42,10 @@ export class ItemList {
     }
 
     // load all items from the given node id
-    static #loadFeed(id) {
-        let node = FeedList.getNodeById(id);
+    static async #loadFeed(id) {
+        const node = FeedList.getNodeById(id);
+        const items = await node.getItems();
+
         ItemList.displayedFeedId = id;
 
         // FIXME: handle folders
@@ -51,25 +54,22 @@ export class ItemList {
             return;
 
         render('#itemlistViewTitle', ItemList.#headerTemplate, { node, view: 'feedlist' });
-        render('#itemlistViewContent', ItemList.#listTemplate, { node });
-        node.items.forEach((i) => ItemList.#itemUpdated(i));
+        render('#itemlistViewContent', ItemList.#listTemplate, { node, items });
+        items.forEach((i) => ItemList.#itemUpdated(i.value));
     }
 
     // toggle read status
-    static #toggleItemRead(feedId, id) {
-        let node = FeedList.getNodeById(feedId);
-        let item = node.getItemById(id);
+    static async #toggleItemRead(id) {
+        const item = await Item.getById(id);
+        const node = FeedList.getNodeById(item.nodeId);
 
-        item.read = !item.read;
-
-        ev.dispatch('itemUpdated', item);
-        ev.dispatch('nodeUpdated', node);
+        item.setRead(!item.read);
+        node.updateUnread(item.read?-1:1);
     }
 
     // select an item
-    static select(feedId, id) {
-        let node = FeedList.getNodeById(feedId);
-        let item = node.getItemById(id);
+    static async select(feedId, id) {
+        const item = await Item.getById(id);
 
         [...document.querySelectorAll('.item.selected')]
             .forEach((n) => n.classList.remove('selected'));
@@ -80,13 +80,10 @@ export class ItemList {
         document.getElementById('itemlist').focus();
 
         ItemList.selected = item;
-        if(!item.read) {
-            item.read = true
-            ev.dispatch('itemUpdated', item);
-            ev.dispatch('nodeUpdated', node);
-        }
+        if(!item.read)
+            ItemList.#toggleItemRead(id);
 
-        ev.dispatch('itemSelected', { feed: node.id, id: item.id });
+        ev.dispatch('itemSelected', { feed: feedId, id: item.id });
     }
 
     // select next unread
@@ -94,7 +91,7 @@ export class ItemList {
         let item, node, id;
         
         if(ItemList.selected) {
-            node = ItemList.selected.node
+            node = FeedList.getNodeById(ItemList.selected.nodeId)
             id = ItemList.selected.id;
         } else {
             // select first node if none is selected
@@ -127,16 +124,19 @@ export class ItemList {
 
     constructor() {
         document.addEventListener('itemUpdated',  (e) => ItemList.#itemUpdated(e.detail));
-        document.addEventListener('feedSelected', (e) => ItemList.#loadFeed(e.detail.id));
+        document.addEventListener('feedSelected', (e) => {
+            ItemList.selected = undefined;
+            ItemList.#loadFeed(parseInt(e.detail.id));
+        });
         document.addEventListener('itemsAdded',   (e) => {
             if(e.detail.id == ItemList.displayedFeedId)
-                ItemList.#loadFeed(e.detail.id)
+                ItemList.#loadFeed(parseInt(e.detail.id))
         });
 
         // handle mouse events
-        ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(el.dataset.feed, el.dataset.id), (e) => e.button == 1);
-        ev.connect('click',    '.item', (el) => ItemList.select(el.dataset.feed, el.dataset.id));
-        ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(el.dataset.feed, el.dataset.id));
+        ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
+        ev.connect('click',    '.item', (el) => ItemList.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
+        ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
 
         // handle cursor keys
         document.addEventListener('keydown', (e) => {

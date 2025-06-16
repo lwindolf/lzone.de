@@ -1,11 +1,9 @@
 // vim: set ts=4 sw=4:
 
-// Feed info rendering widget, can appear in two places
-//
-// - single pane layout: as an error box on top of the item list
-// - 3 pane layout: in the item view
+// Feed info rendering
 
 import { Settings } from '../models/Settings.js';
+import { ItemList } from './itemlist.js';
 import { FeedList } from './feedlist.js';
 import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
@@ -66,11 +64,14 @@ export class FeedInfo {
         <p>{{{feed.description}}}</p>
 
         <div class='feedInfoError'></div>
+
+        Last updated: <span class='feedLastUpdated'>{{lastUpdated}}</span><br>
+        <button class='btn' id='feedUpdate'>Update Now</button>
     `);
 
     constructor() {
         document.addEventListener('nodeUpdated', (e) => {
-            if (e.detail.id == this.#displayedId)
+            if ((e.detail.id == this.#displayedId) && ItemList.selected === undefined)
                 this.#render(e.detail.id)
         });
         document.addEventListener('feedSelected', (e) => this.#render(e.detail.id));
@@ -80,9 +81,18 @@ export class FeedInfo {
         let feed = FeedList.getNodeById(id);
         this.#displayedId = id;
 
-        render('#itemViewContent', FeedInfo.#contentTemplate, { feed });
+        render('#itemViewContent', FeedInfo.#contentTemplate, {
+            feed,
+            lastUpdated: feed.last_updated ? new Date(feed.last_updated * 1000).toLocaleString() : 'never'
+        });
         render('#itemViewContent .feedInfoError', FeedInfo.#errorTemplate, { feed });
         
+        ev.connect('click', '#feedUpdate', async () => {
+            const button = document.querySelector('#feedUpdate');
+            button.disabled = true;
+            button.textContent = 'Updating...';
+            await feed.forceUpdate();
+        });
         ev.connect('click', '.btn#enableCors', async () => {
             FeedList.allowCorsProxy(feed.id, true);
             await feed.update();

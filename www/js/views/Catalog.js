@@ -113,7 +113,7 @@ export class CatalogView {
             properties : Config.groups[this.#group],
             diskUsage  : await this.#getDiskUsage(),
             removable  : Config.groups[this.#group].removable,
-            tree       : Section.getTree().nodes[this.#group]
+            tree       : (await Section.getTree()).nodes[this.#group]
         });
 
         ev.connect('click', '#customInstall button', (e) => {

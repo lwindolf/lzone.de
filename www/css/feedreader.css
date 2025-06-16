@@ -291,7 +291,7 @@ header .title {
 /* content formatting */
 
 #itemViewContent pre,
-#itemViewContent code {
+#itemViewContent :not(pre) > code {
         overflow: auto;
         padding: 0.5rem;
         background: var(--darkbg);

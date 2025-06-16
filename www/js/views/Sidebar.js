@@ -99,6 +99,7 @@ export class Sidebar {
                 const icon        = feed.querySelector('.icon');
                 feedTitle.textContent = ev.detail.title;
                 unreadCount.textContent = ev.detail.unreadCount;
+                unreadCount.dataset.count = ev.detail.unreadCount;
                 icon.src = ev.detail.icon;
             } else {
                 this.#render();

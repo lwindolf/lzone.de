@@ -3,7 +3,13 @@
 // Managing a tree of folders and feeds that are served by different
 // subscriptions (e.g. local, Google Reader API, ...)
 //
+// emits
+// - feedlistUpdated
+// - nodeRemoved(id)
+// - feedSelected(id)
+// 
 // FIXME: implement the tree (currently only flat list of feeds) 
+// FIXME: convert the feed list to a generic AggregatorTree
 
 import { Config } from '../config.js';
 import { DB } from '../models/DB.js'
@@ -17,14 +23,14 @@ export class FeedList {
     // id to node lookup map
     static #nodeById = {};
 
-    // currently selected node
-    static #selected;
+    // id of currently selected node
+    static #selectedId;
 
     // currently known max feed id
     static maxId = 1;
 
     // Return selected node id
-    static getSelectedId = () => FeedList.#selected.id;
+    static getSelectedId = () => FeedList.#selectedId;
 
     // Return node by id
     static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
@@ -46,16 +52,16 @@ export class FeedList {
         return this.root.children.find((n) => n.unreadCount > 0);
     }
 
-    static #save() {
-        console.log("Saving feed list to DB");
-        DB.set('feedreader', 'feedlist', 'tree', FeedList.root.children);
-    }
+    static #save() {     
+        function serializeNode(node) {
+            const serialized = node.serialize();
+            if (node.children)
+                serialized.children = node.children.map(serializeNode);
 
-    static #nodeUpdated(feed) {
-        // FIXME: folder recursion
-        feed.unreadCount = feed.items.filter((i) => {
-            return (i.read === false);
-        }).length;
+            return serialized;
+        }
+
+        DB.set('aggregator', 'tree', 'tree', FeedList.root.children.map(serializeNode));
     }
 
     static allowCorsProxy(id, allow) {
@@ -75,14 +81,10 @@ export class FeedList {
         FeedList.#nodeById[f.id] = f;
         f.parent = FeedList.root; // set parent to root
 
-        // FIXME: belong into DB mapper code
-        for(const i of f.items) {
-            i.node = f;
-        }
-
         if(update)
             await f.update();
 
+        FeedList.#save();
         ev.dispatch('feedlistUpdated', undefined);
     }
 
@@ -91,7 +93,7 @@ export class FeedList {
         if(!node)
             return;
 
-        if(node === FeedList.#selected)
+        if(id === FeedList.#selectedId)
             FeedList.select(undefined);
 
         node.parent.children = node.parent.children.filter((n) => n.id !== id);
@@ -105,37 +107,24 @@ export class FeedList {
     // recursively mark all read on node and its children
     static markAllRead(id) {
         let node = FeedList.getNodeById(id);
-
-        // FIXME: support recursion
-
-        node.items.forEach((i) => {
-            if(i.read)
-                return;
-
-            i.read = true;
-            if(node === FeedList.#selected)
-                ev.dispatch('itemUpdated', i);
-        })
-        ev.dispatch('nodeUpdated', node);
+        node.children.forEach((n) => this.markAllRead(n.id));
+        node.markAllRead();
     }
 
     static select(id) {
-        FeedList.#selected = FeedList.getNodeById(id);
+        FeedList.#selectedId = id;
 
         if(id)
-            ev.dispatch('feedSelected', { id });
+            ev.dispatch('feedSelected', id);
     }
 
     // Load folders/feeds from DB
     static async setup() {
-        document.addEventListener('feedlistUpdated', FeedList.#save);
-        document.addEventListener('nodeUpdated', (e) => FeedList.#nodeUpdated(e.detail));
+        document.addEventListener('nodeUpdated', () => FeedList.#save());
 
-        for(const f of (await DB.get('feedreader', 'feedlist', 'tree', Config.groups.Feeds.defaultFeeds))){
+        for(const f of (await DB.get('aggregator', 'tree', 'tree', Config.groups.Feeds.defaultFeeds))){
             await this.add(new Feed(f), true);
         }
-
-        FeedList.#save();
     }
 
     constructor() {

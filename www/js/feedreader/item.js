@@ -1,6 +1,12 @@
 // vim: set ts=4 sw=4:
 
+import { DB } from '../models/DB.js';
+import * as ev from '../helpers/events.js';
+
 // DAO for items
+//
+// emits
+// - itemUpdated(item)
 
 export class Item {
         // maximum id currently used
@@ -8,6 +14,7 @@ export class Item {
 
         // state
         id = 0;
+        nodeId = 0;
         read = false;
         starred = false;
 
@@ -61,4 +68,29 @@ export class Item {
 
             this.media.push({ url, mime, length: l });
         }
+
+        setRead(read) {
+            if (this.read === read)
+                return;
+
+            this.read = read;
+            this.save();
+            ev.dispatch('itemUpdated', this);
+        }
+
+        static getById = async (itemId) => new Item(await DB.get('aggregator', 'items', itemId));
+
+        save = async () => await DB.set('aggregator', 'items', this.id, {
+            id          : this.id,
+            nodeId      : this.nodeId,
+            read        : this.read,
+            starred     : this.starred,
+            title       : this.title,
+            description : this.description,
+            time        : this.time,
+            source      : this.source,
+            sourceId    : this.sourceId,
+            media       : this.media,
+            metadata    : this.metadata
+        });
 }

@@ -9,7 +9,7 @@ import { DB } from './DB.js';
 
 export class Settings {
     static get = async (name, defaultValue) =>
-        DB.get("settings", "settings", name, defaultValue);
+        await DB.get("settings", "settings", name, defaultValue);
 
     static async set(name, value, event = true) {
         await DB.set("settings", "settings", name, value, event);
@@ -17,5 +17,5 @@ export class Settings {
     }
 
     static remove = async (name) => 
-        DB.remove("settings", "settings", name);
+        await DB.remove("settings", "settings", name);
 }
