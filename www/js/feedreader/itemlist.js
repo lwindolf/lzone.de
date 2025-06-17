@@ -115,12 +115,8 @@ export class ItemList {
         }
     }
 
-    static #openItemLink(feedId, id) {
-        let node = FeedList.getNodeById(feedId);
-        let item = node.getItemById(id);
-
-        window.open(item.source, '_system', 'location=yes');
-    }
+    static #openItemLink = async (id) =>
+        window.open((await Item.getById(id)).source, '_system', 'location=yes');
 
     constructor() {
         document.addEventListener('itemUpdated',  (e) => ItemList.#itemUpdated(e.detail));
@@ -136,7 +132,7 @@ export class ItemList {
         // handle mouse events
         ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
         ev.connect('click',    '.item', (el) => ItemList.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
-        ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
+        ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(parseInt(el.dataset.id)));
 
         // handle cursor keys
         document.addEventListener('keydown', (e) => {
@@ -162,7 +158,7 @@ export class ItemList {
             }
             if(e.key === 'Enter') {
                 if(selected) {
-                    ItemList.#openItemLink(selected.dataset.feed, selected.dataset.id);
+                    ItemList.#openItemLink(parseInt(selected.dataset.id));
                     e.preventDefault();
                 }
             }
