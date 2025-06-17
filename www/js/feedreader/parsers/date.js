@@ -20,14 +20,30 @@ class DateParser {
 
     // pretty print date from epoch
     static getShortDateStr(time) {
-        return new Intl.DateTimeFormat(
-            'en-GB',
-            {
-                dateStyle: 'short',
-                timeStyle: 'short',
-                timeZone: 'GMT'
-            }
-        ).format(time*1000)
+        /* Different formats based on the time difference
+        
+           Today 10:05
+           Yesterday 10:05
+           Wed 10:05
+           Aug 05
+           Mar 01, 2024
+         */
+        if (!time)
+            return '';
+        const date = new Date(time * 1000);
+        const now = new Date();
+        const diff = now.getTime() - date.getTime();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const oneYear = 356 * oneDay;
+        if (diff < oneDay) {
+            return `Today ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        } else if (diff < 2 * oneDay) {
+            return `Yesterday ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        } else if (diff < oneYear && date.getFullYear() === now.getFullYear()) {
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        } else {
+            return date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+        }
     }
 
 }
