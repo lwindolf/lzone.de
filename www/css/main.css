@@ -598,12 +598,10 @@ a[data-path]:not([data-path*=":::"]) {
 }
 
 .video .title {
-        color: white;
         font-size: 90%;
 }
 
 .video .caption {
-        color: #959396;
         font-size: 80%;
 }
 

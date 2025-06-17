@@ -5,7 +5,7 @@ import * as r from '../../helpers/render.js';
 // Rendering markdown & HTML cheat sheet content
 //
 // - supported formats HTML, Markdown, restructured, asciidoc
-// - supports YouTube video embedding
+// - supports simple YouTube thumb embedding
 // - supports Mermaid diagrams
 // - XSS protection using DOMPurify
 
@@ -14,7 +14,7 @@ export class CheatSheetRenderer {
 
     static #youtubeTemplate = r.template(`
         <div class='video'>
-            <a class='glightbox' href='{{ href }}'>
+            <a href='{{ href }}'>
                 <img src='https://i.ytimg.com/vi/{{ ytid }}/hqdefault.jpg'/>
             </a>
             <div class='title'>{{ title }}</div>
