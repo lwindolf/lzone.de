@@ -378,6 +378,20 @@ header .title {
         border: 1px solid rgba(0, 0, 0, 0);
 }
 
+#itemlist .date {
+        float: right;
+}
+
+#itemview .date {
+        margin: 6px 0 32px 0;
+}
+
+#itemview .date,
+#itemlist .date {
+        filter: brightness(50%);
+        font-size: 0.8rem;
+}
+
 
 .selected {
         background: var(--darkerbg);
