@@ -180,7 +180,7 @@ header .title {
         border-bottom: 1px solid hsl(from var(--text) h s calc(l - 80));
 }
 
-.item .title[data-read="true"] {
+.item:not(.selected) .title[data-read="true"] {
         color: hsl(from var(--text) h s calc(l - 25));
 }
 }
