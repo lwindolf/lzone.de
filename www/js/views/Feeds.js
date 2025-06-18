@@ -61,7 +61,7 @@ export class FeedsView {
 
         <h2>Discover Feeds</h2>
 
-        <iframe src='https://lwindolf.github.io/rss-finder' width='100%' height='500px' frameborder='0'>
+        <iframe src='https://lwindolf.github.io/rss-finder?show-title=false' width='100%' height='500px' frameborder='0'>
         </iframe>
     `);
 
