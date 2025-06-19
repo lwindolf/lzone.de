@@ -86,15 +86,6 @@ export class CheatSheetRenderer {
         if (frontmatter?.videoEmbed === "true")
             this.#embedVideos(e);
 
-        // to adapt to justthedocs CSS we have to re-wrap all <pre> with <div class="language-plaintext highlighter-rouge">
-        Array.prototype.forEach.call(e.getElementsByTagName("pre"), (p) => {
-            var divNode = document.createElement("div");
-            divNode.classList.add("language-plaintext");
-            divNode.classList.add("highlighter-rouge");
-            p.parentNode.insertBefore(divNode, p);
-            divNode.appendChild(p);
-        });
-
         // Finally render mermaid diagrams
         await (await Libraries.get('Mermaid')).run({
             querySelector: '.main-content-view .mermaid'

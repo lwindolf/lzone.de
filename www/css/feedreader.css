@@ -40,35 +40,6 @@ blockquote {
         clear: both;
 }
 
-#itemview pre {
-        background: var(--box-bg);
-        padding: var(--box-padding);
-        border-radius: var(--box-radius);
-        overflow: auto;
-        padding: 0.5rem;
-}
-
-#itemview code {
-        background: var(--box-bg);
-        padding: 0 0.35em;
-        border-radius: 0.35rem;
-        word-break: break-word;
-        padding: 0.5rem;
-}
-
-#itemview a>code {
-        color: var(--tblue);
-}
-
-#itemview pre pre,
-#itemview pre code {
-        padding: 0.5rem;
-        margin: 0;
-        font-size: 1em;
-        background: none;
-        color: inherit;
-}
-
 #itemview strong,
 #itemview b {
         font-weight: 600;
@@ -289,13 +260,6 @@ header .title {
 }
 
 /* content formatting */
-
-#itemViewContent pre,
-#itemViewContent :not(pre) > code {
-        overflow: auto;
-        padding: 0.5rem;
-        background: var(--darkbg);
-}
 
 #itemViewContent h1,
 #itemViewContent section,

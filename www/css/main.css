@@ -63,17 +63,25 @@ body {
 
 code {
         font-weight: 400;
+        background-color: var(--code);
+        padding: 0.25rem;
 }
 
-div.highlighter-rouge {
-        padding: .75rem;
+pre {
+        border-radius: var(--border-radius);
+        background-color: var(--code);
+
         margin-top: 0;
         margin-bottom: .75rem;
+        padding: 0.75rem 1.2rem;
         overflow-x: auto;
-        background-color: var(--code);
-        border-radius: var(--border-radius);
-        box-shadow: none;
         -webkit-overflow-scrolling: touch;
+        display: block;
+}
+
+pre code,
+code pre {
+        padding: 0;
 }
 
 a {
