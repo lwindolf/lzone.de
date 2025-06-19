@@ -37,15 +37,11 @@ var filesToCache = [
   '/js/models/Section.js',
   '/js/models/Settings.js',
 
-  '/js/vendor/asciidoctor.min.js',
   '/js/vendor/handlebars.min.js',
   '/js/vendor/lunr.min.js',
-  '/js/vendor/mermaid.esm.min.mjs',
   '/js/vendor/purify.es.mjs',
-  '/js/vendor/rst2html.min.js',
   '/js/vendor/showdown.min.js',
   '/js/vendor/split.es.js',
-  '/js/vendor/webamp.bundle.min.js',
 
   '/js/views/renderers/CheatSheet.js',
   '/js/views/renderers/Pdf.js',

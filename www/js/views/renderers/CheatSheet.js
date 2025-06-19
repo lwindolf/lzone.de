@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import * as r from '../../helpers/render.js';
+import { Libraries } from '../../libraries.js';
 
 // Rendering markdown & HTML cheat sheet content
 //
@@ -10,8 +11,6 @@ import * as r from '../../helpers/render.js';
 // - XSS protection using DOMPurify
 
 export class CheatSheetRenderer {
-    static #converters;
-
     static #youtubeTemplate = r.template(`
         <div class='video'>
             <a href='{{ href }}'>
@@ -21,53 +20,6 @@ export class CheatSheetRenderer {
             <div class='caption'>{{ caption }}</div>
         </div>
     `);
-
-    static async #setup () {
-        let csr = CheatSheetRenderer;
-
-        // Import all converters/renderers (except showdown with cannot be loaded with import())
-
-        const {
-            default: DOMPurify
-        } = await import('../../vendor/purify.es.mjs');
-        
-        const {
-            default: Asciidoctor
-        } = await import('../../vendor/asciidoctor.min.js');
-
-        const {
-            default: Mermaid
-        } = await import('../../vendor/mermaid.esm.min.mjs');
-
-        await import('../../vendor/rst2html.min.js');
-
-        // Configure stuff
-
-        const md = new window.showdown.Converter({
-            tables: true,
-            metadata: true,
-            ghCodeBlocks: true
-        });
-        md.setFlavor('github');
-        md.setOption('simpleLineBreaks', false);
-
-        Mermaid.initialize({
-            startOnLoad: false,
-            securityLevel: 'antiscript',
-            logLevel: 'error'
-        });
-
-        csr.#converters = {
-            // general
-            DOMPurify,
-            Mermaid,
-
-            // by file extension
-            rst  : window.rst2html,
-            md   : md,
-            adoc : new Asciidoctor()
-        };
-    }
 
     // In-place replaces all Youtube video links found with a image link
     static #embedVideos(e) {
@@ -87,15 +39,14 @@ export class CheatSheetRenderer {
     // Just returns rendered contents for a document (without layout / breadcrumbs ...)
     // Returns document details or undefined if no content was found for the given path
     static async renderDocument(e, d) {
-        let baseUrl;
+        let baseUrl = encodeURI(d.baseUrl);
 
-        if(!this.#converters)
-            await this.#setup();
-
-        baseUrl = encodeURI(d.baseUrl);
-        if (d.type === "link")
+        if (d.type === "link") {
+            // FIXME: cache downloaded document
+            e.innerHTML = `Fetching content from <a href="${d.baseUrl}">${d.baseUrl}</a>...`;
             d.data = await fetch(baseUrl + "/" + d.baseName)
                 .then((response) => response.text());
+        }
 
         if (!d.data)
             return undefined;
@@ -106,21 +57,21 @@ export class CheatSheetRenderer {
         // FIXME: use service workers for rendering to get some isolation!
         try {
             if(d.baseName?.match(/\.rst$/)) {
-                html = this.#converters['rst'](d.data);
+                html = (await Libraries.get('rst'))(d.data);
 
             } else if(d.baseName?.match(/\.(adoc|asciidoc)$/)) {
-                html = this.#converters['adoc'].convert(d.data);
+                html = (await Libraries.get('adoc')).convert(d.data);
 
             // Default to markdown
             } else {
                 // Replace all relative markdown links with absolute ones
                 d.data = d.data.replace(/(\[[^\]]+\])\(\//g, '$1(' + baseUrl + '/');
 
-                html = this.#converters['md'].makeHtml(d.data);
-                frontmatter = this.#converters['md'].getMetadata();
+                html = (await Libraries.get('md')).makeHtml(d.data);
+                frontmatter = (await Libraries.get('md')).getMetadata();
             }
 
-            html = this.#converters['DOMPurify'].sanitize(html);
+            html = (await Libraries.get('DOMPurify')).sanitize(html);
         } catch(e) {
             console.error(e);
             html = 'ERROR: Content rendering error!';
@@ -145,7 +96,7 @@ export class CheatSheetRenderer {
         });
 
         // Finally render mermaid diagrams
-        await this.#converters['Mermaid'].run({
+        await (await Libraries.get('Mermaid')).run({
             querySelector: '.main-content-view .mermaid'
         });
 
@@ -153,9 +104,6 @@ export class CheatSheetRenderer {
     }
 
     static async load(e, d) {
-        if (!d?.data)
-            e.insertAdjacentHTML('beforeend', "No content on this page.");     
-
         await this.renderDocument(e, d);
 
         // Add <h1> if markdown didn't provide one
