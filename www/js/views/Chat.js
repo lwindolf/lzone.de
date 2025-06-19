@@ -2,7 +2,7 @@
 
 import { Config } from '../config.js';
 import { ContentView } from "./Content.js";
-import { Client } from "../vendor/gradio-client/index.js";
+import { Libraries } from '../libraries.js';
 import { Settings } from "../models/Settings.js";
 
 export class ChatView {
@@ -12,8 +12,9 @@ export class ChatView {
     static #showdown;           // markdown converter instance (or undefined)
 
     static async connectModel(name) {
+        const module = await import('../vendor/gradio-client/index.js');
         ChatView.#currentModel = name;
-        ChatView.#gradioClient = await Client.connect(name);
+        ChatView.#gradioClient = await module.Client.connect(name);
         document.querySelector('#aiChatView .content').innerHTML += `<p>Connecting chat bot <a href="https://huggingface.co/spaces/${name}">${name}</a></p>`;
     }
 
@@ -68,7 +69,7 @@ export class ChatView {
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
         if(!ChatView.#showdown)
-            ChatView.#showdown = new window.showdown.Converter();
+            ChatView.#showdown = await Libraries.get('md');
         
         // Add prompt to history
         Settings.get('AIPromptHistory', []).then((promptHistory) => {
