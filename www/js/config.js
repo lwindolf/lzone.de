@@ -168,6 +168,11 @@ export class Config {
                 url          : 'https://www.peeringdb.com/',
                 favicon      : 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
                 description  : 'PeeringDB is a database of networks, exchanges, and data centers'
+            },
+            'Snap Drop': {
+                url          : 'https://snapdrop.net/',
+                favicon      : 'https://www.snap-drop.net/images/favicon-96x96.png',
+                description  : 'Share files with other devices in your network'
             }
         },
         'Diagram Tools': {
