@@ -761,6 +761,9 @@ input {
         font-size: 100%;
         padding: 6px;
 }
+input:invalid {
+        border: 1px solid var(--tred);
+}
 
 .app-catalog .app {
         clear: both;
