@@ -33,17 +33,9 @@ export class Config {
                     github: 'lwindolf/lzone-cheat-sheets',
                     filePattern: '^Cheat Sheets/(.*)\\.md$'
                 },
-                'LZone Examples': {
-                    github: 'lwindolf/lzone-cheat-sheets',
-                    filePattern: '^Examples/(.*)\\.md$'
-                },
                 'Video Tutorials': {
                     github: 'lwindolf/lzone-cheat-sheets',
                     filePattern: '^Video Tutorials/(.*)\\.md$'
-                },
-                'Visual Ops': {
-                    github: 'lwindolf/lzone-cheat-sheets',
-                    filePattern: '^Visual Ops/(.*)\\.md$'
                 }
             },
             catalog : {

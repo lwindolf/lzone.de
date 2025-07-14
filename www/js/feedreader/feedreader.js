@@ -5,6 +5,9 @@ import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { HelpDialog } from '../dialogs/help.js';
+import { keydown } from '../helpers/events.js';
+
 export class FeedReader {
     // member variables for easier console debugging
     feedlist = new FeedList();
@@ -14,7 +17,7 @@ export class FeedReader {
 
     constructor() {
         // global hotkeys
-        //keydown('body', /* F1 */               (e) => (e.keyCode === 112),             () => new HelpDialog());
+        keydown('body', /* F1 */               (e) => (e.keyCode === 112),             () => new HelpDialog());
         //keydown('body', /* Ctrl-right arrow */ (e) => (e.keyCode === 39 && e.ctrlKey), () => ItemList.nextUnread());
 
         // FIXME: Ctrl hotkeys do not work with PWAs

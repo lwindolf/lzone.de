@@ -34,6 +34,13 @@ function connect(eventName, selector, callback, condition = undefined) {
 	});
 }
 
+function keydown(selector, condition, callback) {
+    document.querySelector(selector).addEventListener('keydown', (event) => {
+        if(condition(event))
+            callback(event);
+    });
+}
+
 const dispatch = (name, data) => document.dispatchEvent(new CustomEvent(name, { detail: data }));
 
-export { connect, forward, dispatch };
+export { connect, forward, keydown, dispatch };

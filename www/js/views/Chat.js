@@ -48,6 +48,10 @@ export class ChatView {
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
+    static getModel() {
+        return ChatView.#models[ChatView.#currentModel];
+    }
+
     static async submitAIPrompt(prompt) {
         if(0 == prompt.length)
             return;
@@ -58,7 +62,7 @@ export class ChatView {
         const output = chat.querySelector('.content');
 
         if(!ChatView.#gradioClient) {
-            output.innerHTML += `<div class="loading"><i>Connecting ...</i></div>`;
+            output.innerHTML += `<div class="loading"><i>Connecting chat bot ...</i></div>`;
             await ChatView.connectModel(Object.keys(ChatView.#models)[0]);  // default to first model defined
             output.innerHTML += `<div>Successfully connected model.</div>`;
         }
@@ -80,8 +84,9 @@ export class ChatView {
 
         // Prepare model specific parameters
         let html;
+        const model = ChatView.getModel();
         try {
-            const response = await ChatView.#models[ChatView.#currentModel](ChatView.#gradioClient, prompt);
+            const response = await model(ChatView.#gradioClient, prompt);
             if (response.error) {
                 html += `<div class="answer">ERROR: Request failed (${response.message})!</div>`;
             } else {
