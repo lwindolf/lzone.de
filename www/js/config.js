@@ -259,7 +259,7 @@ export class Config {
     // welcome text
     static welcome = `
         <p>
-            LZone is a progressive web app by <a href="/consulting/en">Lars Windolf</a> that supports
+            LZone is a progressive web app by <a href="https://lzone.de/consulting/en">Lars Windolf</a> that supports
             installing a ton of Sysadmin / DevOps / System Architecture related content
             so that you can search and read all of it in one place.
         </p>`;
