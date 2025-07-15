@@ -411,8 +411,13 @@ a:not([class]) {
 }
 
 /* standard button */
+
+@media (prefers-color-scheme: light) {
 button {
         background: var(--lightbg);
+}
+}
+button {
         color: var(--text);
         border: 1px solid var(--darkerbgborder);
         border-radius: 4px;

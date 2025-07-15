@@ -207,6 +207,11 @@ export class Config {
     // Note: first definition is always our default model
     static chatBotModels = {
         "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", { message: prompt }),
+        "Qwen/Qwen3-Demo": async (client, prompt) => await client.predict("/model_chat", [
+            prompt,
+            [],
+            "You are a helpful assistant."
+        ]),
         "Qwen/Qwen1.5-110B-Chat-demo": async (client, prompt) => await client.predict("/model_chat", [
             prompt,
             [],

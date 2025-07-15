@@ -1,10 +1,15 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from "../config.js";
+import { Settings } from "../models/Settings.js";
 import * as r from "../helpers/render.js";
 
 export class SettingsView {
     constructor(el, path) {
+        SettingsView.#render(el, path);
+    }
+
+    static async #render(el, path) {
         const name = path.split('/').pop();
 
         // render settings for tool web components
@@ -40,7 +45,7 @@ export class SettingsView {
                 <h3>CORS Proxy</h3>
 
                 <p>
-                    <input type="checkbox" name="{{name}}" {{#if enabled}}checked{{/if}}>
+                    <input type="checkbox" name="allowCorsProxy" {{#if enabled}}checked{{/if}}>
                     Allow CORS Proxy
                 </p>
 
@@ -56,6 +61,22 @@ export class SettingsView {
                     Default update interval <input id="refreshInterval" type="number" value="24" size="1" min="1"> hours
                 </div>
 
+                <h3>Chat bot</h3>
+
+                <p>Configure an OpenAI API endpoint or a HuggingFace demo space to use for chat.</p>
+
+                <select name="chatBotModel">
+                    <option value="">OpenAI API</option>
+                    {{#each chatBotModels}}
+                    <option value="{{this}}">HuggingFace - {{this}}</option>
+                    {{/each}}
+                </select>
+
+                <p>Configure the OpenAI endpoint (e.g. <code>http://localhost:11434</code> for ollama)</p>
+
+                <input type="text" name="openAIEndpoint" value="{{openAIEndpoint}}"/>
+                <button name="openAIEndpointTest">Test</button>
+
                 <h3>Cache</h3>
 
                 <div>
@@ -66,7 +87,12 @@ export class SettingsView {
                 <ul>
                     <li><a href="#/-/Settings/Tools">Tools</a></li>
                 </ul>
-            `));
+            `), {
+                allowCorsProxy : Config.allowCorsProxy,
+                openAIEndpoint : await Settings.get('openAIEndpoint', "http://localhost:11434"),
+                chatBotModels  : Object.keys(Config.chatBotModels),
+                chatBotModel   : await Settings.get('chatBotModel', Object.keys(Config.chatBotModels)[0]),
+            });
 
             el.querySelector('#resetPwaCache').addEventListener('click', () => {
                 if (confirm('Are you sure you want to reset the PWA cache? This will reload the app.')) {
