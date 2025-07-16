@@ -14,8 +14,7 @@ export class SettingsView {
         // Checkboxes
         el.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
             checkbox.addEventListener('change', (e) => {
-                console.log(`Settings: ${e.target.name} = ${e.target.checked}`);
-                Settings.set(e.target.name, e.target.checked?true:false);
+                Settings.set(e.target.name, e.target.checked?true:false, true /* send event */);
             });
         });
     }
@@ -36,14 +35,11 @@ export class SettingsView {
                     enabled: await Settings.get("toolEnabled:::" + name, Config.toolboxComponents[name].enabled)
                 }
             })).then((settings) => {
-                console.log("SettingsView: Tools settings", settings);
                 r.renderElement(el, r.template(`
                     <h1>Settings - Tools</h1>
 
-                    FIXME: 🚧 This page is work in progress, it does not work yet! 
-
                     <p>
-                        Here you can activate / deactivate tools.
+                        Activate / deactivate tools.
                     </p>
 
                     {{#each settings}}
