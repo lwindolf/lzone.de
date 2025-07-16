@@ -10,11 +10,22 @@ export class SettingsView {
     }
 
     // Generic settings handling
-    static async #addHandlers(el) {
-        // Checkboxes
+    static async #bind(el) {
         el.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
             checkbox.addEventListener('change', (e) => {
                 Settings.set(e.target.name, e.target.checked?true:false, true /* send event */);
+            });
+        });
+
+        el.querySelectorAll('input[type="text"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', (e) => {
+                Settings.set(e.target.name, e.target.value, true /* send event */);
+            });
+        });
+
+        el.querySelectorAll('select').forEach((select) => {
+            select.addEventListener('change', (e) => {
+                Settings.set(e.target.name, e.target.value, true /* send event */);
             });
         });
     }
@@ -52,7 +63,7 @@ export class SettingsView {
                     settings
                 });
 
-                SettingsView.#addHandlers(el);
+                SettingsView.#bind(el);
             });
         } else if (path === '-/Settings') {
             r.renderElement(el, r.template(`
@@ -124,7 +135,7 @@ export class SettingsView {
                 }
             });
 
-            SettingsView.#addHandlers(el);
+            SettingsView.#bind(el);
         } else {
             el.innerHTML = "ERROR: Unknown settings path";
         }

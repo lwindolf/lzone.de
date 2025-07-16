@@ -111,11 +111,9 @@ export class FeedList {
         node.markAllRead();
     }
 
+    // Feed switching is triggered via location hash routing
     static select(id) {
-        FeedList.#selectedId = id;
-
-        if(id)
-            ev.dispatch('feedSelected', id);
+        document.location.hash = `#/-/Feed/${id}`;
     }
 
     // Load folders/feeds from DB
