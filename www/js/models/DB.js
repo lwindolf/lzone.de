@@ -27,7 +27,8 @@ export class DB {
             version: 1,
             stores: {
                 settings : { keyPath: 'id', autoIncrement: true }
-            }
+            },
+            indexes: { }
         }
     }
 
