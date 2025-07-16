@@ -131,7 +131,7 @@ export class DB {
             const req = store.get(name);
             req.onsuccess = function (evt) {
                 let value;
-                if (!evt.target.result || !evt.target.result.value)
+                if (!evt.target.result || evt.target.result.value === undefined || evt.target.result.value === null)
                     value = defaultValue;
                 else
                     value = evt.target.result.value;

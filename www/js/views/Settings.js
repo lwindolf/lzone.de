@@ -9,6 +9,17 @@ export class SettingsView {
         SettingsView.#render(el, path);
     }
 
+    // Generic settings handling
+    static async #addHandlers(el) {
+        // Checkboxes
+        el.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', (e) => {
+                console.log(`Settings: ${e.target.name} = ${e.target.checked}`);
+                Settings.set(e.target.name, e.target.checked?true:false);
+            });
+        });
+    }
+
     static async #render(el, path) {
         const name = path.split('/').pop();
 
@@ -18,38 +29,49 @@ export class SettingsView {
                 el.innerHTML = `<h1>Settings - ${name}</h1> ${Config.toolboxComponents[name].settings}`;
             });
         } else if (path === '-/Settings/Tools') {
-            r.renderElement(el, r.template(`
-                <h1>Settings - Tools</h1>
+            Promise.all(Object.keys(Config.toolboxComponents).map(async (name) => {
+                return {
+                    name,
+                    setting: "toolEnabled:::" + name,
+                    enabled: await Settings.get("toolEnabled:::" + name, Config.toolboxComponents[name].enabled)
+                }
+            })).then((settings) => {
+                console.log("SettingsView: Tools settings", settings);
+                r.renderElement(el, r.template(`
+                    <h1>Settings - Tools</h1>
 
-                FIXME: 🚧 This page is work in progress, it does not work yet! 
+                    FIXME: 🚧 This page is work in progress, it does not work yet! 
 
-                <p>
-                    Here you can activate / deactivate tools.
-                </p>
+                    <p>
+                        Here you can activate / deactivate tools.
+                    </p>
 
-                {{#each tools}}
-                <div class="tool">
-                    <input type="checkbox" name="{{name}}" {{#if enabled}}checked{{/if}}>
-                    {{@key}} (<a href="#/-/Settings/Tools/{{@key}}">Settings</a>)
-                </div>
-                {{/each}}
-            `), {
-                tools: Config.toolboxComponents,
+                    {{#each settings}}
+                    <div class="tool">
+                        <input type="checkbox" name="{{setting}}" {{#ifTrue enabled}}checked{{/ifTrue}}>
+                        {{name}} (<a href="#/-/Settings/Tools/{{@key}}">Settings</a>)
+                    </div>
+                    {{/each}}
+                `), {
+                    settings
+                });
+
+                SettingsView.#addHandlers(el);
             });
         } else if (path === '-/Settings') {
             r.renderElement(el, r.template(`
                 <h1>Global Settings</h1>
 
-                FIXME: 🚧 This page is work in progress, it does not work yet! 
+                FIXME: 🚧 This page is work in progress, options marked with 🚧 do not work yet! 
 
                 <h3>CORS Proxy</h3>
 
                 <p>
-                    <input type="checkbox" name="allowCorsProxy" {{#if enabled}}checked{{/if}}>
-                    Allow CORS Proxy
+                    <input type="checkbox" name="allowCorsProxy" {{#if allowCorsProxy}}checked{{/if}}>
+                    Always allow using a CORS Proxy
                 </p>
 
-                <h3>Feed Reader</h3>
+                <!--<h3>Feed Reader</h3>
 
                 <div>
                     <input type="checkbox" name="{{name}}" {{#if enabled}}checked{{/if}}> Show favicons
@@ -59,9 +81,9 @@ export class SettingsView {
                 </div>
                 <div>
                     Default update interval <input id="refreshInterval" type="number" value="24" size="1" min="1"> hours
-                </div>
+                </div>-->
 
-                <h3>Chat bot</h3>
+                <h3>🚧 Chat bot</h3>
 
                 <p>Configure an OpenAI API endpoint or a HuggingFace demo space to use for chat.</p>
 
@@ -88,7 +110,7 @@ export class SettingsView {
                     <li><a href="#/-/Settings/Tools">Tools</a></li>
                 </ul>
             `), {
-                allowCorsProxy : Config.allowCorsProxy,
+                allowCorsProxy : await Settings.get('allowCorsProxy', true),
                 openAIEndpoint : await Settings.get('openAIEndpoint', "http://localhost:11434"),
                 chatBotModels  : Object.keys(Config.chatBotModels),
                 chatBotModel   : await Settings.get('chatBotModel', Object.keys(Config.chatBotModels)[0]),
@@ -104,6 +126,8 @@ export class SettingsView {
                     }
                 }
             });
+
+            SettingsView.#addHandlers(el);
         } else {
             el.innerHTML = "ERROR: Unknown settings path";
         }

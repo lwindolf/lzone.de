@@ -4,7 +4,7 @@ import { DB } from './DB.js';
 
 /* Persistent settings using IndexedDB 
  *
- * TODO: Also implements a simple settings schema model
+ * - emits settings-changed event
  */
 
 export class Settings {

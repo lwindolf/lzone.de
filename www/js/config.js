@@ -3,6 +3,8 @@
 // app customization
 
 export class Config {
+    static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
+
     // URLs with content indizes to add to the app
     //
     // These are basically Github repos with 
