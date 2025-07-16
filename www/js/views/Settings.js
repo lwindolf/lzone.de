@@ -45,7 +45,7 @@ export class SettingsView {
                     {{#each settings}}
                     <div class="tool">
                         <input type="checkbox" name="{{setting}}" {{#ifTrue enabled}}checked{{/ifTrue}}>
-                        {{name}} (<a href="#/-/Settings/Tools/{{@key}}">Settings</a>)
+                        {{name}} (<a href="#/-/Settings/Tools/{{name}}">Settings</a>)
                     </div>
                     {{/each}}
                 `), {
@@ -57,8 +57,6 @@ export class SettingsView {
         } else if (path === '-/Settings') {
             r.renderElement(el, r.template(`
                 <h1>Global Settings</h1>
-
-                FIXME: 🚧 This page is work in progress, options marked with 🚧 do not work yet! 
 
                 <h3>CORS Proxy</h3>
 
@@ -80,6 +78,9 @@ export class SettingsView {
                 </div>-->
 
                 <h3>🚧 Chat bot</h3>
+
+                FIXME: 🚧 This setting is work in progress, and does not work yet! 
+
 
                 <p>Configure an OpenAI API endpoint or a HuggingFace demo space to use for chat.</p>
 
@@ -106,7 +107,7 @@ export class SettingsView {
                     <li><a href="#/-/Settings/Tools">Tools</a></li>
                 </ul>
             `), {
-                allowCorsProxy : await Settings.get('allowCorsProxy', true),
+                allowCorsProxy : await Settings.get('allowCorsProxy', false),
                 openAIEndpoint : await Settings.get('openAIEndpoint', "http://localhost:11434"),
                 chatBotModels  : Object.keys(Config.chatBotModels),
                 chatBotModel   : await Settings.get('chatBotModel', Object.keys(Config.chatBotModels)[0]),

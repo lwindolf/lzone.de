@@ -18,17 +18,17 @@ export class FeedsView {
     static #template = r.template(`
         <h1>Folder "Feeds"</h1>
 
-        FIXME: 🚧 This page is work in progress, it does not work yet completely!
-
         <h2>Subscriptions</h2>
 
         <p>
             <div id='installedSections'>
             {{#each tree }}
-                    <div class='installed'>
-                        <button data-id='{{ this.id }}'>Remove</button>
-                        <a href="{{ this.orig_source }}">{{ this.title }}</a>
-                    </div>
+                <div class='installed'>
+                    <button data-id='{{ this.id }}'>Remove</button>
+                    <a href="{{ this.orig_source }}">{{ this.title }}</a>
+                </div>
+            {{else}}
+                You currently have no subscriptions. Try adding one below.
             {{/each}}
             </div>
         </p>
@@ -61,6 +61,8 @@ export class FeedsView {
 
         <h2>Discover Feeds</h2>
 
+        FIXME: 🚧 This feature is work in progress, it does not work yet completely!
+
         <iframe src='https://lwindolf.github.io/rss-finder?show-title=false' width='100%' height='500px' frameborder='0'>
         </iframe>
     `);
@@ -80,8 +82,8 @@ export class FeedsView {
             this.#subscribe(url);
         });
 
-        ev.connect('click', '.installed button', async (e) => {
-            FeedList.remove(e.getAttribute('data-id'));
+        ev.connect('click', '#installedSections .installed button', async (e) => {
+            FeedList.remove(parseInt(e.getAttribute('data-id'), 10));
             this.#render();
         });
     }
