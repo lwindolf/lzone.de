@@ -121,6 +121,24 @@ export class DB {
         });
     }
 
+    static async getAllKeys(dbName, storeName) {
+        const db = await this.#getDB(dbName);
+
+        if (this.testDisable)
+            return Object.keys(this.values).filter(key => key.startsWith(`${dbName}_${storeName}_`)).map(key => key.split('_')[2]);
+
+        return await new Promise((resolve, reject) => {
+            const store = db.transaction(storeName, "readonly").objectStore(storeName);
+            const req = store.getAllKeys();
+            req.onsuccess = function (evt) {
+                resolve(evt.target.result);
+            };
+            req.onerror = function (evt) {
+                reject(`Error getting all keys from DB '${dbName}' store '${storeName}': ${evt.target.errorCode}`);
+            };
+        });
+    }
+
     static async get(dbName, storeName, name, defaultValue = 'null') {
         const db = await this.#getDB(dbName);
 

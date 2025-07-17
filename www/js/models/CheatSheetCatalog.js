@@ -2,6 +2,7 @@
 
 import { App } from '../app.js';
 import { Config } from '../config.js';
+import { DB } from './DB.js';
 import { GithubRepo } from './GithubRepo.js';
 import { Search } from '../search.js';
 import { Section } from './Section.js';
@@ -36,12 +37,28 @@ export class CheatSheetCatalog {
     // Updates the index of all installed sections if they need updating
     // Installs default cheat sheets on uninitialized app.
     static async update() {
+        const sections = await Section.getTree();
         const initialRun = await Settings.get('initialRun', true);
-        if(!initialRun)
+
+        if(!initialRun) {
+            console.log('Checking for orphaned documents...');
+            const result = await DB.getAllKeys("settings", "settings");
+            for(const path of result) {
+                if(0 == path.indexOf('document:::')) {
+                    const tmp = path.split(/:::/);
+                    if(!sections.nodes[tmp[1]] ||
+                       !sections.nodes[tmp[1]].nodes ||
+                       !sections.nodes[tmp[1]].nodes[tmp[2]]
+                    ) {
+                        console.log(`Dropping orphaned doc: ${path}`);
+                        Settings.remove(path);
+                    }
+                }
+            }
             return;
+        }
 
         console.log(`Initial run. Initializing groups...`);
-        const sections = await Section.getTree();        
         for(const group of Object.keys(Config.groups)) {
             if(!Config.groups[group].install)
                 continue;
@@ -66,42 +83,11 @@ export class CheatSheetCatalog {
                         Section.remove(group, s);
                 }*/
 
-                // FIXME: Cleanup orphan documents
-                /*const sectionNames = await Settings.get('extraSections', []);
-                const req = await Settings.getAllKeys();
-                req.onsuccess = () => {
-                    for(const path of req.result) {
-                        if(0 == path.indexOf('document:::')) {
-                            const tmp = path.split(/:::/);
-                            if(!sectionNames.includes(tmp[1])) {
-                                console.log(`Dropping orphaned doc: ${path}`);
-                                Settings.remove(path);
-                            }
-                        }
-                    }
-                };*/
             } catch (e) {
                 console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
             }
 
         }
-
-        console.log('Migrate legacy sections');
-        let extraSections = await Settings.get('extraSections', []);
-        if(extraSections.length > 0) {
-            for(const name of extraSections) {
-                try {
-                    console.log(`Migrating section ${name}`);
-                    const group = "Cheat Sheets";
-                    const catalog = await this.getInstallable(group);
-                    await this.install(group, name, catalog[name], undefined, false);
-                } catch (e) {
-                    console.error(`Migrate legacy sections failed: ${e}`);
-                }       
-            }
-            Settings.remove('extraSections');
-        }
-        console.log('Migrate legacy sections finished');
 
         await Settings.set('initialRun', false);
         console.log('Initial run finished');
