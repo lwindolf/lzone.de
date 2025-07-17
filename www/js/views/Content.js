@@ -115,8 +115,9 @@ export class ContentView {
         const el = ContentView.switch('content');
         const id = path.replace(/\//g, ':::');
         const s = await Section.get(id);
-        // if it has nodes it is a section and we should render an overview
-        if (s.nodes && Object.keys(s.nodes).length > 0) {
+        
+        if (s.nodes) {
+            // if path is toplevel it is a section and we render the catalog settings
             if (-1 == id.indexOf(':::'))
                 // For a group (toplevel folder) we render a catalog
                 new CatalogView(el, path);

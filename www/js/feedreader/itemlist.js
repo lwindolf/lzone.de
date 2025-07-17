@@ -87,9 +87,9 @@ export class ItemList {
     }
 
     // select next unread
-    static nextUnread() {
+    static async nextUnread() {
         let item, node, id;
-        
+
         if(ItemList.selected) {
             node = FeedList.getNodeById(ItemList.selected.nodeId)
             id = ItemList.selected.id;
@@ -100,12 +100,12 @@ export class ItemList {
         }
 
         // Try looking in same feed/folder
-        item = node.getNextUnread(id);
+        item = await node.getNextUnread(id);
 
         // Switch to next feed if needed
         if(!item) {
             node = FeedList.getNextUnreadNode(node.id);
-            item = node.getNextUnread(id);
+            item = await node.getNextUnread(id);
         }
 
         // FIXME: folder recursion
