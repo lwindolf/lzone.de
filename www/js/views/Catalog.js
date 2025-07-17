@@ -71,7 +71,7 @@ export class CatalogView {
                     </tr>
                     <tr>
                         <td>Repo:</td>
-                        <td><input type='text' id='customRepo' placeholder='<user>/<repo>' required pattern='\\w+/\\w+'/>
+                        <td><input type='text' id='customRepo' placeholder='<user>/<repo>' required pattern='\\w+/[\\w.]+'/>
                     </tr>
                     <tr>
                         <td>File Pattern: (optional Regex with exactly one capture group to extract names)<br/>

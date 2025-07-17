@@ -27,10 +27,9 @@ export class Sidebar {
 
         {{#each tree.nodes }}
             <ul class="nav-list">
-                    <li class="nav-list-item" data-path="settings">
+                    <li class="nav-list-item" data-path="{{ @key }}">
                             <a class="nav-list-link pwa-title" data-path="{{ @key }}" href="#/{{ @key }}">
                                     {{ @key }}
-                                    <span class="pwa-settings">⚙</span>
                             </a>
                     </li>
             </ul>
@@ -57,10 +56,9 @@ export class Sidebar {
    
         <!-- FeedReader section -->
         <ul class="nav-list">
-                <li class="nav-list-item" data-path="settings">
+                <li class="nav-list-item" data-path="feeds">
                         <a class="nav-list-link pwa-title" data-path="feeds" href="#/-/Feeds">
                                 Feeds
-                                <span class="pwa-settings">⚙</span>
                         </a>
                 </li>
         </ul>

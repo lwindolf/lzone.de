@@ -189,6 +189,16 @@ export class Config {
                 url          : 'https://onlinewardleymaps.com/',
                 favicon      : 'https://onlinewardleymaps.com/favicon.ico',
                 description  : 'Value chain strategy maps'
+            },
+            'ArchiText': {
+                url          : 'https://architext.dev/playground.html',
+                favicon      : 'https://architext.dev/favicon.ico',
+                description  : 'Draw ArchiMate style diagrams'
+            },
+            'nomnoml': {
+                url          : 'https://nomnoml.com/',
+                favicon      : 'https://nomnoml.com/favicon.png',
+                description  : 'Draw UML diagrams'
             }
         },
         'Chat': {
