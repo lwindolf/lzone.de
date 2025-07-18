@@ -771,7 +771,7 @@ input:invalid {
 }
 
 .app-catalog .app {
-        clear: both;
+        position: relative;
 }
 
 .app-catalog .app button {
@@ -803,6 +803,10 @@ input:invalid {
         float: left;
         cursor: pointer;
         text-decoration: none;
+        position: relative;
+        width: 48px;
+        height: 48px;
+        overflow: hidden;
 }
 
 .app-catalog .app img.favicon,
@@ -840,6 +844,30 @@ input:invalid {
 .app-catalog .app img.favicon {
         filter: brightness(80%);
 }
+}
+
+/* broken image handling https://javascript.plainenglish.io/some-ways-to-handle-broken-images-b206e42c1a08 */
+.app img.favicon.error {
+        background: none;
+        border: 0;
+        line-height: normal;
+        line-break: anywhere;
+        font-size: 80%;;
+}
+
+.app img.favicon.error::before {
+        vertical-align: middle;
+        padding: 0.4rem;
+        background-color: var(--darkerbg);
+        border: 1px solid var(--darkerbg);
+        border-radius: 0.4rem;
+        content: ' ';
+        position: absolute;
+        display: inherit;
+        width: inherit;
+        height: inherit;
+        left: 0;
+        top: 0;
 }
 
 .check {
@@ -937,7 +965,9 @@ iframe {
         margin: auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 80%;
+        top: 0;
+
+        clear: both;   width: 80%;
         max-width: 800px;
 }
 

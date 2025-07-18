@@ -70,6 +70,10 @@ export class Config {
             'HoppScotch.io': {
                 url         : 'https://hoppscotch.io/',
                 description : 'API request tester'
+            },
+            'ezgif': {
+                url         : 'https://ezgif.com/',
+                description : 'GIF, PNG, JPG image editor'
             }
         },
         'DevOps - Playgrounds': {

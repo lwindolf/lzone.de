@@ -38,9 +38,9 @@ class PinnedApps extends HTMLElement {
                 <div class="app">
                     <a class="favicon" href="{{url}}" target="_blank" rel="noopener noreferrer" title="{{@key}} ({{description}})">
                     {{#if favicon}}
-                            <img class="favicon" src="{{favicon}}">
+                            <img class="favicon" src="{{favicon}}" alt="{{@key}}" onerror="this.classList.add('error')">
                     {{else}}
-                            <img class="favicon" src="{{url}}/favicon.ico">
+                            <img class="favicon" src="{{url}}/favicon.ico" alt="{{@key}}" onerror="this.classList.add('error')">
                     {{/if}}
                     </a>
                 </div>
@@ -79,9 +79,9 @@ export class PinnedAppsSettings extends HTMLElement {
                 <div class="app">
                     <a class="favicon" href="{{url}}" target="_blank">
                     {{#if favicon}}
-                            <img class="favicon" src="{{favicon}}">
+                            <img class="favicon" alt="{{@key}}" src="{{favicon}}" onerror="this.classList.add('error')">
                     {{else}}
-                            <img class="favicon" src="{{url}}/favicon.ico">
+                            <img class="favicon" alt="{{@key}}" src="{{url}}/favicon.ico" onerror="this.classList.add('error')">
                     {{/if}}
                     </a>
                     <div class="title">
