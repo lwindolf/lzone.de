@@ -19,32 +19,30 @@ export class ChatView {
     }
 
     // To be used if non chatbot stuff is to be shown
-    static addToolResult(title, str) {
-        if(!str)
+    //
+    // cmd: the command that was run
+    // str: the result of the command (either text or HTML)
+    // type: 'text' or 'html' (default: 'text')
+    static addToolResult(cmd, str, type = 'text') {
+        if(!cmd || !str)
             return;
 
         const chat = ContentView.switch('chat');
         const output = chat.querySelector('.content');
-        const div = document.createElement('div');
-        const answer = document.createElement('div');
         const pre = document.createElement('pre');
 
-        div.innerHTML = `<p>${title}</p>`;
-        answer.classList.add('answer');
-        pre.innerText += str;
-        answer.appendChild(pre)
-        div.appendChild(answer);
-        output.appendChild(div);
-        output.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
+        pre.classList.add('cli');
+        pre.innerText += '$ ' + cmd;
+        if (type === 'text')
+            pre.innerText += '\n' + str;
+        output.appendChild(pre);
 
-    static addHTMLResult(title, html) {
-        const chat = ContentView.switch('chat');
-        const output = chat.querySelector('.content');
-        const div = document.createElement('div');
+        if (type === 'html') {
+            const div = document.createElement('div');
+            div.innerHTML = str;
+            output.appendChild(div);
+        }
 
-        div.innerHTML = `<p>${title}</p>${html}`;
-        output.appendChild(div);
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 

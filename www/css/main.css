@@ -189,6 +189,7 @@ a:not([class]) {
         border-bottom: 1px solid var(--darkerbgborder);
         border-top: 1px solid var(--darkerbgborder);
         background: var(--darkerbg);
+        display: flex;
 }
 
 .search-input-wrap input {

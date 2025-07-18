@@ -9,16 +9,16 @@ export class Commands {
 		help: {
 			syntax: 'help',
 			summary: 'Show this help again\n',
-			func: () => this.help()
+			func: () => ["text", this.help()]
 		},
 		base64: {
 			syntax: 'base64 [-d] <string>',
 			summary: 'string <-> base64',
 			func: (cmd) => {
 				if (cmd[1] !== '-d') {
-					return btoa(cmd[2]);
+					return ["text", btoa(cmd[2])];
 				} else {
-					return atob(cmd[1]);
+					return ["text", atob(cmd[1])];
 				}
 			}
 		},
@@ -34,7 +34,7 @@ export class Commands {
 					return Math.ceil(Math.ceil((d.getTime() - new Date(d.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24)) / 7);
 				}
 
-				return `Current week is ${getWeek(d)}\n\nFollowing weeks are:\n` +
+				return ["text", `Current week is ${getWeek(d)}\n\nFollowing weeks are:\n` +
 					Array.from({ length: 10 }, (_, index) => index + 1)
 						.map((i) => {
 							const m = new Date(d);
@@ -42,13 +42,13 @@ export class Commands {
 							m.setDate(m.getDate() + 7*i)				// skip weeks
 							return `week ${getWeek(m)} --- Monday ${m.toLocaleDateString()}`;
 						})
-						.join('\n');
+						.join('\n')];
 			}
 		},
 		date: {
 			syntax: 'date <epoch>',
 			summary: 'epoch -> date',
-			func: (cmd, paramStr) => new Date(parseInt(paramStr))
+			func: (cmd, paramStr) => ["text", new Date(parseInt(paramStr))]
 		},
 		dig: {
 			syntax: 'dig [<type>] <domain>',
@@ -61,7 +61,7 @@ export class Commands {
 						'Accept': 'application/dns-json'
 					}
 				}).then((r) => r.json());
-				return JSON.stringify(result, null, 2);
+				return ["text", JSON.stringify(result, null, 2)];
 			}
 		},
 		epoch: {
@@ -69,7 +69,7 @@ export class Commands {
 			summary: 'date -> epoch',
 			func: (cmd, paramStr) => {
 				const result = new Date(paramStr).getTime();
-				return `Epoch [ms] : ${result}\nUnix epoch : ${result / 1000}`;
+				return ["text", `Epoch [ms] : ${result}\nUnix epoch : ${result / 1000}`];
 			}
 		},
 		ip: {
@@ -79,7 +79,7 @@ export class Commands {
 				const r = await fetch('https://ifconfig.me/all.json');
 				const json = await r.json();
 				console.log(json)
-				return json.ip_addr;
+				return ["text", json.ip_addr];
 			}
 		},
 		ipcalc: {
@@ -87,31 +87,30 @@ export class Commands {
 			summary: 'Calculate address range',
 			func: (cmd) => {
 				const result = this.#getIpRangeFromAddressAndNetmask(cmd[1]);
-				return `Base      : ${result[0]}\nBroadcast : ${result[1]}`;
+				return ["text", `Base      : ${result[0]}\nBroadcast : ${result[1]}`];
 			}
 		},
 		mkpasswd: {
 			syntax: 'mkpasswd [<len>] [<chars>]',
 			summary: 'Random password',
-			func: (cmd) => this.#secpw(
-				cmd[1] ? parseInt(cmd[1]) : undefined,
-				cmd[2]
-			)
+			func: (cmd) => 
+				["text", this.#secpw(
+					cmd[1] ? parseInt(cmd[1]) : undefined,
+					cmd[2]
+				)]
 		},
 		qr: {
 			syntax: 'qr <URL>',
 			summary: 'Create QR code',
-			func: (cmd, paramStr) => {
-				ChatView.addHTMLResult('$ '+cmd.join(' '), `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURI(paramStr)}"/>`);
-				return "";
-			}
+			func: (cmd, paramStr) => 			
+				["html", `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURI(paramStr)}"/>`]
 		},
 		si: {
 			syntax: 'si <value MB>',
 			summary: 'Print power 2 values',
 			func: (cmd) => {
 				const v = parseInt(cmd[1]);
-				return `${v * 1024} KiB\n${v / 1024} GiB\n${v / 1024 / 1024} TiB`;
+				return ["text", `${v * 1024} KiB\n${v / 1024} GiB\n${v / 1024 / 1024} TiB`];
 			}
 		},
 		weather: {
@@ -119,7 +118,7 @@ export class Commands {
 			summary: 'Embed weather map',
 			func: () => {
 				document.getElementById('CommandsViewEmbed')?.remove();
-				ChatView.addHTMLResult('$ weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>');
+				ChatView.addHTMLResult('$ weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>', 'html');
 				navigator.geolocation.getCurrentPosition((position) => {
 					const crd = position.coords;
 
@@ -138,7 +137,7 @@ export class Commands {
 					timeout: 1000,
 					maximumAge: 0,
 				});
-				return undefined;
+				return [undefined, undefined];
 			}
 		},
 		webamp: {
@@ -159,7 +158,7 @@ export class Commands {
 						window.webamp.renderWhenReady(app);
 					});
 				}
-				return "Opening webamp.";
+				return ["text", "Opening webamp."];
 			}
 		}
 	};
@@ -225,13 +224,14 @@ export class Commands {
 		return [baseAddress.join('.'), broadcastaddress.join('.')];
 	}
 
+	// returns array with [type, result]
 	static async run(str) {
 		try {
 			const cmd = str.split(/\s/);
 			const paramStr = str.substring(cmd[0].length);
 			return await Commands.commands[cmd[0]].func(cmd, paramStr);
 		} catch (e) {
-			return `ERROR: Exception (${e})`;
+			return ["text", `ERROR: Exception (${e})`];
 		}
 	}
 }
