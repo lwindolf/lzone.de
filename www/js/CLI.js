@@ -16,7 +16,7 @@ export class CLI {
                 // Decide what the user want
                 //
                 // 1. Check if user wants to run a command (prefix "!")
-                // 2. Check if user wants an AI prompt (prefix or suffix "?")
+                // 2. Check if user wants an AI prompt (prefix "?")
                 // 3. Perform a normal search
                 if (input.value[0] == '!') {
                     const str = input.value.slice(1);
@@ -25,9 +25,6 @@ export class CLI {
                 } else if (input.value[0] == '?') {
                     const str = input.value.slice(1);
                     ChatView.submitAIPrompt(str);
-
-                } else if(input.value[input.value.length - 1] == '?') {
-                    ChatView.submitAIPrompt(input.value);
 
                 } else {
                     // Nothing to do here, "Enter" will be caught by search list
