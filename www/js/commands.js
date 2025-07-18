@@ -25,7 +25,7 @@ export class Commands {
 		},
 		cw: {
 			syntax: 'cw',
-			summary: 'Print calendar weeks',
+			summary: '📅 Print calendar weeks',
 			func: () => {
 				const d = new Date();
 				const getWeek = (date) => {
@@ -148,6 +148,20 @@ export class Commands {
 					return ["text", entries.sort().join('\n')];
 			}
 		},
+		mkdir: {
+			syntax: 'mkdir <dirname>',
+			summary: 'Create directory in OPFS root',
+			func: async (cmd) => {
+				const dirname = cmd[1];
+				const root = await navigator.storage.getDirectory();
+				try {
+					await root.getDirectoryHandle(dirname, { create: true });
+					return ["text", `Created directory ${dirname}`];
+				} catch (e) {
+					return ["text", `ERROR: Could not create directory ${dirname}.`];
+				}
+			}
+		},
 		mkpasswd: {
 			syntax: 'mkpasswd [<len>] [<chars>]',
 			summary: 'Random password',
@@ -187,7 +201,7 @@ export class Commands {
 		},
 		weather: {
 			syntax: 'weather',
-			summary: 'Embed weather map',
+			summary: '🌤️ Embed weather map',
 			func: () => {
 				document.getElementById('CommandsViewEmbed')?.remove();
 				ChatView.addHTMLResult('$ weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>', 'html');
@@ -214,7 +228,7 @@ export class Commands {
 		},
 		webamp: {
 			syntax: 'webamp',
-			summary: 'Embed music player',
+			summary: '🎸 Embed music player',
 			func: () => {
 				if(document.getElementById('webampApp')) {
 					window.webamp.reopen();

@@ -7,6 +7,7 @@ import { FeedsView } from './Feeds.js';
 import { FolderView } from './Folder.js';
 import { FeedReaderView } from './FeedReader.js';
 import { SettingsView } from './Settings.js';
+import { OPFSFileBrowserView } from './FileBrowser.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
 import { PdfRenderer } from './renderers/Pdf.js';
 import * as r from "../helpers/render.js";
@@ -97,6 +98,10 @@ export class ContentView {
                 switch : 'content',
                 view   : SettingsView
             },
+            OPFS     : {
+                switch : 'content',
+                view   : OPFSFileBrowserView
+            }
         };
 
         if(0 == path.indexOf('-/')) {
