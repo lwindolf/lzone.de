@@ -77,10 +77,14 @@ export class CheatSheetRenderer {
             html = 'ERROR: Content rendering error!';
         }
 
+        // Ensure all <img> tags are marked for lazy loading
+        html = html.replace(/<img /g, '<img loading="lazy" ');
+
         // Replace all remaining relative HTML links
         e.innerHTML = html.replace(/(<img[^>]src=["'])\//g, '$1' + baseUrl + '/')
             .replace(/(<img[^>]+src=["'])([^h:][^t][^t][^p])/g, '$1' + baseUrl + '/$2')
             .replace(/(<a[^>]+href=["'])([^#h:][^t][^t][^p])/g, '$1' + baseUrl + '/$2');
+
 
         // Video embedding
         if (frontmatter?.videoEmbed === "true")
