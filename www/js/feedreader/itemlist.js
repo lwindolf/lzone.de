@@ -4,6 +4,7 @@
 // for simplicity combined view and model
 
 import { FeedList } from './feedlist.js';
+import { FeedReader } from './feedreader.js';
 import { Item } from './item.js';
 import { template, render } from '../helpers/render.js';
 import { DateParser } from './parsers/date.js';
@@ -110,7 +111,7 @@ export class ItemList {
 
         // FIXME: folder recursion
         if(item) {
-            FeedList.select(node.id);
+            FeedReader.select(node.id);
             ItemList.select(node.id, item.id);
         }
     }

@@ -23,14 +23,8 @@ export class FeedList {
     // id to node lookup map
     static #nodeById = {};
 
-    // id of currently selected node
-    static #selectedId;
-
     // currently known max feed id
     static maxId = 1;
-
-    // Return selected node id
-    static getSelectedId = () => FeedList.#selectedId;
 
     // Return node by id
     static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
@@ -93,9 +87,6 @@ export class FeedList {
         if(!node)
             return;
 
-        if(id === FeedList.#selectedId)
-            FeedList.select(undefined);
-
         node.parent.children = node.parent.children.filter((n) => n.id !== id);
 
         delete FeedList.#nodeById[id];
@@ -107,13 +98,9 @@ export class FeedList {
     // recursively mark all read on node and its children
     static markAllRead(id) {
         let node = FeedList.getNodeById(id);
-        node.children.forEach((n) => this.markAllRead(n.id));
+        if(node.children)
+            node.children.forEach((n) => this.markAllRead(n.id));
         node.markAllRead();
-    }
-
-    // Feed switching is triggered via location hash routing
-    static select(id) {
-        document.location.hash = `#/-/Feed/${id}`;
     }
 
     // Load folders/feeds from DB

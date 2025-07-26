@@ -145,7 +145,6 @@ export class Feed extends AggregatorNode {
     }
 
     updateUnread(count) {
-        console.log(this);
         this.unreadCount += count;
         if (this.unreadCount < 0)
             this.unreadCount = 0;
@@ -153,8 +152,8 @@ export class Feed extends AggregatorNode {
         ev.dispatch('nodeUpdated', this);
     }
 
-    markAllRead() {
-        const items = this.getItems();
+    async markAllRead() {
+        const items = await this.getItems();
         items.forEach((i) => i.setRead(true));
         this.updateUnread(-this.unreadCount);
     }

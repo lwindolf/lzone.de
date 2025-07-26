@@ -8,6 +8,11 @@ import { ItemView } from './itemview.js';
 import { HelpDialog } from '../dialogs/help.js';
 import { keydown } from '../helpers/events.js';
 
+// The FeedReader class implements a two pane feed view with one pane for the list
+// of items and the other for the item content or a description of the feed.
+//
+// Feed list navigation is not handled here!
+
 export class FeedReader {
     // member variables for easier console debugging
     feedlist = new FeedList();
@@ -15,13 +20,21 @@ export class FeedReader {
     itemlist = new ItemList();
     itemview = new ItemView();
 
+    #selectedFeedId = null;
+
     constructor() {
         // global hotkeys
-        keydown('#feedreader', /* F1 */               (e) => (e.keyCode === 112),             () => new HelpDialog());
-        keydown('#feedreader', /* Ctrl-right arrow */ (e) => (e.keyCode === 39 && e.ctrlKey), () => ItemList.nextUnread());
+        keydown('#feedreader', /* F1 */            (e) => (e.keyCode === 112),             () => new HelpDialog());
+        keydown('#feedreader', /* C-right arrow */ (e) => (e.keyCode === 39 && e.ctrlKey), () => ItemList.nextUnread());
 
-        // FIXME: Ctrl hotkeys do not work with PWAs
-        //keydown('body', /* Ctrl-S */           (e) => (e.keyCode === 83 && e.ctrlKey), () => document.dispatchEvent(new CustomEvent("feedMarkAllRead", { detail: { id: FeedList.getSelectedId()}})));
-        keydown('#feedreader', /* Ctrl-U */           (e) => (e.keyCode === 85 && e.ctrlKey), () => FeedList.update());
+        keydown('#feedreader', /* C-S-m */ (e) => (e.keyCode === 77 && e.ctrlKey && e.shiftKey), () => FeedList.markAllRead(this.#selectedFeedId));
+        keydown('#feedreader', /* C-S-u */ (e) => (e.keyCode === 85 && e.ctrlKey && e.shiftKey), () => FeedList.update());
+
+        this.#selectedFeedId = parseInt(document.location.hash.match(/Feed\/(\d+)/)?.[1] || 0);
     }
+
+    // Feed switching is triggered via location hash routing
+    static select(id) {
+        document.location.hash = `#/-/Feed/${id}`;
+    }   
 }

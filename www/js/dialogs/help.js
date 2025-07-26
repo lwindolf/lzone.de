@@ -22,11 +22,11 @@ export class HelpDialog extends ModalDialog {
                     <td>Next Unread</td>
                 </tr>
                 <tr>
-                    <td>Ctrl - S</td>
+                    <td>Ctrl - Shift - M</td>
                     <td>Mark All Read</td>
                 </tr>
                 <tr>
-                    <td>Ctrl - U</td>
+                    <td>Ctrl - Shift - U</td>
                     <td>Update All</td>
                 </tr>
             </table>
