@@ -14,6 +14,7 @@ export class ItemList {
     // state
     displayedFeedId;    // id of the feed that is currently displayed
     selected;           // selected item (or undefined)
+    #newItems;          // true if there are new items
 
     static #headerTemplate = template(`
         <span class='switchView' data-view='{{view}}'>&lt;</span>
@@ -24,6 +25,7 @@ export class ItemList {
     `);
 
     static #listTemplate = template(`
+        <div class='newItems hidden'>Click to show new items</div>
         {{#each items}}
             <div class='item' data-id='{{id}}' data-feed='{{nodeId}}'></div>
         {{/each}}
@@ -125,15 +127,17 @@ export class ItemList {
             ItemList.selected = undefined;
             ItemList.#loadFeed(parseInt(e.detail.id));
         });
-        document.addEventListener('itemsAdded',   (e) => {
-            if(e.detail.id == ItemList.displayedFeedId)
-                ItemList.#loadFeed(parseInt(e.detail.id))
-        });
+        document.addEventListener('itemsAdded',   () =>
+            document.querySelector('#itemlistViewContent .newItems').classList.remove('hidden'));
 
         // handle mouse events
         ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
         ev.connect('click',    '.item', (el) => ItemList.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
         ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(parseInt(el.dataset.id)));
+        ev.connect('click',    '.newItems', () => {
+            document.querySelector('.newItems').classList.add('hidden');
+            ItemList.#loadFeed(ItemList.displayedFeedId);
+        });
 
         // handle cursor keys
         document.addEventListener('keydown', (e) => {

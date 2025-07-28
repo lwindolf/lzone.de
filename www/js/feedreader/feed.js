@@ -70,6 +70,8 @@ export class Feed extends AggregatorNode {
 
         const f = await FeedUpdater.fetch(this.source, this.corsProxyAllowed);
         if (Feed.ERROR_NONE == f.error) {
+            let added = 0;
+
             this.title = f.title;
             this.source = f.source;
             this.homepage = f.homepage;
@@ -86,11 +88,14 @@ export class Feed extends AggregatorNode {
                                       x.title === i.title))))
                     return;
 
+                added++;
                 this.unreadCount++;
                 i.nodeId = this.id;
                 i.save();
             })
-            ev.dispatch('itemsAdded', this);
+            
+            if(added > 0)
+                ev.dispatch('itemsAdded', this);
 
             // FIXME: truncate set of items to match max per-feed cache size
 

@@ -326,6 +326,24 @@ header .title {
         width: 100%;
 }
 
+#itemlistViewContent .newItems {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--darkbg);
+        padding: 0.3rem 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        z-index: 1000;
+        font-size:small;
+        border-bottom: 1px solid var(--darkbgborder);
+}
+#itemlistViewContent .newItems:hover {
+        background: var(--darkerbg);
+        color: var(--text);
+}
+
 #itemview,
 #itemlistViewContent {
         overflow: auto;
