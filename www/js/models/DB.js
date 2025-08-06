@@ -34,17 +34,10 @@ export class DB {
 
     // state
     static #db = [];       // IndexedDB object by name
-    static values = {};    // value cache for test mode only
-
-    // flags
-    static testDisable = false;     // if true no DB actions will be performed (for test code), FIXME: properly mock IndexDB
 
     static async #getDB(name) {
         if(!this.#schema[name])
             throw new Error(`DB '${name}' not configured`);
-
-        if(this.testDisable)
-            return;
 
         if(this.#db[name])
             return this.#db[name];
@@ -81,13 +74,12 @@ export class DB {
                 Object.keys(indexes).forEach(storeName => {
                     if (db.objectStoreNames.contains(storeName)) {
                         const store = evt.target.transaction.objectStore(storeName);
-                        Object.keys(indexes[storeName]).forEach(indexName => {
-                            if (!store.indexNames.contains(indexName)) {
-                                const i = indexes[storeName][indexName];
-                                console.log(`Creating index '${indexName}' in store '${storeName}' of IndexedDB ${name}`);
+                        for(const i of indexes[storeName]) {
+                            if (!store.indexNames.contains(i.name)) {
+                                console.log(`Creating index '${i.name}' in store '${storeName}' of IndexedDB ${name}`);
                                 store.createIndex(i.name, i.field, i.params);
                             }
-                        });
+                        }
                     }
                 });
             };
@@ -124,9 +116,6 @@ export class DB {
     static async getAllKeys(dbName, storeName) {
         const db = await this.#getDB(dbName);
 
-        if (this.testDisable)
-            return Object.keys(this.values).filter(key => key.startsWith(`${dbName}_${storeName}_`)).map(key => key.split('_')[2]);
-
         return await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readonly").objectStore(storeName);
             const req = store.getAllKeys();
@@ -141,9 +130,6 @@ export class DB {
 
     static async get(dbName, storeName, name, defaultValue = 'null') {
         const db = await this.#getDB(dbName);
-
-        if (this.testDisable)
-            return this.values[`${dbName}_${storeName}_${name}`]?this.values[`${dbName}_${storeName}_${name}`]:defaultValue;
 
         return await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readonly").objectStore(storeName);
@@ -165,11 +151,6 @@ export class DB {
     static async set(dbName, storeName, name, value) {
         const db = await this.#getDB(dbName);
 
-        if(this.testDisable) {
-            this.values[`${dbName}_${storeName}_${name}`] = value;
-            return;
-        }
-
         await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readwrite").objectStore(storeName);
             try {
@@ -188,11 +169,6 @@ export class DB {
 
     static async remove(dbName, storeName, name) {
         const db = await this.#getDB(dbName);
-
-        if(this.testDisable) {
-            delete this.values[`${dbName}_${storeName}_${name}`];
-            return;
-        }
 
         await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readwrite").objectStore(storeName);
