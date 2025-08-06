@@ -47,12 +47,30 @@ export class CatalogView {
             {{/if }}
         </h2>
 
+        <p id='installableFilter'>
+            <b>Filter by:</b> Type
+            <select id='filterType'>
+                <option value='*'>All</option>
+                {{#each types }}
+                    <option value='{{ this }}'>{{ this }}</option>
+                {{/each }}
+            </select>
+            Category
+            <select id='filterCategory'>
+                <option value='*'>All</option>
+                {{#each categories }}
+                    <option value='{{ this }}'>{{ this }}</option>
+                {{/each }}
+            </select>
+        </p>
+
         <p>
             <div id='installableSections'>
             {{#each catalog }}
                 <div class='installable'>
                     <button data-section='{{ @key }}'>Add</button>
                     <a href="https://github.com/{{ this.github }}">{{ @key }}</a>
+                    <span class='sectionCategory' type='{{ this.type }}'>{{this.category}}</span>
                 </div>
             {{/each }}
             </div>
@@ -109,11 +127,32 @@ export class CatalogView {
 
         r.renderElement(this.#el, CatalogView.#template, {
             group      : this.#group,
-            catalog    : this.#repos,
+            catalog    : Object.keys(this.#repos).sort().reduce((acc, key) => {
+                acc[key] = this.#repos[key];
+                return acc;
+            }, {}),
+            types      : this.#repos ? Object.keys(this.#repos).map(r => this.#repos[r].type).filter((v, i, a) => a.indexOf(v) === i).sort() : [],
+            categories : this.#repos ? Object.keys(this.#repos).map(r => this.#repos[r].category).filter((v, i, a) => a.indexOf(v) === i).sort() : [],
             properties : Config.groups[this.#group],
-            diskUsage  : await this.#getDiskUsage(),
             removable  : Config.groups[this.#group].removable,
+            diskUsage  : await this.#getDiskUsage(),
             tree       : (await Section.getTree()).nodes[this.#group]
+        });
+
+        ev.connect('change', '#installableFilter select', () => {
+            const type = document.getElementById('filterType').value;
+            const category = document.getElementById('filterCategory').value;
+            const sections = document.querySelectorAll('#installableSections .installable');
+            console.log(`Filtering sections by type: ${type}, category: ${category}`);
+            sections.forEach((section) => {
+                console.log(`Checking section: ${section.querySelector('.sectionCategory').textContent}`);
+                if ((type     === '*' || section.querySelector('.sectionCategory').getAttribute('type') === type) &&
+                    (category === '*' || section.querySelector('.sectionCategory').textContent === category)) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
         });
 
         ev.connect('click', '#customInstall button', (e) => {

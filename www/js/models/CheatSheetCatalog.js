@@ -2,8 +2,8 @@
 
 import { App } from '../app.js';
 import { Config } from '../config.js';
+import { ContentSource } from './ContentSource.js';
 import { DB } from './DB.js';
-import { GithubRepo } from './GithubRepo.js';
 import { Search } from '../search.js';
 import { Section } from './Section.js';
 import { Settings } from './Settings.js';
@@ -17,8 +17,6 @@ import { Settings } from './Settings.js';
 // 3rd party cheat sheets:
 // - are downloaded once
 // - fetched from 3rd party repo as defined in catalog JSONs
-//
-// For now only Github as source is supported
 
 export class CheatSheetCatalog {
     // Fetch the catalog for a group
@@ -100,102 +98,22 @@ export class CheatSheetCatalog {
         App.pathChanged('');
     }
 
-    // add a document that is only a link and will only be downloaded on demand
-    static #documentLink(group, section, path, url, editUrl) {
-        Section.addDocument(group, section, path, {
-            type: 'link',
-            baseName: url.replace(/.*\//, ''),
-            baseUrl: url.replace(/\/[^/]+$/, ''),
-            editUrl
-        });
-    }
-
-    static async documentDownload(group, section, path, url, editUrl) {
-        // on first download ask user about persistance
-        if (navigator.storage && navigator.storage.persist) {
-            navigator.storage.persist();
-        }
-
-        await fetch(url)
-            .then((response) => response.text())
-            .then(async (data) => {
-                Section.addDocument(group, section, path, {
-                    data,
-                    baseName: url.replace(/.*\//, ''),
-                    baseUrl: url.replace(/\/[^/]+$/, ''),
-                    editUrl
-                });
-            });
-    }
-
-    static #fileMatch(path, folder = null, re) {
-        var result = {
-            match: path.match(re),
-            target: null
-        };
-
-        if (result.match) {
-            if (folder) {
-                var tmp = path.split(folder);
-                // if we have a matching document in a folder than strip the folder name
-                if (2 == tmp.length)
-                    result.target = result.match[1].substring(folder.length + 1);
-                // if we have a matching document outside the folder than drop it
-                else
-                    result.match = null;
-            } else {
-                result.target = result.match[1];
-            }
-        }
-        return result;
-    }
-
-    // Installation with optional full download
+    // Section installation with full download per default (linking is optional)
     // FIXME: support delta download too
     static async install(group, section, repo, e = undefined, download = true) {
-        const filePattern = repo.filePattern ? repo.filePattern : "^(.+)\\.(md|markdown|rst|adoc|asciidoc)$";
-        const re = new RegExp(filePattern);
-        let downloads = [];
-
         let info = document.createElement("pre");
         info.class = "note";
         info.innerText = "Fetching content...\n";
         if (e)
             e.parentNode.append(info);
 
-        // FIXME: move to GithubRepo.js
-        console.log(`Fetching ${section} from ${repo.github}...`);
-        await GithubRepo.fetch(repo).then(async (result) => {
-            var s = result.section;
-            s.children = [];
+        await ContentSource.fetchNewSection(group, section, repo, download).catch(e => {
+            console.error(`Error fetching '${section}' from ${repo.github}: ${e}`);
+            info.innerText += `Error fetching '${section}' from ${repo.github}: ${e}\n`;
+        });
 
-            for (let i = 0; i < result.data.tree.length; i++) {
-                let e = result.data.tree[i];
-                var m = this.#fileMatch(e.path, repo.folder, re);
-                if (m.target) {
-                    m.target = m.target.replace(/\//g, ':::');
-                    if(download)
-                        downloads.push(this.documentDownload(group, section, m.target,
-                            `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
-                            `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`)
-                            .then(() => {
-                                info.innerText += `Download success: ${e.path}\n`;
-                            })
-                        )
-                    else
-                        this.#documentLink(group, section, m.target,
-                            `https://raw.githubusercontent.com/${repo.github}/${result.data.sha}/${e.path}`,
-                            `https://github.com/${repo.github}/edit/${s.default_branch}/${e.path}`);
-                                                    
-                    s.children.push(m.target);
-                }
-            }
-            await Section.add(group, section, s);
-        });
-        return Promise.all(downloads).then(async () => {
-            document.dispatchEvent(new CustomEvent("sections-updated"));
-            // FIXME: emit event instead
-            Search.init();
-        });
+        document.dispatchEvent(new CustomEvent("sections-updated"));
+        // FIXME: emit event to Search instead
+        Search.init();
     }
 }
