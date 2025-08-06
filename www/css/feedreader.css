@@ -259,33 +259,6 @@ header .title {
         padding: 0.2rem;
 }
 
-/* content formatting */
-
-#itemViewContent h1,
-#itemViewContent section,
-#itemViewContent svg,
-#itemViewContent img {
-        max-width: 100%;
-        height: auto !important;
-}
-
-#itemViewContent figure,
-#itemViewContent iframe {
-        max-width: 100%;
-        box-sizing: border-box;
-
-        /* Note: object-fit would be best practice here, but it fails
-	   on embedded Youtube videos (pushing the embed iframe far
-	   to the right with the controls being not in the place
-	   visually shown) */
-}
-
-#itemViewContent video {
-        max-width: 100%;
-        height: auto;
-        display: block;
-}
-
 /* feed fetch error warning */
 
 .feedInfoErrorBox {
