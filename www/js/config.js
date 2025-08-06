@@ -92,6 +92,11 @@ export class Config {
                 favicon      : 'https://helm-playground.org/icons/favicon.ico',
                 description  : 'Play with Helm charts'
             },
+            'go.dev': {
+                url          : 'https://go.dev/play/',
+                favicon      : 'https://go.dev/favicon.ico',
+                description  : 'Go programming language playground'
+            },
             'OPA Rego': {
                 url          : 'https://play.openpolicyagent.org/',
                 favicon      : 'https://play.openpolicyagent.org/images/favicon.ico',
@@ -203,6 +208,11 @@ export class Config {
                 url          : 'https://nomnoml.com/',
                 favicon      : 'https://nomnoml.com/favicon.png',
                 description  : 'Draw UML diagrams'
+            },
+            'Casual Loops': {
+                url          : 'https://nocomplexity.com/causalloopdiagram',
+                favicon      : 'https://nocomplexity.com/causalloopdiagram/favicon.ico',
+                description  : 'Visualize non-linear causal relationships'
             }
         },
         'Chat': {
@@ -233,6 +243,16 @@ export class Config {
             [],
             "You are a helpful assistant."
         ]),
+        "merterbak/gpt-oss-20b-demo": async (client, prompt) => await client.predict("/chat", {
+            input_data: prompt,
+            max_new_tokens: 2048,
+            system_prompt: "You are a helpful assistant. Reasoning: medium",
+            temperature: 0.7,
+            top_p: 0.9,
+            top_k: 50,
+            repetition_penalty: 1,
+            api_name: "/chat"
+        }),
         "huggingface-projects/gemma-2-9b-it": async (client, prompt) => await client.predict("/chat", {
             message: prompt,
             max_new_tokens: 1024,
