@@ -73,6 +73,8 @@ export class ContentView {
 
     }
 
+    static #resetScroll = () => document.getElementById('breadcrumb-nav').scrollIntoView({ behavior: 'instant', block: 'center' });
+
     // Render all content that needs to be shown in #main-content-content
     //
     // Routing schema:
@@ -104,6 +106,8 @@ export class ContentView {
             }
         };
 
+        ContentView.#resetScroll();
+
         if(0 == path.indexOf('-/')) {
             const name = path.split('/')[1];
             if(!Object.keys(internalRoutes).includes(name)) {
@@ -114,6 +118,7 @@ export class ContentView {
             const target = ContentView.switch(internalRoutes[name].switch);
             if (internalRoutes[name].view)
                 new internalRoutes[name].view(target, path);
+
             return;
         }
 
@@ -144,7 +149,7 @@ export class ContentView {
             el.innerHTML = `<h1>ERROR: No renderer for ${extension} files</h1>`;
             return;
         } else {
-            ContentView.#renderers[extension].load(el, d)
+            await ContentView.#renderers[extension].load(el, d)
         }
     }
 
@@ -163,10 +168,6 @@ export class ContentView {
         document.getElementById('main-content-wrap').style.display = 'block';
         el = document.getElementById(`main-content-${name}`);
         el.style.display = 'block';
-
-        // FIXME: somehow scroll to content top
-        // FIXME: should be a ContentView method
-        //document.querySelector(`#main-content-content h1`).scrollIntoView({ block: "nearest" });
 
         return el;
     }
