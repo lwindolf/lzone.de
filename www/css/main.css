@@ -58,7 +58,35 @@ body {
 
 .columns-3 {
         width: 100%;
+        height: 100vh;
         display: flex;
+}
+
+/* content formatting */
+
+h1,
+section,
+svg,
+img {
+        max-width: 100%;
+        height: auto !important;
+}
+
+figure,
+iframe {
+        max-width: 100%;
+        box-sizing: border-box;
+
+        /* Note: object-fit would be best practice here, but it fails
+	   on embedded Youtube videos (pushing the embed iframe far
+	   to the right with the controls being not in the place
+	   visually shown) */
+}
+
+video {
+        max-width: 100%;
+        height: auto;
+        display: block;
 }
 
 code {
@@ -462,7 +490,9 @@ button#editBtn {
         vertical-align: baseline;
 }
 
-h1 button#editBtn {
+h1 button#editBtn,
+h2 button#editBtn,
+h3 button#editBtn {
         float: right;
 }
 
@@ -763,12 +793,50 @@ table td {
         background: var(--darkbg);
 }
 
-input {
+input, select, textarea {
         font-size: 100%;
         padding: 6px;
 }
 input:invalid {
         border: 1px solid var(--tred);
+}
+.sectionCategory {
+        float:right;
+        clear:vertical;
+        border: 1px dashed var(--darkbgborder);
+        border-radius: 0.4rem;
+        padding: 0.1rem 0.4rem;
+        margin: 0 0.15rem;
+}
+
+.sectionCategory::after {
+        margin-left: 0.2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.sectionCategory[type='Book']::after {
+        content: '📕';
+}
+.sectionCategory[type='Tutorial']::after {
+        content: '💡';
+}
+.sectionCategory[type='Awesome']::after {
+        content: '👍';
+}
+.sectionCategory[type='Documentation']::after {
+        content: '📄';
+}
+.sectionCategory[type='Cheat Sheet']::after {
+        content: '📓';
+}
+.sectionCategory[type='Interview']::after {
+        content: '💬';
+}
+.sectionCategory[type='Runbook']::after {
+        content: '🤖';
+}
+.sectionCategory[type='Learning Path']::after {
+        content: '📚';
 }
 
 .app-catalog .app {
