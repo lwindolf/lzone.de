@@ -35,15 +35,15 @@ test("atom parse", () => {
         expect(feed.error).toBe(undefined);
         expect(feed.title).toBe('Example Feed');
         expect(feed.homepage).toBe('http://example.org/');
-        expect(feed.items.length).toBe(2);
-        expect(feed.items[0].description).toBe('Some text.');
-        expect(feed.items[0].source).toBe('http://example.org/2003/12/13/atom03/html/');
-        expect(feed.items[0].sourceId).toBe('urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a');
-        expect(feed.items[0].time).toBe(1071340202);
+        expect(feed.newItems.length).toBe(2);
+        expect(feed.newItems[0].description).toBe('Some text.');
+        expect(feed.newItems[0].source).toBe('http://example.org/2003/12/13/atom03/html/');
+        expect(feed.newItems[0].sourceId).toBe('urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a');
+        expect(feed.newItems[0].time).toBe(1071340202);
 
-        expect(feed.items[1].source).toBe('http://example.org/2003/12/13/atom02');
-        expect(feed.items[1].sourceId).toBe('urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b');
-        expect(feed.items[1].time).toBe(1071340810);
+        expect(feed.newItems[1].source).toBe('http://example.org/2003/12/13/atom02');
+        expect(feed.newItems[1].sourceId).toBe('urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b');
+        expect(feed.newItems[1].time).toBe(1071340810);
 });
 
 test("atom parse link", () => {

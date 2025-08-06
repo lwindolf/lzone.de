@@ -19,9 +19,9 @@ export class Feed extends AggregatorNode {
     orig_source;
     last_updated;
     etag;
-    corsProxyAllowed;       // whether the user allowed CORS proxy for this feed
-    newItems = [];          // temporarily set to items discovered during update
-    unreadCount = 0;       // number of unread items in this feed
+    corsProxyAllowed = false; // whether the user allowed CORS proxy for this feed
+    newItems = [];            // temporarily set to items discovered during update
+    unreadCount = 0;          // number of unread items in this feed
 
     // feed content
     title;
@@ -37,7 +37,7 @@ export class Feed extends AggregatorNode {
     static ERROR_DISCOVER = 1 << 2;
     static ERROR_XML = 1 << 3;
 
-    constructor(defaults) {
+    constructor(defaults = {}) {
         super("Feed");
 
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
@@ -101,7 +101,8 @@ export class Feed extends AggregatorNode {
 
             // feed provided favicon should always win
             if (f.icon)
-                this.icon = this.corsProxyAllowed?f.icon:`https://corsproxy.io/?${f.icon}`;
+                this.icon = this.corsProxyAllowed?`https://corsproxy.io/?${f.icon}`:f.icon;
+
         }
 
         this.last_updated = f.last_updated;

@@ -33,9 +33,9 @@ test('rss 1.1 parse', () => {
         expect(feed.error).toBe(undefined);
         expect(feed.title).toBe('XML.com');
         expect(feed.homepage).toBe('http://xml.com/pub');
-        expect(feed.items.length).toBe(2);
-        expect(feed.items[1].description).toBe(`In this month's Transforming XML column...`);
-        expect(feed.items[1].source).toBe('http://www.xml.com/pub/a/2005/01/05/tr-xml.html');
+        expect(feed.newItems.length).toBe(2);
+        expect(feed.newItems[1].description).toBe(`In this month's Transforming XML column...`);
+        expect(feed.newItems[1].source).toBe('http://www.xml.com/pub/a/2005/01/05/tr-xml.html');
 });
 
 test('rss 2.0 parse', () => {
@@ -74,16 +74,16 @@ test('rss 2.0 parse', () => {
         expect(feed.error).toBe(undefined);
         expect(feed.title).toBe('NASA Space Station News');
         expect(feed.homepage).toBe('http://www.nasa.gov/');
-        expect(feed.items.length).toBe(2);
-        expect(feed.items[0].description).toBe(`As part of the state's first Earth-to-space call...`);
-        expect(feed.items[0].source).toBe('http://www.nasa.gov/press-release/louisiana-students-to-hear-from-nasa-astronauts-aboard-space-station');
-        expect(feed.items[0].sourceId).toBe('http://www.nasa.gov/press-release/louisiana-students-to-hear-from-nasa-astronauts-aboard-space-station');
-        expect(feed.items[0].time).toBe(1689944640)
-        expect(feed.items[0].media.length).toBe(2)
-        expect(feed.items[0].media[0].url).toBe('https://example.com/mp3s/podcast1_part1.mp3')
-        expect(feed.items[0].media[0].mime).toBe('audio/mpeg')
-        expect(feed.items[0].media[0].length).toBe(NaN)
-        expect(feed.items[0].media[1].url).toBe('https://example.com/mp3s/podcast1_part2.mp3')
+        expect(feed.newItems.length).toBe(2);
+        expect(feed.newItems[0].description).toBe(`As part of the state's first Earth-to-space call...`);
+        expect(feed.newItems[0].source).toBe('http://www.nasa.gov/press-release/louisiana-students-to-hear-from-nasa-astronauts-aboard-space-station');
+        expect(feed.newItems[0].sourceId).toBe('http://www.nasa.gov/press-release/louisiana-students-to-hear-from-nasa-astronauts-aboard-space-station');
+        expect(feed.newItems[0].time).toBe(1689944640)
+        expect(feed.newItems[0].media.length).toBe(2)
+        expect(feed.newItems[0].media[0].url).toBe('https://example.com/mp3s/podcast1_part1.mp3')
+        expect(feed.newItems[0].media[0].mime).toBe('audio/mpeg')
+        expect(feed.newItems[0].media[0].length).toBe(NaN)
+        expect(feed.newItems[0].media[1].url).toBe('https://example.com/mp3s/podcast1_part2.mp3')
 });
 
 test('rss 2.0 atom ns', () => {

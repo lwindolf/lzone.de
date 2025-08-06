@@ -12,5 +12,5 @@ test('FeedUpdater.fetch', async () => {
     expect(f.last_updated - Date.now() / 1000 < 10000).toBe(true);
     expect(f.error).toBe(Feed.ERROR_NONE);
     expect(f.icon).toBe('https://slashdot.org//favicon.ico');
-    expect(f.items[0].title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
+    expect(f.newItems[0].title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
 });

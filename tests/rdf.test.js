@@ -50,8 +50,8 @@ test('rss 1.0 parse', () => {
         expect(feed.error).toBe(undefined);
         expect(feed.title).toBe('XML.com');
         expect(feed.homepage).toBe('http://xml.com/pub');
-        expect(feed.items.length).toBe(2);
-        expect(feed.items[0].description).toBe(`Processing document inclusions with general XML tools can be ...`);
-        expect(feed.items[0].source).toBe('http://xml.com/pub/2000/08/09/xslt/xslt.html');
-        expect(feed.items[0].time).toBe(1694950440);
+        expect(feed.newItems.length).toBe(2);
+        expect(feed.newItems[0].description).toBe(`Processing document inclusions with general XML tools can be ...`);
+        expect(feed.newItems[0].source).toBe('http://xml.com/pub/2000/08/09/xslt/xslt.html');
+        expect(feed.newItems[0].time).toBe(1694950440);
 });

@@ -14,7 +14,6 @@ export class ItemList {
     // state
     displayedFeedId;    // id of the feed that is currently displayed
     selected;           // selected item (or undefined)
-    #newItems;          // true if there are new items
 
     static #headerTemplate = template(`
         <span class='switchView' data-view='{{view}}'>&lt;</span>
@@ -53,9 +52,6 @@ export class ItemList {
 
         // FIXME: handle folders
 
-        if(!document.getElementById('itemlistViewContent'))
-            return;
-
         render('#itemlistViewTitle', ItemList.#headerTemplate, { node, view: 'feedlist' });
         render('#itemlistViewContent', ItemList.#listTemplate, { node, items });
         items.forEach((i) => ItemList.#itemUpdated(i));
@@ -84,7 +80,7 @@ export class ItemList {
 
         ItemList.selected = item;
         if(!item.read)
-            ItemList.#toggleItemRead(id);
+            await ItemList.#toggleItemRead(id);
 
         ev.dispatch('itemSelected', { feed: feedId, id: item.id });
     }
@@ -113,8 +109,8 @@ export class ItemList {
 
         // FIXME: folder recursion
         if(item) {
-            FeedReader.select(node.id);
-            ItemList.select(node.id, item.id);
+            await FeedReader.select(node.id);
+            await ItemList.select(node.id, item.id);
         }
     }
 

@@ -1,6 +1,9 @@
 // vim: set ts=4 sw=4:
 
+import { DB } from '../www/js/models/DB.js';
 import { Favicon } from "../www/js/feedreader/parsers/favicon";
+
+DB.testDisable = true;  // DB class won't use IndexedDB, but will use a static cache
 
 let responses = {
     "https://arstechnica.com/test1": `<!DOCTYPE html>

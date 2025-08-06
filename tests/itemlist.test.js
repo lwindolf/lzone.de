@@ -7,73 +7,40 @@ const { Feed } = require('../www/js/feedreader/feed');
 const { Item } = require('../www/js/feedreader/item');
 const { FeedList } = require('../www/js/feedreader/feedlist');
 const { ItemList } = require('../www/js/feedreader/itemlist');
-const { DB } = require('../www/js/models/DB');
 
 const mockFeeds = [
-    new Feed({ title: 'abc', id: 1, unreadCount: 0, items: []}),
-    new Feed({ title: 'def', id: 2, unreadCount: 5, items: [
-        new Item({ id: 100, time: 203304944, read: true }),
-        new Item({ id: 101, time: 203304944, read: true }),
-        new Item({ id: 102, time: 203304944, read: true }),
-        new Item({ id: 103, time: 203304944 }),
-        new Item({ id: 104, time: 203304944 })
-    ]}),
+    new Feed({ title: 'abc', id: 1, unreadCount: 0}),
+    new Feed({ title: 'def', id: 2, unreadCount: 5})
 ];
 
-DB.testDisable = true;  // DB won't do anything
+[
+    { id: 100, nodeId: 2, time: 203304944, read: true },
+    { id: 101, nodeId: 2, time: 203304944, read: true },
+    { id: 102, nodeId: 2, time: 203304944, read: true },
+    { id: 103, nodeId: 2, time: 203304944 },
+    { id: 104, nodeId: 2, time: 203304944 }
+].forEach(async (d) => await (new Item(d)).save());
 
-test('Itemlist.nextUnread', () => {
-    // FIXME: load index.html instead!
-    document.body.innerHTML = `
-    <div id='wrap'>
-    <div id='main'>
-        <div class='view' id='feedlist'>
-            <header id='feedlistViewTitle'>
-                <span class='title'>Feeds</span>
-                <span class='addBtn'>+ Add</span>
-            </header>
-            <div id='feedlistViewContent'></div>
-        </div>
-        <div class='view' id='itemlist'>
-            <header id='itemlistViewTitle'></header>
-            <div class='feedInfoError'></div>
-            <div id='itemlistViewContent'></div>
-        </div>
-        <div class='view' id='item'>
-            <header id='itemViewTitle'></header>
-            <div id='itemViewContent'></div>
-        </div>
-        <div id='linkHover'></div>
-    </div>
+test('Itemlist.nextUnread', async () => {
+    new ItemList();
 
-    <!-- modal dialog -->
-    <div id="modal">
-        <div id="modalContent">
-        </div>
-    </div>
-    </div>`;
-
-    let il = new ItemList();
-
-    FeedList.add(mockFeeds[0], false /* update */);
-    FeedList.add(mockFeeds[1], false /* update */);
+    await FeedList.add(mockFeeds[0], false /* update */);
+    await FeedList.add(mockFeeds[1], false /* update */);
 
     document.dispatchEvent(new CustomEvent("feedSelected", { detail: { id: 2 } }));
-    setTimeout(() => {
-        document.dispatchEvent(new CustomEvent("itemSelected", { detail: { feed: 2, item: 102 } }));
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await ItemList.select(2, 102);
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-        setTimeout(() => {
-            expect(ItemList.selected.id).toBe(102);
-    
-            ItemList.nextUnread();
-            expect(ItemList.selected.id).toBe(103);
+    expect(ItemList.selected.id).toBe(102);
 
-            ItemList.nextUnread();
-            expect(ItemList.selected.id).toBe(104);
+    await ItemList.nextUnread();
+    expect(ItemList.selected.id).toBe(103);
 
-            ItemList.nextUnread();
-            expect(ItemList.selected.id).toBe(undefined);
-        }, 500);
-    }, 500); 
+    await ItemList.nextUnread();
+    expect(ItemList.selected.id).toBe(104);
+
+    await ItemList.nextUnread();
+    expect(ItemList.selected.id).toBe(104); // selection stays if there is nothing more
 });
 

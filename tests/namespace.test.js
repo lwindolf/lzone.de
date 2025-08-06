@@ -59,10 +59,10 @@ test('Dublin Core', () => {
         </rdf:RDF>`);
     
         expect(feed.error).toBe(undefined);
-        expect(feed.items.length).toBe(1);
-        expect(feed.items[0].description).toBe(`XML is placing increasingly heavy...`);   
+        expect(feed.newItems.length).toBe(1);
+        expect(feed.newItems[0].description).toBe(`XML is placing increasingly heavy...`);   
         // with no date given date should be similar to current date
-        expect(Math.floor(Date.now() / 10000) - Math.floor(feed.items[0].time / 10000)).toBe(0)
+        expect(Math.floor(Date.now() / 10000) - Math.floor(feed.newItems[0].time / 10000)).toBe(0)
     });
 
 test('content:encoded', () => {
@@ -95,8 +95,8 @@ test('content:encoded', () => {
      </rdf:RDF>`);
      
         expect(feed.error).toBe(undefined);
-        expect(feed.items.length).toBe(1);
-        expect(feed.items[0].description).toBe(`<p>What a <em>beautiful</em> day!</p>`);
+        expect(feed.newItems.length).toBe(1);
+        expect(feed.newItems[0].description).toBe(`<p>What a <em>beautiful</em> day!</p>`);
      });
 
 test('media:content', () => {
@@ -144,10 +144,10 @@ test('media:content', () => {
    </rdf:RDF>`);
    
       expect(feed.error).toBe(undefined);
-      expect(feed.items.length).toBe(1);
-      expect(feed.items[0].media.length).toBe(1);
-      expect(feed.items[0].media[0].url).toBe("http://www.foo.com/movie.mov");
-      expect(feed.items[0].media[0].mime).toBe("video/quicktime");
-      expect(feed.items[0].media[0].length).toBe(185);
+      expect(feed.newItems.length).toBe(1);
+      expect(feed.newItems[0].media.length).toBe(1);
+      expect(feed.newItems[0].media[0].url).toBe("http://www.foo.com/movie.mov");
+      expect(feed.newItems[0].media[0].mime).toBe("video/quicktime");
+      expect(feed.newItems[0].media[0].length).toBe(185);
    });
    

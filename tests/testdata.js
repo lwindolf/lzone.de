@@ -1,7 +1,4 @@
-import { DB } from '../www/js/models/DB';
 import { Feed } from '../www/js/feedreader/feed';
-
-DB.testDisable = true;  // DB won't do anything
 
 // provide a default fetch mock with static feed returned
 global['fetch'] = jest.fn().mockImplementation(() =>
@@ -74,9 +71,9 @@ global['fetch'] = jest.fn().mockImplementation(() =>
 );
 
 export class TestData {
-        static slashdotFeed = new Feed({
-                id: 1,
-                source: 'https://rss.slashdot.org/Slashdot/slashdotMain',
-                title: 'Slashdot'
-        });
+    static slashdotFeed = new Feed({
+        id: 1,
+        source: 'https://rss.slashdot.org/Slashdot/slashdotMain',
+        title: 'Slashdot'
+    });
 }
