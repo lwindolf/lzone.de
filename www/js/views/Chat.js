@@ -15,7 +15,11 @@ export class ChatView {
         const module = await import('../vendor/gradio-client/index.js');
         ChatView.#currentModel = name;
         ChatView.#gradioClient = await module.Client.connect(name);
-        document.querySelector('#aiChatView .content').innerHTML += `<p>Connecting chat bot <a href="https://huggingface.co/spaces/${name}">${name}</a></p>`;
+        document.querySelector('#aiChatView .content').innerHTML += `
+            <p>
+                Connecting chat bot <a href="https://huggingface.co/spaces/${name}">${name}</a>
+                (<a href="#/-/Settings">Change</a>).
+            </p>`;
     }
 
     // To be used if non chatbot stuff is to be shown
@@ -61,8 +65,9 @@ export class ChatView {
 
         if(!ChatView.#gradioClient) {
             output.innerHTML += `<div class="loading"><i>Connecting chat bot ...</i></div>`;
-            await ChatView.connectModel(Object.keys(ChatView.#models)[0]);  // default to first model defined
-            output.innerHTML += `<div>Successfully connected model.</div>`;
+            await ChatView.connectModel(await Settings.get('huggingFaceModel'))
+            .then(() => output.innerHTML += `<div>Successfully connected model.</div>`)
+            .catch((e) => output.innerHTML += `<div class="answer error">ERROR: ${e.message}</div>`);
         }
         output.innerHTML += `
             <div class="question"><p>${prompt}</p></div>
@@ -83,20 +88,21 @@ export class ChatView {
         // Prepare model specific parameters
         let html;
         const model = ChatView.getModel();
-        try {
-            const response = await model(ChatView.#gradioClient, prompt);
-            if (response.error) {
-                html += `<div class="answer">ERROR: Request failed (${response.message})!</div>`;
-            } else {
-                html = ChatView.#showdown.makeHtml(response.data.join("\n"));
+        if(model) {
+            try {
+                const response = await model(ChatView.#gradioClient, prompt);
+                if (response.error) {
+                    html += `<div class="answer">ERROR: Request failed (${response.error})!</div>`;
+                } else {
+                    html = ChatView.#showdown.makeHtml(response.data.join("\n"));
+                }
+            } catch(e) {
+                console.error(e)
+                console.error(e.stack)
+
+                html = `ERROR: Markdown parsing error (${encodeURIComponent(e)})!`;
             }
-        } catch(e) {
-            console.error(e)
-            console.error(e.stack)
-
-            html = `ERROR: Markdown parsing error (${e})!`;
         }
-
         [...chat.querySelectorAll('.loading')].forEach((el) => el.remove());
         output.innerHTML += `<div class="answer">${html?html:"ERROR: Request failed!"}</div>`;
     }

@@ -10,23 +10,57 @@ export class SettingsView {
     }
 
     // Generic settings handling
+    //
+    // We expect all input/select names to be the same as the settings name.
     static async #bind(el) {
-        el.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        el.querySelectorAll('input[type="checkbox"]').forEach(async (checkbox) => {
+            const v = await Settings.get(checkbox.name);
+            if(v === true)
+                checkbox.checked = true;
+
             checkbox.addEventListener('change', (e) => {
                 Settings.set(e.target.name, e.target.checked?true:false, true /* send event */);
             });
         });
 
-        el.querySelectorAll('input[type="text"]').forEach((checkbox) => {
-            checkbox.addEventListener('change', (e) => {
+        el.querySelectorAll('input[type="text"]').forEach(async (input) => {
+            const v = await Settings.get(input.name);
+            if(v !== undefined)
+                input.value = v;
+
+            input.addEventListener('change', (e) => {
                 Settings.set(e.target.name, e.target.value, true /* send event */);
             });
         });
 
-        el.querySelectorAll('select').forEach((select) => {
+        el.querySelectorAll('select').forEach(async (select) => {
+            const v = await Settings.get(select.name);
+            if(v !== undefined)
+                select.value = v;
+
+            SettingsView.#updateVisibility(el, select.name);
+
             select.addEventListener('change', (e) => {
+                SettingsView.#updateVisibility(el, e.target.name);
                 Settings.set(e.target.name, e.target.value, true /* send event */);
             });
+        });
+    }
+
+    // Make options (in)visible based on a <select> value
+    static #updateVisibility(el, name) {
+        console.log(`update visibility for ${name}`);
+
+        const v = el.querySelector(`select[name="${name}"]`)?.value;
+        if(!v)
+                return;
+console.log(`update visibility for ${name}=${v}`);
+        el.querySelectorAll(`[${name}]`).forEach((div) => {
+            if (div.getAttribute(name) === v) {
+                div.classList.remove('hidden');
+            } else {
+                div.classList.add('hidden');
+            }
         });
     }
 
@@ -38,32 +72,19 @@ export class SettingsView {
             import(Config.toolboxComponents[name].import).then(() => {
                 el.innerHTML = `<h1>Settings - ${name}</h1> ${Config.toolboxComponents[name].settings}`;
             });
+            return; // we want no binding
         } else if (path === '-/Settings/Tools') {
-            Promise.all(Object.keys(Config.toolboxComponents).map(async (name) => {
-                return {
-                    name,
-                    setting: "toolEnabled:::" + name,
-                    enabled: await Settings.get("toolEnabled:::" + name, Config.toolboxComponents[name].enabled)
-                }
-            })).then((settings) => {
-                r.renderElement(el, r.template(`
-                    <h1>Settings - Tools</h1>
+            r.renderElement(el, r.template(`
+                <h1>Settings - Tools</h1>
 
-                    <p>
-                        Activate / deactivate tools.
-                    </p>
-
-                    {{#each settings}}
-                    <div class="tool">
-                        <input type="checkbox" name="{{setting}}" {{#ifTrue enabled}}checked{{/ifTrue}}>
-                        {{name}} (<a href="#/-/Settings/Tools/{{name}}">Settings</a>)
-                    </div>
-                    {{/each}}
-                `), {
-                    settings
-                });
-
-                SettingsView.#bind(el);
+                {{#each names}}
+                <div class="tool">
+                    <input type="checkbox" name="toolEnabled:::{{.}}" {{#ifTrue enabled}}checked{{/ifTrue}}>
+                    {{.}} (<a href="#/-/Settings/Tools/{{.}}">Settings</a>)
+                </div>
+                {{/each}}
+            `), {
+                names: Object.keys(Config.toolboxComponents)
             });
         } else if (path === '-/Settings') {
             r.renderElement(el, r.template(`
@@ -88,35 +109,46 @@ export class SettingsView {
                     Default update interval <input id="refreshInterval" type="number" value="24" size="1" min="1"> hours
                 </div>-->
 
-                <h3>🚧 Chat bot</h3>
+                <h3>Configure Chat Bot</h3>
 
-                FIXME: 🚧 This setting is work in progress, and does not work yet! 
-
-
-                <p>Configure an OpenAI API endpoint or a HuggingFace demo space to use for chat.</p>
-
-                <select name="chatBotModel">
-                    <option value="">OpenAI API</option>
-                    {{#each chatBotModels}}
-                    <option value="{{this}}">HuggingFace - {{this}}</option>
-                    {{/each}}
+                Mode <select name="chatType">
+                    <option value="none">Disabled</option>
+                    <option value="openai">OpenAI API (e.g. local ollama / llama.cpp)</option>
+                    <option value="huggingFace">HuggingFace</option>
                 </select>
 
-                <p>Configure the OpenAI endpoint (e.g. <code>http://localhost:11434</code> for ollama)</p>
+                <div chatType="huggingFace" class="hidden">
+                    <p>
+                        Select a public <a href="https://huggingface.co/">HuggingFace</a> space 
+                        to use for chat. The listed spaces do not require authentication and 
+                        might have usage quota. Do not use those spaces for sensitive prompts.
+                        Consider all prompts public and your data processed by 3rd parties!
+                    </p>
 
-                <input type="text" name="openAIEndpoint" value="{{openAIEndpoint}}"/>
-                <button name="openAIEndpointTest">Test</button>
-
-                <h3>Cache</h3>
-
-                <div>
-                    <button id="resetPwaCache">Reset PWA cache</button> (does not delete data, just reloads the app)
+                    Space <select name="huggingFaceModel">
+                        {{#each chatBotModels}}
+                        <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
                 </div>
 
-                <h3>More Settings</h3>
-                <ul>
-                    <li><a href="#/-/Settings/Tools">Tools</a></li>
-                </ul>
+                <div chatType="openai" class="hidden">
+                    <p>Configure the OpenAI endpoint e.g. <code>http://localhost:11434</code> for a local ollama setup.</p>
+
+                    <input type="text" name="openAIEndpoint" value="{{openAIEndpoint}}"/>
+                    <button name="openAIEndpointTest">Test</button>
+                </div>
+
+                <h3>App Cache</h3>
+
+                <p>Clear the app cache. This does <b>not</b> delete content. Try this when the app does not work!</p>
+                <div>
+                    <button id="resetPwaCache">Reset PWA cache</button>
+                </div>
+
+                <h3>Configure Tools</h3>
+                
+                <p>Manage tools shown in the side bar: <a href="#/-/Settings/Tools">Configure</a></p>
             `), {
                 allowCorsProxy : await Settings.get('allowCorsProxy', false),
                 openAIEndpoint : await Settings.get('openAIEndpoint', "http://localhost:11434"),
@@ -134,10 +166,10 @@ export class SettingsView {
                     }
                 }
             });
-
-            SettingsView.#bind(el);
         } else {
             el.innerHTML = "ERROR: Unknown settings path";
         }
+
+        SettingsView.#bind(el);
     }
 }

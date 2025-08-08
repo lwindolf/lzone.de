@@ -230,19 +230,28 @@ export class Config {
     };
 
     // Huggingface spaces for chat bot models
-    // Note: first definition is always our default model
     static chatBotModels = {
-        "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", { message: prompt }),
-        "Qwen/Qwen3-Demo": async (client, prompt) => await client.predict("/model_chat", [
-            prompt,
-            [],
-            "You are a helpful assistant."
-        ]),
-        "Qwen/Qwen1.5-110B-Chat-demo": async (client, prompt) => await client.predict("/model_chat", [
-            prompt,
-            [],
-            "You are a helpful assistant."
-        ]),
+        "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", {
+            message: prompt
+        }),
+        "Qwen/Qwen2-72B-Instruct": async (client, prompt) => {
+            let response = await client.predict("/model_chat", { 		
+				query: prompt, 		
+				system: "You are a helpful assistant."
+            });
+            return {
+                data  : [ response.data[1][0][1] ],
+                error : response.error,
+            };
+        },
+        "huggingface-projects/llama-3.2-3B-Instruct": async (client, prompt) => await client.predict("/chat", {
+            message: prompt,
+            max_new_tokens: 1,
+            temperature: 0.1, 		
+            top_p: 0.05, 		
+            top_k: 1, 		
+            repetition_penalty: 1,
+        }),
         "merterbak/gpt-oss-20b-demo": async (client, prompt) => await client.predict("/chat", {
             input_data: prompt,
             max_new_tokens: 2048,
@@ -250,8 +259,7 @@ export class Config {
             temperature: 0.7,
             top_p: 0.9,
             top_k: 50,
-            repetition_penalty: 1,
-            api_name: "/chat"
+            repetition_penalty: 1
         }),
         "huggingface-projects/gemma-2-9b-it": async (client, prompt) => await client.predict("/chat", {
             message: prompt,
