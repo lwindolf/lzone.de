@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from '../config.js';
-import { Settings } from "./Settings";
+import { Settings } from "./Settings.js";
 
 /* Running chat bot prompts against either a OpenAI compatible API or a Huggingface space
    using GRadioClient 
@@ -9,67 +9,108 @@ import { Settings } from "./Settings";
    Emits
     - "chat-connecting" when a new connection is being prepared
     - "chat-connected" when the connection is established
-    - "chat-response" on answer
 
    Does not support streaming responses
 */
 
 export class Chat {
     static #currentChatType;    // 'none', 'openai' or 'huggingface' (or undefined)
+    static #currentModelName;   // human readable name of the current model (or undefined)
     static #currentModel;       // currently selected chat bot model (or undefined)
-    static #currentModelName;   // currently selected chat bot model name (or undefined)
     static #gradioClient;       // client initialized to active model (or undefined)
     static #gradio;             // gradio client module (or undefined)
+    static #reconnectListener; // listener for reconnecting the model (or undefined)
 
-    static async #connect() {
-        if(!this.#gradio)
-            this.#gradio = await import('../vendor/gradio-client/index.js');
-
-        const chatType = Settings.get('chatBotType');
-        const huggingFaceModel = Settings.get('huggingFaceModel');
-
-        if (this.#gradioClient &&
-            this.#currentModel &&
-            this.#currentChatType === chatType &&
-            this.#currentModelName === huggingFaceModel)
-            return;
-
-        document.dispatchEvent(new CustomEvent('chat-connecting', { detail: chatType }));
-
-        this.#currentChatType = chatType;
-
-        if (chatType === 'huggingface') {
-            this.#currentModelName = huggingFaceModel;
-            this.#currentModel = Config.chatBotModels[huggingFaceModel];
-            this.#gradioClient = await this.#gradio.Client.connect(huggingFaceModel);
-        }
-        if (chatType === 'openai') {
-            this.#gradioClient = await this.#gradio.Client.connect(Settings.get('openaiHost'));
-            this.#currentModel = async (client, prompt) => await client.predict("/chat", {
-                model: Settings.get('openaiModel'),
-                messages: [{ role: 'user', content: prompt }],
-                max_tokens: Settings.get('openaiMaxTokens'),
-                temperature: Settings.get('openaiTemperature'),
-                top_p: Settings.get('openaiTopP'),
-                top_k: Settings.get('openaiTopK'),
-                repetition_penalty: Settings.get('openaiRepetitionPenalty'),
+    // return list of available models for the configure ollama API connection
+    static async getOllamaModelList() {
+        const models = await fetch(`${await Settings.get('ollamaEndpoint')}/api/tags`, { method: 'GET' })
+            .then(response => {
+                if (!response.ok)
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                const result = response.json();
+                return result.models.map(m => m.name);
             });
-            this.#currentModelName = undefined;
+
+        Settings.set('ollamaModels', models, true /* send event */);
+        return models;
+    }
+
+    static async #setup() {
+        this.#currentChatType = await Settings.get('chatType', 'none');
+
+        if(this.#currentChatType === 'huggingFace') {
+            if(!this.#gradio)
+                this.#gradio = await import('../vendor/gradio-client/index.js');
+
+            document.dispatchEvent(new CustomEvent('chat-connecting', { detail: this.#currentChatType }));
+
+            this.#currentModelName = await Settings.get('huggingFaceModel');
+            this.#gradioClient = await this.#gradio.Client.connect(this.#currentModelName);
+
+            document.dispatchEvent(new CustomEvent('chat-connected'));
+
+            this.#currentModel = async (prompt) => {
+                const response = await Config.chatBotModels[this.#currentModelName](this.#gradioClient, prompt);
+                return response.data.join('\n');
+            }
         }
-        if (chatType === 'none') {
-            this.#currentModel = undefined;
-            this.#currentModelName = undefined;
-            this.#gradioClient = undefined;
+
+        if(this.#currentChatType === 'ollama') {
+            // ollama support is stateless so no connecting and no gradio
+            this.#currentModelName = await Settings.get('ollamaModel');
+            this.#currentModel = async (prompt) => {
+                return await fetch(`${await Settings.get('ollamaEndpoint')}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt,
+                        model  : this.#currentModelName,
+                        stream : false
+                    })
+                }).then(response => {
+                    if (!response.ok)
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    return response.json();
+                }).then(data => {
+                    if (data.error)
+                        throw new Error(data.error);
+                    return data.response;
+                });
+            }
         }
+
+        if(!this.#reconnectListener)
+            this.#reconnectListener = (e) => {
+                if((e.detail.name === 'chatType') ||
+                   (e.detail.name === 'huggingFaceModel') ||
+                   (e.detail.name === 'ollamaModel')) {
+                    this.#currentChatType = e.detail.value;
+                    this.#currentModelName = undefined;
+                    this.#currentModel = undefined;
+                    this.#gradioClient = undefined;
+
+                    console.log('ChatView: Switching model.');
+                    this.#setup();
+                }
+            };
+            document.addEventListener('settings-changed', this.#reconnectListener);
     }
 
     static async submit(prompt) {
-        this.#connect();
+        if(!this.#currentChatType)
+            await this.#setup();
 
-        if (this.#currentChatType === 'none')
-            throw new Error("Chat is disabled in Settings. Please enable it to use this feature.");
+        if(this.#currentChatType === 'none')
+            return "ERROR: LLM chat bot is currently disabled in <a href='#/-/Settings'>Settings</a>. Please enable it to allow LLM prompts.";
 
-        const response = await this.#currentModel(this.#gradioClient, prompt);
-        document.dispatchEvent(new CustomEvent('chat-response', { detail: response }));
+        return await this.#currentModel(prompt);
+    }
+
+    static getLLMName() {
+        if(!this.#currentModelName)
+            return '';
+
+        return `${this.#currentChatType}: ${this.#currentModelName}`;
     }
 }

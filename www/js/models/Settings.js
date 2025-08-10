@@ -13,7 +13,8 @@ export class Settings {
 
     static async set(name, value, event = true) {
         await DB.set("settings", "settings", name, value, event);
-        document.dispatchEvent(new CustomEvent('settings-changed', { detail: { name, value } }));
+        if (event)       
+            document.dispatchEvent(new CustomEvent('settings-changed', { detail: { name, value } }));
     }
 
     static remove = async (name) => 
