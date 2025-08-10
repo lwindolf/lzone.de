@@ -4,24 +4,11 @@ import { SearchIndex } from "./models/SearchIndex.js"
 
 // Inspired by the Just-the-Docs search index loading
 //
-// Search index management: handles two types of cheat sheets
-//
-// site cheat sheets:
-// - have a pre-build index loaded from search-data.json
-// - index created at server during build time using build() method
-// - full text index
-//
-// 3rd party cheat sheets:
-// - have an index build after installing/downloading those documents
-// - index created in user browser with init() method
-// - index for headings only
-//
-// Loads an optionally cached SearchIndex into window.lunr and triggers
-// the Just-the-Docs search method.
+// Simple search index management for installed content
 
 class Search {
 
-  // Site search code from just-the-docs
+  // Site search code derived from just-the-docs
 
   static addEvent(el, type, handler) {
     if (el.attachEvent) el.attachEvent('on' + type, handler); else el.addEventListener(type, handler);
@@ -62,10 +49,6 @@ class Search {
       currentInput = input;
       searchResults.innerHTML = '';
       if (input === '') {
-        return;
-      }
-      // skip search on commands and AI prompts
-      if (input[0] === '?' || input[0] === '!') {
         return;
       }
 
@@ -368,6 +351,12 @@ class Search {
   static async init() {
     window.lunr.tokenizer.separator = /[\s\-/]+/;
 
+    // listen on index updates
+    document.addEventListener('search-index-updated', (e) => {
+      console.log('Search.init: reloading search index...');
+      Search.jtdSearchLoaded(e.detail.index, e.detail.docs);
+    });
+    
     // Try to load from cache
     try {
       const cache = await SearchIndex.getCache();
@@ -383,24 +372,8 @@ class Search {
       console.error(`ERROR: Failed to load index from cache (${e})!`);
     }
 
-    // or build it
-    try {
-      console.log("Building search index...");
-      const result = await SearchIndex.update();
-      Search.jtdSearchLoaded(result.index, result.docs);
-      console.log("Building search index done.");
-    } catch (e) {
-      console.error("Building search index failed.");
-      console.error(e);
-    }
-  }
-
-  static updateForSection(name) {
-    console.log(`FIXME Updating search index for '${name}'...`);
-  }
-
-  static deleteForSection(name) {
-    console.log(`FIXME Dropping search index for '${name}'...`);
+    // or build it initially
+    SearchIndex.update();
   }
 }
 

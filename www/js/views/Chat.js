@@ -4,22 +4,13 @@ import { Chat } from '../models/Chat.js';
 import { ContentView } from "./Content.js";
 import { Libraries } from '../libraries.js';
 import { Settings } from "../models/Settings.js";
+import * as r from "../helpers/render.js";
+
+// Chat view append only adding prompts and responses as well as
+// commands and their results.
 
 export class ChatView {
     static #showdown;           // markdown converter instance (or undefined)
-
-    constructor(el) {
-        el.innerHTML = `Welcome to the chat view!<br>`;
-
-    }
-
-    /*static async connectModel(name) {
-        document.querySelector('#aiChatView .content').innerHTML += `
-            <p>
-                Connecting chat bot <a href="https://huggingface.co/spaces/${name}">${name}</a>
-                (<a href="#/-/Settings">Change</a>).
-            </p>`;
-    }*/
 
     // To be used if non chatbot stuff is to be shown
     //
@@ -49,25 +40,18 @@ export class ChatView {
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
-    static async submitAIPrompt(prompt) {
+    // Submit an LLM prompt
+    static async submitPrompt(prompt) {
         if(0 == prompt.length)
             return;
 
         const chat = ContentView.switch('chat');
-
-        // Scroll down chat view first
         const output = chat.querySelector('.content');
 
-/*        if(!ChatView.#gradioClient) {
-            output.innerHTML += `<div class="loading"><i>Connecting chat bot ...</i></div>`;
-            await ChatView.connectModel(await Settings.get('huggingFaceModel'))
-            .then(() => output.innerHTML += `<div>Successfully connected model.</div>`)
-            .catch((e) => output.innerHTML += `<div class="answer error">ERROR: ${e.message}</div>`);
-        }*/
-        output.innerHTML += `
-            <div class="question"><p>${prompt}</p></div>
+        output.innerHTML += r.renderToString(`
+            <div class="question"><p>{{prompt}}</p></div>
             <div class="loading"><i>Processing ...</i></div>
-        `;
+        `, { prompt });
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
         if(!ChatView.#showdown)

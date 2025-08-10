@@ -3,7 +3,7 @@
 import { Config } from '../config.js';
 import { Settings } from "./Settings.js";
 
-/* Running chat bot prompts against either a OpenAI compatible API or a Huggingface space
+/* Running chat bot prompts against either a ollama API or a Huggingface space
    using GRadioClient 
 
    Emits
@@ -19,20 +19,18 @@ export class Chat {
     static #currentModel;       // currently selected chat bot model (or undefined)
     static #gradioClient;       // client initialized to active model (or undefined)
     static #gradio;             // gradio client module (or undefined)
-    static #reconnectListener; // listener for reconnecting the model (or undefined)
+    static #reconnectListener;  // listener for reconnecting the model (or undefined)
 
-    // return list of available models for the configure ollama API connection
-    static async getOllamaModelList() {
-        const models = await fetch(`${await Settings.get('ollamaEndpoint')}/api/tags`, { method: 'GET' })
+    // update list of available ollama models
+    static async updateOllamaModelList() {
+        const result = await fetch(`${await Settings.get('ollamaEndpoint')}/api/tags`, { method: 'GET' })
             .then(response => {
                 if (!response.ok)
                     throw new Error(`HTTP error! status: ${response.status}`);
-                const result = response.json();
-                return result.models.map(m => m.name);
+                return response.json();
             });
 
-        Settings.set('ollamaModels', models, true /* send event */);
-        return models;
+        await Settings.set('ollamaModels', result.models.map(m => m.name), true /* send event */);
     }
 
     static async #setup() {

@@ -24,7 +24,7 @@ export class CLI {
 
                 } else if (input.value[0] == '?') {
                     const str = input.value.slice(1);
-                    ChatView.submitAIPrompt(str);
+                    ChatView.submitPrompt(str);
 
                 } else {
                     // Nothing to do here, "Enter" will be caught by search list

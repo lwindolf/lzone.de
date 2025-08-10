@@ -4,19 +4,26 @@ import { App } from '../app.js';
 import { Config } from '../config.js';
 import { ContentSource } from './ContentSource.js';
 import { DB } from './DB.js';
-import { Search } from '../search.js';
+import { SearchIndex } from './SearchIndex.js';
 import { Section } from './Section.js';
 import { Settings } from './Settings.js';
 
-// Installing site and 3rd party cheat sheets from curated sources
+// Installing content from a catalog of curated sources
 //
-// site cheat sheets:
-// - are linked only, index update on each run
-// - fetched from defined index JSON
+// There are 2 installation modes: linked and downloaded.
+// The "linked" mode is used for cheat sheets that are
+// already installed in the app. We do not want to impose
+// an initial download of all cheat sheets, so we link them.
+
+// Therefore we have
+//
+// "site" cheat sheets:
+// - configured in config.js
+// - are linked only
 //
 // 3rd party cheat sheets:
-// - are downloaded once
-// - fetched from 3rd party repo as defined in catalog JSONs
+// - are downloaded completely
+// - are defined in catalog JSON source from config.js
 
 export class CheatSheetCatalog {
     // Fetch the catalog for a group
@@ -74,13 +81,6 @@ export class CheatSheetCatalog {
                     const repo = Config.groups[group].install[name];
                     await this.install(group, name, repo, undefined, false);
                 }
-
-                // FIXME: Cleanup orphaned default sections
-                /*for(const tree of await Section.getTree()) {
-                    if(s.default && repos[s.name])
-                        Section.remove(group, s);
-                }*/
-
             } catch (e) {
                 console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
             }
@@ -96,6 +96,14 @@ export class CheatSheetCatalog {
     static removeGroup(group) {
         Section.removeGroup(group);
         App.pathChanged('');
+
+        SearchIndex.update();
+    }
+
+    static remove(group, section) {
+        Section.remove(group, section);
+
+        SearchIndex.update();
     }
 
     // Section installation with full download per default (linking is optional)
@@ -113,7 +121,6 @@ export class CheatSheetCatalog {
         });
 
         document.dispatchEvent(new CustomEvent("sections-updated"));
-        // FIXME: emit event to Search instead
-        Search.init();
+        SearchIndex.update();
     }
 }

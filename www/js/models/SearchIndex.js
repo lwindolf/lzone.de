@@ -21,7 +21,7 @@ export class SearchIndex {
     }
 
     static async getDocs() {
-        const tree = Section.getTree()
+        const tree = await Section.getTree()
         let docs = {};
 
         // Create index for all group childs
@@ -58,6 +58,7 @@ export class SearchIndex {
     }
 
     static async update() {
+        console.log('SearchIndex: Updating index...');
         const docs = await SearchIndex.getDocs();
         let results = {
             docs,
@@ -79,6 +80,7 @@ export class SearchIndex {
             })
         };
         SearchIndex.setCache({ index: JSON.stringify(results.index), docs: results.docs });
-        return results;
-      }
+        document.dispatchEvent(new CustomEvent('search-index-updated', { detail: results }));   
+        console.log('SearchIndex: Updating index done.');
+    }
 }

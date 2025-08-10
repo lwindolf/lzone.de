@@ -78,6 +78,18 @@ function template(str) {
     return window.Handlebars.compile(str);
 }
 
+function renderToString(templateStr, params) {
+    let result;
+
+    try {
+        const template = window.Handlebars.compile(templateStr);
+        result = template(params);
+    } catch (e) {
+        result = `Rendering exception: ${e}`;
+    }
+    return result;
+}
+
 function renderElement(e, template, params, append = false) {
     let result;
 
@@ -102,4 +114,4 @@ function render(selector, template, params, append = false) {
     renderElement(document.querySelector(selector), template, params, append);
 }
 
-export { template, render, renderElement };
+export { template, render, renderToString, renderElement };

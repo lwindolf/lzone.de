@@ -185,7 +185,10 @@ export class CatalogView {
             ));
 
         ev.connect('click', '.installed button', async (e) =>
-            Section.remove(this.#group, e.getAttribute('data-section')));
+            CheatSheetCatalog.remove(
+                this.#group,
+                e.getAttribute('data-section')
+            ));
     }
 
     async #getDiskUsage() {

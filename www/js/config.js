@@ -244,14 +244,6 @@ export class Config {
                 error : response.error,
             };
         },
-        "huggingface-projects/llama-3.2-3B-Instruct": async (client, prompt) => await client.predict("/chat", {
-            message: prompt,
-            max_new_tokens: 1,
-            temperature: 0.1, 		
-            top_p: 0.05, 		
-            top_k: 1, 		
-            repetition_penalty: 1,
-        }),
         "merterbak/gpt-oss-20b-demo": async (client, prompt) => await client.predict("/chat", {
             input_data: prompt,
             max_new_tokens: 2048,

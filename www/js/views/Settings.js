@@ -88,8 +88,8 @@ export class SettingsView {
 
     static async #updateOllamaModels() {
         try {
-            await Chat.getOllamaModelList();
-            // We rely on getOllamaModelList() to trigger a settings-changed event
+            await Chat.updateOllamaModelList();
+            // We rely on updateOllamaModelList() to trigger a settings-changed event
             // for the model <select>. So we just indicate success here.
             document.getElementById('ollamaTestResult').innerText = '✅ Works!';
         } catch (e) {
