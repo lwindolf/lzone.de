@@ -129,7 +129,7 @@ export class SettingsView {
 
                 <p>
                     <input type="checkbox" name="allowCorsProxy">
-                    Always allow using the CORS Proxy <code>https://corsproxy.io</code>
+                    Always allow using the CORS Proxy <code>${Config.corsProxy}</code>
                 </p>
 
                 <!--<h3>Feed Reader</h3>
