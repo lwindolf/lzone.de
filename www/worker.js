@@ -9,7 +9,8 @@ var filesToCache = [
   '/css/feedreader.css',
 
   '/js/components/pinned-apps/js/PinnedApps.js',
-  
+  '/js/components/badge-checker/js/BadgeChecker.js',
+  '/js/components/badge-checker/css/style.css',
   '/js/components/dns-checker/js/DnsChecker.js',
   '/js/components/dns-checker/js/settings.js',
   '/js/components/dns-checker/css/style.css',

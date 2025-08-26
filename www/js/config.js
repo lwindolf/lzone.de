@@ -295,6 +295,12 @@ export class Config {
             settings   : `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
             enabled    : true
         },
+        'Badge Checker': {
+            import     : '../components/badge-checker/js/BadgeChecker.js',
+            embed      : `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
+            settings   : `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
+            enabled    : false
+        }
     };
 
     // welcome text
