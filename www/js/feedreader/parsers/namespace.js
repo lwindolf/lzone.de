@@ -7,6 +7,41 @@ import { XPath } from './xpath.js';
 
 export class NamespaceParser {
     /**
+     * Returns the root node of a given document
+     * 
+     * @param {*} doc    the DOM document
+     * @returns         the root node
+     */
+    static getRootNode(doc) {
+        let root = doc.firstChild;
+        while (root.nodeType != 1) {
+            root = root.nextSibling;
+        }
+        return root;
+    }
+
+    /**
+     * Returns list of all namespaces defined in root node
+     * 
+     * @param {*} root    the DOM root
+     * @returns           list of namespace strings
+     */
+    static getNamespaces(root) {
+        const nsList = [];
+        if (!root.attributes) {
+            console.debug("No attributes!", root);
+            return nsList;
+        }
+        for (let i = 0; i < root.attributes.length; i++) {
+            const attr = root.attributes[i];
+            if (attr.name.startsWith('xmlns:')) {
+                nsList.push(attr.name.substring(6));
+            }
+        }
+        return nsList;
+    }
+
+    /**
      * Parse all RSS namespace childs of a given DOM node
      * 
      * @param {*} root        the DOM root
@@ -28,6 +63,7 @@ export class NamespaceParser {
         if (nsList.includes('dc')) {
             if (!item.description)
                 item.description = XPath.lookup(node, 'dc:description');
+            // FIXME: missing dc:content handling (e.g. https://www.tomshardware.com/feeds.xml)
             if (!item.time)
                 item.time = DateParser.parse(XPath.lookup(node, 'dc:date'));
         }

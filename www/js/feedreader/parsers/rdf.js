@@ -28,7 +28,7 @@ class RDFParser {
 	static parse(str) {
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(str, 'application/xml');
-		const root = doc.firstChild;
+		const root = NamespaceParser.getRootNode(doc);
 		let feed = new Feed({
 			error: XPath.lookup(root, '/parsererror'),
 		});

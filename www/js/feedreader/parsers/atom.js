@@ -41,6 +41,7 @@ class AtomParser {
                 let item = new Item({
                         title       : XPath.lookup(node, 'ns:title'),
                         description : XPath.lookup(node, 'ns:summary'),
+                        // FIXME support atom:content
                         sourceId    : XPath.lookup(node, 'ns:id'),
                         time        : DateParser.parse(XPath.lookup(node, 'ns:updated'))
                 });
@@ -55,7 +56,7 @@ class AtomParser {
         static parse(str) {              
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(str, 'application/xml');
-                const root = doc.firstChild;
+                const root = NamespaceParser.getRootNode(doc);
 
                 let feed = new Feed({
                         error       : XPath.lookup(root, '/parsererror'),
