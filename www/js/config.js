@@ -213,7 +213,12 @@ export class Config {
                 url          : 'https://nocomplexity.com/causalloopdiagram',
                 favicon      : 'https://nocomplexity.com/causalloopdiagram/favicon.ico',
                 description  : 'Visualize non-linear causal relationships'
-            }
+            },
+			'Excalidraw': {
+				url          : 'https://excalidraw.com/',
+				favicon      : 'https://excalidraw.com/apple-touch-icon.png',
+				description  : 'Collaborative drawing whiteboard'
+			}
         },
         'Chat': {
             'Cinny': {
