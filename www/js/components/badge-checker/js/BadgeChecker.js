@@ -3,7 +3,7 @@
 import { Settings } from "../../../models/Settings.js";
 import * as r from "../../../helpers/render.js";
 
-/* Badge Checker widget
+/* Badge widget
 
    Displays remote badge images with a name along it.
    Refreshes the images periodically to get the latest status.
@@ -109,7 +109,7 @@ export class BadgeCheckerSettings extends HTMLElement {
         console.log(badges);
         this.#div.innerHTML = r.renderToString(`
 		    <p>
-		    	The badge checker can be used to have an overview over all build pipelines
+		    	The badge widget can be used to have an overview over all build pipelines
                 you care about. Simply add the badge name and image URL below.
 		    </p>
 

@@ -204,7 +204,8 @@ export class Commands {
 			summary: '🌤️ Embed weather map',
 			func: () => {
 				document.getElementById('CommandsViewEmbed')?.remove();
-				ChatView.addHTMLResult('$ weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>', 'html');
+				ChatView.addToolResult('weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>', 'html');
+
 				navigator.geolocation.getCurrentPosition((position) => {
 					const crd = position.coords;
 
@@ -220,8 +221,8 @@ export class Commands {
 					document.getElementById('CommandsViewEmbed').innerHTML = `Fetching Geo position failed (Error ${err.code}: ${err.message})!`;
 				}, {
 					enableHighAccuracy: false,
-					timeout: 1000,
-					maximumAge: 0,
+					timeout: 20000,
+					maximumAge: 100,
 				});
 				return [undefined, undefined];
 			}

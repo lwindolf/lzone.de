@@ -59,7 +59,7 @@ export class ContentView {
 
             <div id="main-content-chat" class="main-content-view">
                 <p class="loading">
-                This is the chat view. By prefixing prompts with <code>?</code> you can ask questions here and get answers from the configured LLM.
+                This is the combined CLI/chat view. By prefixing prompts with <code>?</code> you can ask questions here and get answers from the configured LLM.
                 Enter <code>!help</code> to see available CLI commands. Not using a prefix will perform a content search.
                 </p>
 
