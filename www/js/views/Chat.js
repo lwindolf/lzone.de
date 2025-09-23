@@ -64,22 +64,21 @@ export class ChatView {
             Settings.set('AIPromptHistory', promptHistory);
         });
 
-        let html;
-        let response;
+        let html, response;
         try {
             response = await Chat.submit(prompt);
         } catch(e) {
             html = `<div class="answer">ERROR: Request failed (${encodeURI(e)})!</div>`;
         }
-
+        
         try {
-            html = ChatView.#showdown.makeHtml(response);
+            html = ChatView.#showdown.makeHtml(response.result);
         } catch(e) {
             html = `ERROR: Markdown parsing error (${encodeURIComponent(e)})!`;
         }
 
         [...chat.querySelectorAll('.loading')].forEach((el) => el.remove());
-        output.innerHTML += `<div class="answer"><div class="llm">${Chat.getLLMName()}</div>${html?html:"ERROR: Request failed!"}</div>`;
+        output.innerHTML += `<div class="answer"><div class="llm">${response.model}</div>${html?html:"ERROR: Request failed!"}</div>`;
         output.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 }

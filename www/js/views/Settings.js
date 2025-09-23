@@ -181,7 +181,6 @@ export class SettingsView {
                         </td>
                         <td>
                             <input type="text" name="huggingFaceToken" value="{{huggingFaceToken}}" width="100%">
-                            <br/>(optional, but required for private spaces)
                         </td>
                     </tr>
                     </table>
