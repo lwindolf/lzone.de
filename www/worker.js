@@ -53,8 +53,10 @@ var filesToCache = [
   '/js/views/Content.js',
   '/js/views/FeedReader.js',
   '/js/views/Feeds.js',
+  '/js/views/FileBrowser.js',
   '/js/views/Folder.js',
   '/js/views/Home.js',
+  '/js/views/Settings.js',
   '/js/views/Sidebar.js'
 ];
 
