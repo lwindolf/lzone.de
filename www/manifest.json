@@ -1,5 +1,6 @@
 {
-    "name": "LZone Cheat Sheets",
+    "name": "lzone.de",
+    "description": "LZone - Content aggregator and feed reader",
     "start_url": "/",
     "icons": [
         {
@@ -13,10 +14,10 @@
             "type": "image/png"
         }
     ],
-    "ProtocolHandlers": [
+    "protocol_handlers": [
         {
-          "protocol": "feed",
-          "url": "/"
+          "protocol": "web+lzonefeedsubscribe",
+          "url": "/?add-feed=%s"
         }
     ],
     "theme_color": "#f0e8e8",

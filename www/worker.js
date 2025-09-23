@@ -17,7 +17,6 @@ var filesToCache = [
 
   '/js/components/saas-multi-status/js/MultiStatus.js',
   '/js/components/saas-multi-status/js/MultiStatusCloud.js',
-  '/js/components/saas-multi-status/js/MultiStatusSettings.js',
   '/js/components/saas-multi-status/js/settings.js',
   '/js/components/saas-multi-status/css/style.css',
 
@@ -62,6 +61,7 @@ var filesToCache = [
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener('install', function(e) {
+  console.log('[ServiceWorker] Install');
   e.waitUntil(
     caches.open(cacheName).then(function(cache) {
       return cache.addAll(filesToCache).then(() => {
@@ -77,6 +77,7 @@ self.addEventListener('install', function(e) {
       });
     })  
   );
+  console.log('[ServiceWorker] Install success!');
 });
 
 /* Serve cached content when offline */

@@ -58,22 +58,29 @@ export class FeedsView {
                 <table>
             </div>
         </p>
-<!--
+
         <h2>Discover Feeds</h2>
 
         FIXME: 🚧 This feature is work in progress, it does not work yet!
-
-        <iframe src='https://lwindolf.github.io/rss-finder?show-title=false' width='100%' height='500px' frameborder='0'>
-        </iframe>
-        -->
+       
+        <x-rss-finder show-title="false" uri-schema="web+feed"></x-rss-finder>
     `);
 
     constructor(el) {
         this.#el = el;
         this.#render();
+
+        // register protocol handler for feed subscription links
+        // provided by rss-finder component
+        navigator.registerProtocolHandler(
+            'web+feed', 
+            '/?add-feed=%s'
+        );
     }
 
     async #render() {
+        await import('../components/rss-finder/widget.js');
+
         r.renderElement(this.#el, FeedsView.#template, {
             tree       : FeedList.root.children
         });
