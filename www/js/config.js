@@ -234,45 +234,18 @@ export class Config {
         }
     };
 
-    // Huggingface spaces for chat bot models
-    static chatBotModels = {
-        "Be-Bo/llama-3-chatbot_70b": async (client, prompt) => await client.predict("/chat", {
-            message: prompt
-        }),
-        "Qwen/Qwen2-72B-Instruct": async (client, prompt) => {
-            let response = await client.predict("/model_chat", { 		
-				query: prompt, 		
-				system: "You are a helpful assistant."
-            });
-            return {
-                data  : [ response.data[1][0][1] ],
-                error : response.error,
-            };
-        },
-        "merterbak/gpt-oss-20b-demo": async (client, prompt) => await client.predict("/chat", {
-            input_data: prompt,
-            max_new_tokens: 2048,
-            system_prompt: "You are a helpful assistant. Reasoning: medium",
-            temperature: 0.7,
-            top_p: 0.9,
-            top_k: 50,
-            repetition_penalty: 1
-        }),
-        "huggingface-projects/gemma-2-9b-it": async (client, prompt) => await client.predict("/chat", {
-            message: prompt,
-            max_new_tokens: 1024,
-            temperature: 0.6,
-            top_p: 0.9,
-            top_k: 50,
-            repetition_penalty: 1.2,
-        }),
-        "eswardivi/Phi-3-mini-128k-instruct": async (client, prompt) => await client.predict("/chat", [
-            prompt,
-            0.6,        // temperature
-            true,       // sampling
-            1024        // max token  
-        ])
-    };
+    // Huggingface LLM completion model names
+    // (from https://huggingface.co/docs/inference-providers/tasks/chat-completion)
+    static chatBotModels = [
+        'openai/gpt-oss-120b',
+        'google/gemma-2-2b-it',
+        'Qwen/Qwen3-Coder-480B-A35B-Instruct',
+        'zai-org/GLM-4.5',
+        'Qwen/Qwen3-4B-Thinking-2507',
+        'Qwen/Qwen2.5-7B-Instruct-1M',
+        'Qwen/Qwen2.5-Coder-32B-Instruct',
+        'deepseek-ai/DeepSeek-R1'
+    ];
 
     // Web components that will embed in the right side toolbox
     //

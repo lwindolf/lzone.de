@@ -162,11 +162,29 @@ export class SettingsView {
                         Consider all prompts public and your data processed by 3rd parties!
                     </p>
 
-                    Space <select name="huggingFaceModel">
-                        {{#each hfModels}}
-                        <option value="{{this}}">{{this}}</option>
-                        {{/each}}
-                    </select>
+                    <table>
+                    <tr>
+                        <td>
+                            Space
+                        </td>
+                        <td>
+                            <select name="huggingFaceModel">
+                                {{#each hfModels}}
+                                <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            HuggingFace Token
+                        </td>
+                        <td>
+                            <input type="text" name="huggingFaceToken" value="{{huggingFaceToken}}" width="100%">
+                            <br/>(optional, but required for private spaces)
+                        </td>
+                    </tr>
+                    </table>
                 </div>
 
                 <div chatType="ollama" class="hidden">
@@ -210,7 +228,8 @@ export class SettingsView {
                     <button onclick='document.location.hash="/-/Settings/Tools"'>Configure</button>
                 </p>
             `), {
-                hfModels     : Object.keys(Config.chatBotModels),
+                hfModels            : Config.chatBotModels,
+                huggingFaceToken    : await Settings.get('huggingFaceToken', ''),
                 ollamaModels
             });
 

@@ -17,8 +17,6 @@ export class Chat {
     static #currentChatType;    // 'none', 'openai' or 'huggingface' (or undefined)
     static #currentModelName;   // human readable name of the current model (or undefined)
     static #currentModel;       // currently selected chat bot model (or undefined)
-    static #gradioClient;       // client initialized to active model (or undefined)
-    static #gradio;             // gradio client module (or undefined)
     static #reconnectListener;  // listener for reconnecting the model (or undefined)
 
     // update list of available ollama models
@@ -37,24 +35,23 @@ export class Chat {
         this.#currentChatType = await Settings.get('chatType', 'none');
 
         if(this.#currentChatType === 'huggingFace') {
-            if(!this.#gradio)
-                this.#gradio = await import('../vendor/gradio-client/index.js');
-
-            document.dispatchEvent(new CustomEvent('chat-connecting', { detail: this.#currentChatType }));
-
             this.#currentModelName = await Settings.get('huggingFaceModel');
-            this.#gradioClient = await this.#gradio.Client.connect(this.#currentModelName);
-
-            document.dispatchEvent(new CustomEvent('chat-connected'));
-
             this.#currentModel = async (prompt) => {
-                const response = await Config.chatBotModels[this.#currentModelName](this.#gradioClient, prompt);
-                return response.data.join('\n');
+                return await this.#hfQuery({ 
+                    messages: [
+                        {
+                            role: "user",
+                            content: prompt,
+                        },
+                    ],
+                    model: this.#currentModelName,
+                }).then((response) => {
+                    return response.choices[0].message.content;
+                });
             }
         }
 
         if(this.#currentChatType === 'ollama') {
-            // ollama support is stateless so no connecting and no gradio
             this.#currentModelName = await Settings.get('ollamaModel');
             this.#currentModel = async (prompt) => {
                 return await fetch(`${await Settings.get('ollamaEndpoint')}/api/generate`, {
@@ -78,7 +75,7 @@ export class Chat {
             }
         }
 
-        if(!this.#reconnectListener)
+        if(!this.#reconnectListener) {
             this.#reconnectListener = (e) => {
                 if((e.detail.name === 'chatType') ||
                    (e.detail.name === 'huggingFaceModel') ||
@@ -86,13 +83,35 @@ export class Chat {
                     this.#currentChatType = e.detail.value;
                     this.#currentModelName = undefined;
                     this.#currentModel = undefined;
-                    this.#gradioClient = undefined;
 
                     console.log('ChatView: Switching model.');
                     this.#setup();
                 }
             };
             document.addEventListener('settings-changed', this.#reconnectListener);
+        }
+    }
+
+    static async #hfQuery(data) {      
+        let headers = {
+            "Content-Type": "application/json",
+        };
+
+        // Optional auth
+        const hf_token = await Settings.get('huggingFaceToken');
+        if(hf_token && hf_token.length > 0)
+            headers.Authorization = `Bearer ${hf_token}`;
+
+        const response = await fetch(
+            "https://router.huggingface.co/v1/chat/completions",
+            {
+                headers,
+                method: "POST",
+                body: JSON.stringify(data),
+            }
+        );
+        const result = await response.json();
+        return result;
     }
 
     static async submit(prompt) {
