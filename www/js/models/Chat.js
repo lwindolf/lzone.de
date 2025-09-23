@@ -1,14 +1,9 @@
 // vim: set ts=4 sw=4:
 
-import { Config } from '../config.js';
 import { Settings } from "./Settings.js";
 
-/* Running chat bot prompts against either a ollama API or a Huggingface space
-   using GRadioClient 
-
-   Emits
-    - "chat-connecting" when a new connection is being prepared
-    - "chat-connected" when the connection is established
+/* Running chat bot prompts against either a ollama API or the Huggingface 
+   chat completions API.
 
    Does not support streaming responses
 */
