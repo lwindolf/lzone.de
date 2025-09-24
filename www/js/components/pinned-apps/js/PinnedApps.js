@@ -19,7 +19,7 @@ class PinnedApps extends HTMLElement {
         // inherit style from root document
         const linkElem = document.createElement("link");
         linkElem.setAttribute("rel", "stylesheet");
-        linkElem.setAttribute("href", "../../../../css/main.css");
+        linkElem.setAttribute("href", "css/main.css");
 
         this.shadowRoot.appendChild(linkElem);
         this.shadowRoot.append(this.#results);
