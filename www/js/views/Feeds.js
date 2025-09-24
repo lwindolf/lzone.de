@@ -162,7 +162,7 @@ export class FeedsView {
             // Fetch content the URL points to
             str = await pfetch(url).then((response) => response.text());
         } catch (e) {
-            console.error(`Error fetching URL ${url}:`, e);
+            console.error(`Error fetching URL %s`, url, e);
             this.#updateSubscribeStatus({
                 fetching : false,
                 error    : 'URL download failed!'
