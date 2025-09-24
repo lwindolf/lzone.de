@@ -46,7 +46,7 @@ class DnsChecker extends HTMLElement {
 		// inherit style from root document
         const linkElem2 = document.createElement("link");
         linkElem2.setAttribute("rel", "stylesheet");
-        linkElem2.setAttribute("href", "../../../../css/main.css");
+        linkElem2.setAttribute("href", "css/main.css");
 
         this.shadowRoot.append(this.#results);
         this.shadowRoot.append(this.#info);
