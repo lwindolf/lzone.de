@@ -37,6 +37,10 @@ export class ContentView {
 
     // routing
     static #internalRoutes = {
+        Catalog  : {
+            switch : 'content',
+            view   : 'Catalog'
+        },
         CLI      : {
             switch : 'chat',
             view   : undefined
@@ -52,6 +56,10 @@ export class ContentView {
         Feed     : {
             switch : 'feedreader',
             view   : 'FeedReader'
+        },
+        Folder     : {
+            switch : 'content',
+            view   : 'Folder'
         },
         Settings : {
             switch : 'content',
@@ -109,11 +117,14 @@ export class ContentView {
         }
 
         const target = ContentView.switch(ContentView.#internalRoutes[name].switch);
-        import(`./${ContentView.#internalRoutes[name].view}.js`).then((module) => {
-            new module[`${name}View`](target, path);
+        const view = ContentView.#internalRoutes[name].view;
+        if(!view)
+            return;
+        import(`./${view}.js`).then((module) => {
+            new module[`${view}View`](target, path);
         })
         .catch((err) => {
-            ContentView.switch('content').innerHTML = `ERROR: Loading view ${name} failed: ${err}`;
+            ContentView.switch('content').innerHTML = `ERROR: Loading view ${view} failed: ${err}`;
         });
     }
 
@@ -128,8 +139,7 @@ export class ContentView {
         ContentView.#resetScroll();
 
         if(0 == path.indexOf('-/')) {
-            const name = path.split('/')[1];
-            ContentView.#load(ContentView.#internalRoutes[name].view, path);
+            ContentView.#load(path.split('/')[1], path);
             return;
         }
 
@@ -179,6 +189,9 @@ export class ContentView {
         document.getElementById('main-content-wrap').style.display = 'block';
         el = document.getElementById(`main-content-${name}`);
         el.style.display = 'block';
+
+        if(name !== 'chat')
+            el.innerHTML = '';
 
         return el;
     }
