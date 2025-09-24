@@ -50,6 +50,7 @@ var filesToCache = [
   '/js/views/Chat.js',
   '/js/views/Checks.js',
   '/js/views/Content.js',
+  '/js/views/Discover.js',
   '/js/views/FeedReader.js',
   '/js/views/Feeds.js',
   '/js/views/FileBrowser.js',

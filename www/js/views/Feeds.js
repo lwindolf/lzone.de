@@ -36,32 +36,20 @@ export class FeedsView {
         <h2>Add subscription</h2>
         
         <p>
-            Please provide the feed / website URL:
-
             <div id='customInstall'>
-                <table>
-                    <tr>
-                        <td>URL:</td>
-                        <td><input type='text' width='100%' id='url' placeholder='URL'/></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><button class="btn">Subscribe</button></td>
-                    </tr>
-                    {{#if error}}
-                    <tr>
-                        <td>
-                            <div>Error: {{error}}</div>
-                        </td>
-                    </tr>
-                    {{/if}}
-                <table>
+                <div>
+                        <input type='text' width='100%' id='url' placeholder='URL'/>
+                        <button>Subscribe</button>
+                </div>
+                {{#if error}}
+                    <div>Error: {{error}}</div>
+                {{/if}}
             </div>
         </p>
 
-        <h2>Discover Feeds</h2>
+        <p>Or discover feeds from the different sources...</p>
 
-        <x-rss-finder show-title="false" scheme="web+feed:" icon-path="js/components/rss-finder/icons" target="_self"></x-rss-finder>
+        <button class="btn" onclick="location.href='#/-/Discover'">Discover Feeds</button>
     `);
 
     constructor(el) {

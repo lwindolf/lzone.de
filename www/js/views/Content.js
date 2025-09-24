@@ -2,12 +2,6 @@
 
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
-import { CatalogView } from './Catalog.js';
-import { FeedsView } from './Feeds.js';
-import { FolderView } from './Folder.js';
-import { FeedReaderView } from './FeedReader.js';
-import { SettingsView } from './Settings.js';
-import { OPFSFileBrowserView } from './FileBrowser.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
 import { PdfRenderer } from './renderers/Pdf.js';
 import * as r from "../helpers/render.js";
@@ -39,6 +33,34 @@ export class ContentView {
         htm      : CheatSheetRenderer,
         html     : CheatSheetRenderer,
         pdf      : PdfRenderer
+    };
+
+    // routing
+    static #internalRoutes = {
+        CLI      : {
+            switch : 'chat',
+            view   : undefined
+        },
+        Discover : {
+            switch : 'content',
+            view   : 'Discover'
+        },
+        Feeds    : {
+            switch : 'content',
+            view   : 'Feeds'
+        },
+        Feed     : {
+            switch : 'feedreader',
+            view   : 'FeedReader'
+        },
+        Settings : {
+            switch : 'content',
+            view   : 'Settings'
+        },
+        OPFS     : {
+            switch : 'content',
+            view   : 'OPFSFileBrowser'
+        }
     };
 
     // Note: we expect only one instantiation
@@ -80,6 +102,21 @@ export class ContentView {
 
     static #resetScroll = () => document.getElementById('breadcrumb-nav').scrollIntoView({ behavior: 'instant', block: 'center' });
 
+    static #load(name, path) {
+        if(!Object.keys(ContentView.#internalRoutes).includes(name)) {
+            ContentView.switch('content').innerHTML = `ERROR: No internal route for ${name}`;
+            return;
+        }
+
+        const target = ContentView.switch(ContentView.#internalRoutes[name].switch);
+        import(`./${ContentView.#internalRoutes[name].view}.js`).then((module) => {
+            new module[`${name}View`](target, path);
+        })
+        .catch((err) => {
+            ContentView.switch('content').innerHTML = `ERROR: Loading view ${name} failed: ${err}`;
+        });
+    }
+
     // Render all content that needs to be shown in #main-content-content
     //
     // Routing schema:
@@ -88,46 +125,14 @@ export class ContentView {
     //
     // For installed content a file extension based renderer will be used.
     static async render(path) {
-        const internalRoutes = {
-            CLI      : {
-                switch : 'chat',
-                view   : undefined
-            },
-            Feeds    : {
-                switch : 'content',
-                view   : FeedsView
-            },
-            Feed     : {
-                switch : 'feedreader',
-                view   : FeedReaderView
-            },
-            Settings : {
-                switch : 'content',
-                view   : SettingsView
-            },
-            OPFS     : {
-                switch : 'content',
-                view   : OPFSFileBrowserView
-            }
-        };
-
         ContentView.#resetScroll();
 
         if(0 == path.indexOf('-/')) {
             const name = path.split('/')[1];
-            if(!Object.keys(internalRoutes).includes(name)) {
-                ContentView.switch('content').innerHTML = `ERROR: No internal route for ${name}`;
-                return;
-            }
-
-            const target = ContentView.switch(internalRoutes[name].switch);
-            if (internalRoutes[name].view)
-                new internalRoutes[name].view(target, path);
-
+            ContentView.#load(ContentView.#internalRoutes[name].view, path);
             return;
         }
 
-        const el = ContentView.switch('content');
         const id = path.replace(/\//g, ':::');
         const s = await Section.get(id);
         
@@ -135,10 +140,10 @@ export class ContentView {
             // if path is toplevel it is a section and we render the catalog settings
             if (-1 == id.indexOf(':::'))
                 // For a group (toplevel folder) we render a catalog
-                new CatalogView(el, path);
+                ContentView.#load('Catalog', path);
             else
                 // otherwise we render a folder overview
-                new FolderView(el, path);
+                ContentView.#load('Folder', path);
             return;
         }
 
@@ -150,8 +155,9 @@ export class ContentView {
         }
 
         const extension = d.baseName.split('.').pop().toLowerCase();
+        const el = ContentView.switch('content');
         if (!Object.keys(ContentView.#renderers).includes(extension)) {
-            el.innerHTML = `<h1>ERROR: No renderer for ${extension} files</h1>`;
+            el.innerHTML = `ERROR: No renderer for ${extension} files`;
             return;
         } else {
             await ContentView.#renderers[extension].load(el, d)
