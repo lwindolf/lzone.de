@@ -2,7 +2,9 @@
 
 A backend less content aggregator for Markdown and RSS. Collect and hoard knowledge like in the 90s!
 
-Loads all the content from [lwindolf/lzone-cheat-sheets](https://github.com/lwindolf/lzone-cheat-sheets).
+- Install tech knowledge from a curated catalog [lwindolf/lzone-cheat-sheets](https://github.com/lwindolf/lzone-cheat-sheets).
+- Integration with ollama / HuggingFace models
+- No AI slop! Real human expert knowledge.
 
 ## What is this?
 
