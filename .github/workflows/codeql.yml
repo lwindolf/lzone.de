@@ -70,7 +70,7 @@ jobs:
         config: |
           paths:
           - www/js
-          paths_ignore:
+          paths-ignore:
           - www/js/vendor
 
     # If the analyze step fails for one of the languages you are analyzing with
