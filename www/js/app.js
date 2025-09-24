@@ -42,6 +42,9 @@ export class App {
                 ContentView.render(path);
                 return;
             }
+
+            console.warn("Unknown location hash format: " + window.location.hash);
+            return;
         }
 
         App.#pathChanged('');

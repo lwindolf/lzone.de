@@ -149,7 +149,7 @@ export class Sidebar {
         });
     
     static selectionChanged(path) {
-        const cssPath = path.replaceAll(/\//g, ":::");
+        const cssPath = path.replace(/\/$/, "").replaceAll(/\//g, ":::");
 
         try {
             const sidebar = document.getElementById('sidebar');
@@ -171,7 +171,7 @@ export class Sidebar {
                 Array.from(sidebar.querySelectorAll(`li[data-path="${tmp}"]`)).forEach(
                     (p) => p.classList.add('active')
                 );
-                tmp = tmp.replace(/:::[^:]+$/, "");
+                tmp = tmp.replace(/:::.*?$/, "");
             }
 
             // Selection marker

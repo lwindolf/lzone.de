@@ -61,25 +61,31 @@ export class FeedsView {
 
         <h2>Discover Feeds</h2>
 
-        FIXME: 🚧 This feature is work in progress, it does not work yet!
-       
-        <x-rss-finder show-title="false" uri-schema="web+feed"></x-rss-finder>
+        <x-rss-finder show-title="false" scheme="web+feed:" icon-path="js/components/rss-finder/icons" target="_self"></x-rss-finder>
     `);
 
     constructor(el) {
         this.#el = el;
-        this.#render();
+
+        if(document.location.hash.startsWith('#/-/Feeds/Add')) {
+            let url = document.location.search.split('url=')[1] || 'unknown';
+            url = decodeURIComponent(url);
+            url = url.replace(/^web\+feed:/, '');
+            this.#subscribe(url);
+        } else {
+            this.#render();
+        }
 
         // register protocol handler for feed subscription links
         // provided by rss-finder component
         navigator.registerProtocolHandler(
             'web+feed', 
-            '/?add-feed=%s'
+            '/?url=%s#/-/Feeds/Add'
         );
     }
 
     async #render() {
-        await import('../components/rss-finder/widget.js');
+        await import('../components/rss-finder/js/widget.js');
 
         r.renderElement(this.#el, FeedsView.#template, {
             tree       : FeedList.root.children

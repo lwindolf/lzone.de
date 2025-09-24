@@ -16,8 +16,8 @@
     ],
     "protocol_handlers": [
         {
-          "protocol": "web+lzonefeedsubscribe",
-          "url": "/?add-feed=%s"
+          "protocol": "web+feed",
+          "url": "/?url=%s#/-/Feeds/Add"
         }
     ],
     "theme_color": "#f0e8e8",
