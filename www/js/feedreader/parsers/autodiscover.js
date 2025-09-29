@@ -9,9 +9,20 @@ import { XPath } from './xpath.js';
 import { AtomParser } from './atom.js';
 import { RSSParser } from './rss.js';
 import { RDFParser } from './rdf.js';
+import { JSONFeedParser } from './jsonfeed.js';
 
 // Return a parser class matching the given document string or undefined
 function parserAutoDiscover(str, url = "") {
+    if (0 == str.indexOf('{')) {
+        try {
+            const obj = JSON.parse(str);
+            if (obj.version && obj.version.startsWith("https://jsonfeed.org/version/"))
+                return JSONFeedParser;
+        } catch(e) {
+            // ignore
+        }
+    }
+
     let parsers = [AtomParser, RSSParser, RDFParser];
     const parser = new DOMParser();
     const doc = parser.parseFromString(str, 'application/xml');
@@ -55,6 +66,7 @@ function linkAutoDiscover(str, baseURL) {
         if ((type === 'application/atom+xml') ||
             (type === 'application/rss+xml') ||
             (type === 'application/rdf+xml') ||
+            (type === 'application/json') ||
             (type === 'text/xml'))
             results.push(n.getAttribute('href'));
     });
@@ -78,6 +90,7 @@ function linkAutoDiscover(str, baseURL) {
                         if ((type === 'application/atom+xml') ||
                             (type === 'application/rss+xml') ||
                             (type === 'application/rdf+xml') ||
+                            (type === 'application/json') ||
                             (type === 'text/xml'))
                                 results.push(url);
         }
