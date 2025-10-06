@@ -88,6 +88,7 @@ export class Sidebar {
         el.addEventListener("drop",      this.#onDrop.bind(this));
 
         // Listen for feed updates
+        document.addEventListener('nodeRemoved', this.#render());
         document.addEventListener('nodeUpdated', (ev) => {    
             const id = ev.detail.id;       
             const feed = el.querySelector(`#feedlist .nav-list-item[data-id="${id}"]`);
@@ -95,15 +96,16 @@ export class Sidebar {
                 const feedTitle   = feed.querySelector('.title');
                 const unreadCount = feed.querySelector('.count');
                 const icon        = feed.querySelector('.icon');
-                feedTitle.textContent = ev.detail.title;
-                unreadCount.textContent = ev.detail.unreadCount;
+                if (feedTitle.textContent != ev.detail.title)
+                    feedTitle.textContent = ev.detail.title;
+                if (unreadCount.textContent != '' + ev.detail.unreadCount)
+                    unreadCount.textContent = ev.detail.unreadCount;
                 unreadCount.dataset.count = ev.detail.unreadCount;
                 icon.src = ev.detail.icon;
             } else {
                 this.#render();
             }
         });
-        document.addEventListener('nodeRemoved', this.#render());
 
         document.addEventListener('sections-updated', this.#render);
         document.addEventListener('click', (e) => {
