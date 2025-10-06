@@ -18,6 +18,10 @@
         {
           "protocol": "web+feed",
           "url": "/?url=%s#/-/Feeds/Add"
+        },
+        {
+          "protocol": "feed",
+          "url": "/?url=%s#/-/Feeds/Add"
         }
     ],
     "theme_color": "#f0e8e8",
