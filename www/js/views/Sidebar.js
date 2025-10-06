@@ -101,7 +101,9 @@ export class Sidebar {
                 if (unreadCount.textContent != '' + ev.detail.unreadCount)
                     unreadCount.textContent = ev.detail.unreadCount;
                 unreadCount.dataset.count = ev.detail.unreadCount;
-                icon.src = ev.detail.icon;
+                if (icon && ev.detail.icon && icon.src != ev.detail.icon) {
+                    icon.src = ev.detail.icon;
+                }
             } else {
                 this.#render();
             }
@@ -164,16 +166,13 @@ export class Sidebar {
             if("" === path)
                 return;
 
-            // Open section
-            sidebar.querySelector(`li[data-path="${cssPath.replace(/:::.*/, "")}"]`)?.classList.add('active');
-
-            // Open sub entries
+            // Open section parents
             let tmp = cssPath;
             while (tmp.indexOf(':::') !== -1) {
                 Array.from(sidebar.querySelectorAll(`li[data-path="${tmp}"]`)).forEach(
                     (p) => p.classList.add('active')
                 );
-                tmp = tmp.replace(/:::.*?$/, "");
+                tmp = tmp.replace(/:::[^:]*$/, "");
             }
 
             // Selection marker
