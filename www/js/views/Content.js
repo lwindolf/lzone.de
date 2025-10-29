@@ -190,7 +190,7 @@ export class ContentView {
         el = document.getElementById(`main-content-${name}`);
         el.style.display = 'block';
 
-        if(name !== 'chat')
+        if((name !== 'chat') && (name !== 'search'))
             el.innerHTML = '';
 
         return el;
