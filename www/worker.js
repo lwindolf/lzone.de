@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20251008;
+var cacheVersion = 20251029;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
