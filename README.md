@@ -37,8 +37,6 @@ On the technical side
 - Customize check tools in `www/js/views/Checks.js`
 - Update base URL + title in `www/index.html` and `www/manifest.json`
 
-FIXME: describe how to setup SaaS multi status updating!
-
 ## Building / Testing
 
     npm install
