@@ -28,6 +28,27 @@ class DnsChecker extends HTMLElement {
     #info;
     #results;
 
+	// static constructor to register CLI commands
+	static initialize() {
+		window.app.Commands.register({
+			dig: {
+				syntax: 'dig [<type>] <domain>',
+				summary: 'Simple Cloudflare DoH lookup',
+				func: async (cmd) => {
+					let record = cmd[2] ? cmd[1] : 'A';
+					let domain = cmd[2] ? cmd[2] : cmd[1];
+					const result = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${record}`, {
+						headers: {
+							'Accept': 'application/dns-json'
+						}
+					}).then((r) => r.json());
+					return ["text", JSON.stringify(result, null, 2)];
+				}
+			}
+			// FIXME: add enumeration command
+		});
+	}
+
     constructor() {
         super();
 
@@ -331,3 +352,5 @@ export class DnsCheckerSettings extends HTMLElement {
 
 customElements.define('x-dns-checker', DnsChecker);
 customElements.define('x-dns-checker-settings', DnsCheckerSettings);
+
+DnsChecker.initialize();

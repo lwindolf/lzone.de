@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { CLI } from './CLI.js';
+import { Commands } from './commands.js';
 import { Layout } from './layout.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
@@ -81,7 +82,10 @@ export class App {
             });
 
         new Layout();
-        window.FeedReader = new FeedReader();
+        window.app = {
+            Commands,
+            FeedReader : new FeedReader()
+        };
         new Sidebar(document.getElementById('site-nav'));
         new ContentView(document.getElementById('main-content-wrap'));
 

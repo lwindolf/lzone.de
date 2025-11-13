@@ -9,7 +9,7 @@ export class Commands {
 	static commands = {
 		help: {
 			syntax: 'help',
-			summary: 'Show this help again\n',
+			summary: 'Show this help again',
 			func: () => ["text", this.help()]
 		},
 		base64: {
@@ -25,7 +25,7 @@ export class Commands {
 		},
 		cw: {
 			syntax: 'cw',
-			summary: '📅 Print calendar weeks',
+			summary: 'Print calendar weeks',
 			func: () => {
 				const d = new Date();
 				const getWeek = (date) => {
@@ -90,20 +90,6 @@ export class Commands {
 			syntax: 'date <epoch>',
 			summary: 'epoch -> date',
 			func: (cmd, paramStr) => ["text", new Date(parseInt(paramStr))]
-		},
-		dig: {
-			syntax: 'dig [<type>] <domain>',
-			summary: 'Simple Cloudflare DoH lookup',
-			func: async (cmd) => {
-				let record = cmd[2] ? cmd[1] : 'A';
-				let domain = cmd[2] ? cmd[2] : cmd[1];
-				const result = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${record}`, {
-					headers: {
-						'Accept': 'application/dns-json'
-					}
-				}).then((r) => r.json());
-				return ["text", JSON.stringify(result, null, 2)];
-			}
 		},
 		epoch: {
 			syntax: 'epoch <date>',
@@ -201,7 +187,7 @@ export class Commands {
 		},
 		weather: {
 			syntax: 'weather',
-			summary: '🌤️ Embed weather map',
+			summary: 'Embed weather map',
 			func: () => {
 				document.getElementById('CommandsViewEmbed')?.remove();
 				ChatView.addToolResult('weather', '<div id="CommandsViewEmbed">Loading weather widget...</div>', 'html');
@@ -229,7 +215,7 @@ export class Commands {
 		},
 		webamp: {
 			syntax: 'webamp',
-			summary: '🎸 Embed music player',
+			summary: 'Embed music player',
 			func: () => {
 				if(document.getElementById('webampApp')) {
 					window.webamp.reopen();
@@ -250,13 +236,20 @@ export class Commands {
 		}
 	};
 
+	// Allow extending commands
+	static register(additionalCommands) {
+		Commands.commands = {...Commands.commands, ...additionalCommands};
+	}
+
 	static isValid = (str) => Object.hasOwn(Commands.commands, str.split(/\s+/)[0])
 	static help = () => 'Syntax:\n\n' + 
 						'    <query>             # Search all cheat sheets\n' +
 						'    ?<query>            # Perform a chat bot query\n' +
 						'    !<command>          # Run a command\n\n' +
 						'Commands:\n\n' +
-						Object.entries(Commands.commands).map((e) => {
+						Object.entries(Commands.commands).sort((a,b) => {
+							return a[0].localeCompare(b[0]);
+						}).map((e) => {
 							return '    ' + e[1].syntax + ' '.repeat(30 - e[1].syntax.length) + ' # ' + e[1].summary;
 						}).join('\n');
 	
