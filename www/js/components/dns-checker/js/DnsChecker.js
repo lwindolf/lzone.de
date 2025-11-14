@@ -44,8 +44,24 @@ class DnsChecker extends HTMLElement {
 					}).then((r) => r.json());
 					return ["text", JSON.stringify(result, null, 2)];
 				}
+			},
+			crtsh: {
+				syntax: 'crtsh <domain>',
+				summary: 'Simple certificate lookup via crt.sh',
+				func: async (cmd) => {
+					return ["text", JSON.stringify(await DnsChecker.#crtsh(cmd[1]), null, 2)];
+				}
+			},
+			dns: {
+				syntax: 'dns <domain>',
+				summary: 'Simple lookup for standard DNS records via Cloudflare',
+				func: async (cmd) => {
+					return [
+						"text",
+						Object.values(await DnsChecker.#dnsrecords(cmd[1])).join('\n')
+					];
+				}
 			}
-			// FIXME: add enumeration command
 		});
 	}
 
@@ -153,10 +169,29 @@ class DnsChecker extends HTMLElement {
 		});
     }
 
-	#stringifyResolveAnswer(record, answer) {
+	static #stringifyResolveAnswer(record, answer) {
 		return answer.sort().map((e) => {
 			return `${e.name} ${record} ${e.data}`
 		}).join('\n');
+	}
+
+	static async #dnsrecords(domain) {
+		const results = {};
+
+		for(const record of ['A', 'AAAA', 'NS', 'SOA', 'TXT', 'CNAME', 'PTR', 'SRV', 'MX', 'CAA']) {
+			const response = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${record}`, {
+				headers: {
+					'Accept': 'application/dns-json'
+				}
+			})
+			.then((r) => r.json())
+			.then((j) => {
+				if(j.Answer)
+					results[record] = DnsChecker.#stringifyResolveAnswer(record, j.Answer || []);
+			});
+		}
+		
+		return results;
 	}
 
 	async #resolve(e, domain) {
@@ -190,7 +225,7 @@ class DnsChecker extends HTMLElement {
 				}
 
 				if('Answer' in result)
-					r.value = this.#stringifyResolveAnswer(record, result.Answer);
+					r.value = DnsChecker.#stringifyResolveAnswer(record, result.Answer);
 			}
 
 			d.updated = new Date().getTime();
@@ -204,6 +239,11 @@ class DnsChecker extends HTMLElement {
 		});
 	}
 
+	static async #crtsh(domain) {
+		const response = await fetch(`https://crt.sh/json?q=${domain}`);
+        return await response.json();
+	}
+
 	async #runCheck(e, domain) {
 		const d = await settingsGet(`domain:::${domain}`, { updated: 0, subdomains: {} });
 		if(d.updated < new Date().getTime() - this.#refreshInterval*60*1000)
@@ -214,8 +254,7 @@ class DnsChecker extends HTMLElement {
 		// Fetch Atom feed from crt.sh for subdomain enumeration
 		this.#setInfo(`<i>Enumerating '${domain}'...</i>`);
 
-		const response = await fetch(`https://crt.sh/json?q=${domain}`);
-        const data = await response.json();
+		const data = await DnsChecker.#crtsh(domain);
 		let newSubdomains = {};
 
 		// Mark all previous subdomains as old
