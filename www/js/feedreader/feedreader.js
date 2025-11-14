@@ -5,6 +5,7 @@ import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { Action } from '../Action.js';
 import { HelpDialog } from '../dialogs/help.js';
 import { keydown } from '../helpers/events.js';
 
@@ -22,6 +23,13 @@ export class FeedReader {
 
     #selectedFeedId = null;
 
+    // static constructor
+    static initialize() {
+        Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(params.id));
+        Action.register('feedreader:updateNode', (params) => FeedList.update(params.id));
+        Action.register('feedreader:removeNode', (params) => FeedList.remove(params.id));
+    }
+
     constructor() {
         // global hotkeys
         keydown('#feedreader', /* F1 */            (e) => (e.keyCode === 112),             () => new HelpDialog());
@@ -38,3 +46,5 @@ export class FeedReader {
         document.location.hash = `#/-/Feed/${id}`;
     }   
 }
+
+FeedReader.initialize();

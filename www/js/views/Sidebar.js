@@ -1,7 +1,9 @@
 // vim: set ts=4 sw=4:
 
-import { Section } from "../models/Section.js";
+import { ContextMenu } from "../ContextMenu.js";
 import { FeedList } from "../feedreader/feedlist.js";
+import { Section } from "../models/Section.js";
+
 import * as r from "../helpers/render.js";
 
 /* Dynamic sidebar building for installed content */
@@ -56,7 +58,7 @@ export class Sidebar {
    
         <!-- FeedReader section -->
         <ul class="nav-list">
-                <li class="nav-list-item" data-path="feeds">
+                <li class="nav-list-item context-node" data-type='folder' data-path="feeds">
                         <a class="nav-list-link pwa-title" data-path="feeds" href="#/-/Feeds">
                                 Feeds
                         </a>
@@ -65,7 +67,7 @@ export class Sidebar {
         <div id="feedlist">
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
-                    <li class='nav-list-item' data-id='{{id}}'>
+                    <li class='nav-list-item context-node' data-type='feed' data-id='{{id}}'>
                         <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
                             <div class="feed">
                                 {{> sidebarChildFeed feed=this }}
@@ -122,6 +124,46 @@ export class Sidebar {
                 target.parentNode.classList.toggle('active');
             }
         });
+
+        new ContextMenu(this.#el, [
+            // Feed options
+            {
+                label: 'Mark Read',
+                action: 'feedreader:markRead',
+                type: 'feed'
+            },
+            {
+                label: 'Update',
+                action: 'feedreader:updateNode',
+                type: 'feed'
+            },
+            /*{
+                label: 'Remove',
+                action: 'feedreader:removeNode',
+                type: 'feed'
+            },*/
+            // Folder options
+            /*{
+                label: 'Add Feed',
+                action: 'feedreader:addFeed',
+                type: 'folder'
+            },
+            {
+                label: 'Mark All Read',
+                action: 'feedreader:markRead',
+                type: 'folder'
+            },
+            {
+                label: 'Update',
+                action: 'feedreader:updateNode',
+                type: 'folder'
+            },
+            {
+                label: 'Remove',
+                action: 'feedreader:removeNode',
+                type: 'folder'
+            }*/
+        ]);
     }
 
     #onDrop(e) {

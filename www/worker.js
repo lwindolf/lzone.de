@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20251029;
+var cacheVersion = 20251114;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
   '/',
@@ -20,10 +20,14 @@ var filesToCache = [
   '/js/components/saas-multi-status/js/settings.js',
   '/js/components/saas-multi-status/css/style.css',
 
+  '/js/Action.js',
   '/js/app.js',
-  '/js/config.js',
   '/js/CLI.js',
   '/js/commands.js',
+  '/js/config.js',
+  '/js/ContextMenu.js',
+  '/js/layout.js',
+  '/js/libraries.js',
   '/js/search.js',
 
   '/js/helpers/debounce.js',
