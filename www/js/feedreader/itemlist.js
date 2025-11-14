@@ -52,6 +52,9 @@ export class ItemList {
 
         // FIXME: handle folders
 
+        if(window.app.debug)
+            console.debug(`Loading items for feed ${node.title}`, items);
+
         render('#itemlistViewTitle', ItemList.#headerTemplate, { node, view: 'feedlist' });
         render('#itemlistViewContent', ItemList.#listTemplate, { node, items });
         items.forEach((i) => ItemList.#itemUpdated(i));
