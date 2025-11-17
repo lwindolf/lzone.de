@@ -116,7 +116,12 @@ export class Config {
                 url          : 'https://labs.iximiuz.com/playgrounds',
                 favicon      : 'https://iximiuz.com/favicon.ico',
                 description  : 'VM, Docker, Podman, containerd, Ubuntu, k8s instances'
-            }
+            },
+            'WurmTerm': {
+                url          : 'https://wurmterm.lzone.de/',
+                favicon      : 'https://wurmterm.lzone.de/favicon.ico',
+                description  : 'Follows along SSH sessions / k8s contexts and detects problems'
+            }   
         },
         'Networking': {
             'ipinfo.io': {
