@@ -1,3 +1,5 @@
+// vim: set ts=4 sw=4:
+
 /* Context menu (used for the side bar only) with for actions and data binding */
 
 import { Action } from './Action.js';
