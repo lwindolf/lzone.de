@@ -15,14 +15,6 @@ export class ItemList {
     displayedFeedId;    // id of the feed that is currently displayed
     selected;           // selected item (or undefined)
 
-    static #headerTemplate = template(`
-        <span class='switchView' data-view='{{view}}'>&lt;</span>
-        <a class='title' target='_system' href='{{node.homepage}}'>{{node.title}}</a>
-        {{#if node.icon}}
-            <img class='icon' src='{{node.icon}}'/>
-        {{/if}}
-    `);
-
     static #listTemplate = template(`
         <div class='newItems hidden'>Click to show new items</div>
         {{#each items}}
@@ -55,8 +47,10 @@ export class ItemList {
         if(window.app.debug)
             console.debug(`Loading items for feed ${node.title}`, items);
 
-        render('#itemlistViewTitle', ItemList.#headerTemplate, { node, view: 'feedlist' });
-        render('#itemlistViewContent', ItemList.#listTemplate, { node, items });
+        render('#itemlistViewContent', ItemList.#listTemplate, {
+            node,
+            items: items.sort((a, b) => b.time - a.time)
+        });
         items.forEach((i) => ItemList.#itemUpdated(i));
     }
 
