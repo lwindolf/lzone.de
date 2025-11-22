@@ -220,6 +220,17 @@ export class SettingsView {
                 <div>
                     <button id="resetPwaCache">Reset PWA cache</button>
                 </div>
+                <p>Current worker version: ${await new Promise((resolve) => {
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        const messageChannel = new MessageChannel();
+                        messageChannel.port1.onmessage = (event) => {
+                            resolve(event.data);
+                        };
+                        navigator.serviceWorker.controller.postMessage('version', [messageChannel.port2]);
+                    } else {
+                        resolve('N/A');
+                    }
+                })}</p>
 
                 <h3>Sidebar Tools</h3>
                 
