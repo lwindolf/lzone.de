@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { ChatView } from "./views/Chat.js";
+import { Settings } from "./models/Settings.js";
 import { pfetch } from './feedreader/net.js';
 
 // Poor man helper functions, cheaply implemented
@@ -40,7 +41,7 @@ export class Commands {
 						.map((i) => {
 							const m = new Date(d);
 							m.setDate(m.getDate() + (1 - m.getDay()));	// set to Monday
-							m.setDate(m.getDate() + 7*i)				// skip weeks
+							m.setDate(m.getDate() + 7 * i)				// skip weeks
 							return `week ${getWeek(m)} --- Monday ${m.toLocaleDateString()}`;
 						})
 						.join('\n')];
@@ -73,7 +74,7 @@ export class Commands {
 				}
 				const text = await response.text();
 
-				if(cmd[2] && cmd[2].startsWith('>')) {
+				if (cmd[2] && cmd[2].startsWith('>')) {
 					const filename = cmd[2].substring(1).trim();
 					const root = await navigator.storage.getDirectory();
 					const fileHandle = await root.getFileHandle(filename, { create: true });
@@ -128,7 +129,7 @@ export class Commands {
 				}
 				console.log("Listing OPFS root directory");
 
-				if(entries.length === 0)
+				if (entries.length === 0)
 					return ["text", "No entries in OPFS found."];
 				else
 					return ["text", entries.sort().join('\n')];
@@ -151,7 +152,7 @@ export class Commands {
 		mkpasswd: {
 			syntax: 'mkpasswd [<len>] [<chars>]',
 			summary: 'Random password',
-			func: (cmd) => 
+			func: (cmd) =>
 				["text", this.#secpw(
 					cmd[1] ? parseInt(cmd[1]) : undefined,
 					cmd[2]
@@ -160,7 +161,7 @@ export class Commands {
 		qr: {
 			syntax: 'qr <URL>',
 			summary: 'Create QR code',
-			func: (cmd, paramStr) => 			
+			func: (cmd, paramStr) =>
 				["html", `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURI(paramStr)}"/>`]
 		},
 		rm: {
@@ -184,6 +185,11 @@ export class Commands {
 				const v = parseInt(cmd[1]);
 				return ["text", `${v * 1024} KiB\n${v / 1024} GiB\n${v / 1024 / 1024} TiB`];
 			}
+		},
+		setting: {
+			syntax: 'setting <name>',
+			summary: 'Get a setting value',
+			func: async (cmd) => ["text", JSON.stringify(await Settings.get(cmd[1], ''))]
 		},
 		weather: {
 			syntax: 'weather',
@@ -217,7 +223,7 @@ export class Commands {
 			syntax: 'webamp',
 			summary: 'Embed music player',
 			func: () => {
-				if(document.getElementById('webampApp')) {
+				if (document.getElementById('webampApp')) {
 					window.webamp.reopen();
 				} else {
 					const div = document.createElement("div");
@@ -238,21 +244,21 @@ export class Commands {
 
 	// Allow extending commands
 	static register(additionalCommands) {
-		Commands.commands = {...Commands.commands, ...additionalCommands};
+		Commands.commands = { ...Commands.commands, ...additionalCommands };
 	}
 
 	static isValid = (str) => Object.hasOwn(Commands.commands, str.split(/\s+/)[0])
-	static help = () => 'Syntax:\n\n' + 
-						'    <query>             # Search all cheat sheets\n' +
-						'    ?<query>            # Perform a chat bot query\n' +
-						'    !<command>          # Run a command\n\n' +
-						'Commands:\n\n' +
-						Object.entries(Commands.commands).sort((a,b) => {
-							return a[0].localeCompare(b[0]);
-						}).map((e) => {
-							return '    ' + e[1].syntax + ' '.repeat(30 - e[1].syntax.length) + ' # ' + e[1].summary;
-						}).join('\n');
-	
+	static help = () => 'Syntax:\n\n' +
+		'    <query>             # Search all cheat sheets\n' +
+		'    ?<query>            # Perform a chat bot query\n' +
+		'    !<command>          # Run a command\n\n' +
+		'Commands:\n\n' +
+		Object.entries(Commands.commands).sort((a, b) => {
+			return a[0].localeCompare(b[0]);
+		}).map((e) => {
+			return '    ' + e[1].syntax + ' '.repeat(30 - e[1].syntax.length) + ' # ' + e[1].summary;
+		}).join('\n');
+
 	// Slightly modified from https://github.com/hannob/secpw/blob/main/secpw.js
 	/* (c) Hanno Boeck, 0BSD license, https://password.hboeck.de/ */
 	static #secpw(pwlen, pwchars) {
@@ -308,6 +314,8 @@ export class Commands {
 		try {
 			const cmd = str.split(/\s/);
 			const paramStr = str.substring(cmd[0].length);
+			if(Commands.commands[cmd[0]] === undefined)
+				return ["text", `Unknown command`];
 			return await Commands.commands[cmd[0]].func(cmd, paramStr);
 		} catch (e) {
 			return ["text", `ERROR: Exception (${e})`];
