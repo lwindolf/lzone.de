@@ -120,8 +120,10 @@ export class ItemList {
             ItemList.selected = undefined;
             ItemList.#loadFeed(parseInt(e.detail.id));
         });
-        document.addEventListener('itemsAdded',   () =>
-            document.querySelector('#itemlistViewContent .newItems').classList.remove('hidden'));
+        document.addEventListener('itemsAdded',   (e) => {
+            if(e.detail.feedId == ItemList.displayedFeedId)
+                document.querySelector('#itemlistViewContent .newItems').classList.remove('hidden');
+        });
 
         // handle mouse events
         ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
