@@ -326,18 +326,7 @@ class Search {
             }
           }
           return;
-        case 13: // enter
-          e.preventDefault();
-          active = document.querySelector('.search-result.active');
-          if (active) {
-            active.click();
-          } else {
-            var first = document.querySelector('.search-result');
-            if (first) {
-              first.click();
-            }
-          }
-          return;
+        // Note enter is handled in CLI.js
       }
     });
 
@@ -346,6 +335,18 @@ class Search {
         hideSearch();
       }
     });
+  }
+
+  static selectResult() {
+    let active = document.querySelector('.search-result.active');
+    if (active) {
+      active.click();
+    } else {
+      var first = document.querySelector('.search-result');
+      if (first) {
+        first.click();
+      }
+    }
   }
 
   static async init() {

@@ -36,7 +36,7 @@ export class App {
             if(window.location.hash[1] != '/')
                 return;
 
-            // URI hash starting with a slash indicates a content load
+            // URI hash starting with a slash indicates a content view load
             if ('/' == window.location.hash.substring(1, 2)) {
                 const path = App.getPath();
                 App.#pathChanged(path);

@@ -127,7 +127,6 @@ export class Commands {
 				for await (const [name, entry] of root.entries()) {
 					entries.push(`${entry.kind === 'directory' ? '📁' : '📄'} ${name}`);
 				}
-				console.log("Listing OPFS root directory");
 
 				if (entries.length === 0)
 					return ["text", "No entries in OPFS found."];

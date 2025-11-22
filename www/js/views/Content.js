@@ -14,14 +14,10 @@ import * as r from "../helpers/render.js";
 // 2. different content renderers (cheat sheet markdown+HTML, PDf)
 // 3. type a head find search results
 //
-// Content type switching happens by
-// 
-// - CLI input keyboard Enter
-// - by mouse clicks selecting content from the sidebar
-// - by location hash change
-//
-// For CLI inputs the first character indicates the type of content to 
-// render so we can switch the mode.
+// Content type switching happens only by location hash changes with
+// the exception of searching where we want to show search results 
+// without changing the location hash. For this there are helper
+// methods showSearch() and hideSearch().
 
 export class ContentView {
     // renderers per file extension
@@ -101,7 +97,7 @@ export class ContentView {
                 </div>
             </div>
         `), {});
-        new HomeView(ContentView.switch('content'));
+        new HomeView(ContentView.#switch('content'));
         Array.from(document.getElementsByClassName('main-content-view')).forEach((el) => {
             el.onclick = () => el.focus();
         });
@@ -112,11 +108,11 @@ export class ContentView {
 
     static #load(name, path) {
         if(!Object.keys(ContentView.#internalRoutes).includes(name)) {
-            ContentView.switch('content').innerHTML = `ERROR: No internal route for ${name}`;
+            ContentView.#switch('content').innerHTML = `ERROR: No internal route for ${name}`;
             return;
         }
 
-        const target = ContentView.switch(ContentView.#internalRoutes[name].switch);
+        const target = ContentView.#switch(ContentView.#internalRoutes[name].switch);
         const view = ContentView.#internalRoutes[name].view;
         if(!view)
             return;
@@ -124,11 +120,11 @@ export class ContentView {
             new module[`${view}View`](target, path);
         })
         .catch((err) => {
-            ContentView.switch('content').innerHTML = `ERROR: Loading view ${view} failed: ${err}`;
+            ContentView.#switch('content').innerHTML = `ERROR: Loading view ${view} failed: ${err}`;
         });
     }
 
-    // Render all content that needs to be shown in #main-content-content
+    // Render all content that needs to be shown in #main-content-content.
     //
     // Routing schema:
     // - for internal navigation   -/<route>
@@ -165,7 +161,7 @@ export class ContentView {
         }
 
         const extension = d.baseName.split('.').pop().toLowerCase();
-        const el = ContentView.switch('content');
+        const el = ContentView.#switch('content');
         if (!Object.keys(ContentView.#renderers).includes(extension)) {
             el.innerHTML = `ERROR: No renderer for ${extension} files`;
             return;
@@ -175,7 +171,7 @@ export class ContentView {
     }
 
     /* Switch different type of content views and return content element */
-    static switch(name) {
+    static #switch(name) {
         let el;
 
         if(name === 'feedreader') {
@@ -194,5 +190,20 @@ export class ContentView {
             el.innerHTML = '';
 
         return el;
+    }
+
+    static getViewElement(name) {
+        return document.getElementById(`main-content-${name}`);
+    }
+
+    static showSearch() {
+        ContentView.#switch('search');
+    }
+
+    static hideSearch() {
+        if(window.location.hash.startsWith('#/-/CLI'))
+            ContentView.#switch('chat');
+        else
+            ContentView.#switch('content');
     }
 }

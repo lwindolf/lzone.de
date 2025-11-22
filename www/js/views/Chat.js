@@ -21,7 +21,7 @@ export class ChatView {
         if(!cmd || !str)
             return;
 
-        const chat = ContentView.switch('chat');
+        const chat = ContentView.getViewElement('chat');
         const output = chat.querySelector('.content');
         const pre = document.createElement('pre');
 
@@ -45,7 +45,7 @@ export class ChatView {
         if(0 == prompt.length)
             return;
 
-        const chat = ContentView.switch('chat');
+        const chat = ContentView.getViewElement('chat');
         const output = chat.querySelector('.content');
 
         output.innerHTML += r.renderToString(`

@@ -3,6 +3,7 @@
 import { Commands } from "./commands.js";
 import { ContentView } from "./views/Content.js";
 import { ChatView } from "./views/Chat.js";
+import { Search } from "./search.js";
 
 // A CLI prompt for multiple types of command (AI, commands, search)
 export class CLI {
@@ -27,7 +28,7 @@ export class CLI {
                     ChatView.submitPrompt(str);
 
                 } else {
-                    // Nothing to do here, "Enter" will be caught by search list
+                    Search.selectResult();
                 }
 
                 // Reset prompt field
@@ -35,14 +36,13 @@ export class CLI {
                 event.preventDefault();
             } else if (event.key === 'Escape' || event.keyCode === 27) {
                 // Close search results and show content again
-                document.getElementById('search-results').style.display = 'none';
-                ContentView.switch('content');
+                ContentView.hideSearch();
             } else {
                 if ((input.value.length > 1) &&
                     (input.value[0] != '!') &&
                     (input.value[0] != '?')) {
                     // type ahead find switch to search content view
-                    ContentView.switch('search');
+                    ContentView.showSearch();
                 }
             }
         });
