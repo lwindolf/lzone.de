@@ -108,8 +108,12 @@ export class FeedList {
         document.addEventListener('nodeUpdated', () => FeedList.#save());
 
         for(const f of (await DB.get('aggregator', 'tree', 'tree', Config.groups.Feeds.defaultFeeds))){
-            await this.add(new Feed(f), true);
+            await this.add(new Feed(f), false);
         }
+
+        // Do not update immediately to avoid blocking startup
+        // FIXME: devise better more snappy solution
+        setTimeout(() => FeedList.update(), 2000);
     }
 
     constructor() {

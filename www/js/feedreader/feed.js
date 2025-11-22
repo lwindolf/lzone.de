@@ -6,13 +6,12 @@
 // - nodeUpdated(node)
 // - itemsAdded(node)
 
-import { AggregatorNode } from '../models/AggregatorNode.js';
 import { DB } from '../models/DB.js';
 import { FeedUpdater } from './feedupdater.js';
 import { Item } from './item.js';
 import * as ev from '../helpers/events.js';
 
-export class Feed extends AggregatorNode {
+export class Feed {
     // state
     id;
     error;
@@ -38,8 +37,6 @@ export class Feed extends AggregatorNode {
     static ERROR_XML = 1 << 3;
 
     constructor(defaults = {}) {
-        super("Feed");
-
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
 
         // Ensure we do not loose the original source URL on bogus HTTP redirects
