@@ -44,7 +44,7 @@ export class Feed {
     }
 
     serialize() {
-        return {...super.serialize(), ...{
+        return {
             id               : this.id,
             title            : this.title,
             description      : this.description,
@@ -55,7 +55,7 @@ export class Feed {
             corsProxyAllowed : this.corsProxyAllowed,
             unreadCount      : this.unreadCount,
             metadata         : this.metadata
-        }};
+        };
     }
 
     async update() {

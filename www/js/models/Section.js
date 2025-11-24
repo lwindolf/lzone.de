@@ -1,8 +1,22 @@
 // vim: set ts=4 sw=4:
 
+import { Node } from './Node.js';
 import { Settings } from './Settings.js';
 
-/* Handling the installed cheat sheet sections tree and documents leaves in IndexedDB */
+/* Handling the installed cheat sheet sections tree and documents leaves in IndexedDB.
+   The challenge here is the installed content does not form a full tree by itself,
+   but is a set of sections each containing a set of documents identified by paths.
+   So we need to build a tree structure from the path names.
+
+   Also the content tree is to merge different nodes like folders, feeds, cheat sheets etc.
+   into a single tree structure.
+
+   Additionally in cheat sheets we often have single-leaf folders that just contain
+   a single document. These should be merged into the parent node for usability.
+
+   FIXME: class naming is bad, better name would be ContentTree
+   FIXME: right now sections/documents live in the settings DB
+*/
 
 export class Section {
     // Helper to convert children path list to a tree
@@ -114,8 +128,8 @@ export class Section {
         this.#update(root);
     }
 
-    // add or update
-    static async add(group, name, s) {
+    // add or update a document tree (cheat sheet section)
+    static async addDocTree(group, name, s) {
         let root = await this.getTree();
         if(!root.nodes[group])
             root.nodes[group] = { nodes: {}};

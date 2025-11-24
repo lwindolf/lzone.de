@@ -129,7 +129,7 @@ export class ContentSource {
             s.children.push(m.target);
         });
 
-        await Section.add(group, section, s);
+        await Section.addDocTree(group, section, s);
         await Promise.all(downloads);
     }
 }
