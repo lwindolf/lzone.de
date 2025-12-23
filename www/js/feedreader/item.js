@@ -9,79 +9,71 @@ import * as ev from '../helpers/events.js';
 // - itemUpdated(item)
 
 export class Item {
-        // maximum id currently used
-        static maxId = 0;
+    // state
+    id = undefined;
+    nodeId = 0;
+    read = false;
+    starred = false;
 
-        // state
-        id = 0;
-        nodeId = 0;
-        read = false;
-        starred = false;
+    // item content
+    title;
+    description;
+    time;
+    source;
+    sourceId;
+    media = [];     // list of media content attached
+    metadata = {};
 
-        // item content
-        title;
-        description;
-        time;
-        source;
-        sourceId;
-        media = [];     // list of media content attached
-        metadata = {};
+    constructor(defaults) {
+        Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
+    }
 
-        constructor(defaults) {
-                Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
+    /**
+     * Add a media enclosure to the item
+     * 
+     * @param {*} url       valid URL
+     * @param {*} mime      MIME type or 'audio' or 'video'
+     * @param {*} length    (optional) duration in [s]
+     */
+    addMedia(url, mime, length = NaN) {
+        let l = NaN;
+        
+        try {
+            l = parseInt(length, 10);
+        // eslint-disable-next-line no-empty
+        } catch { }
 
-                if(Number.isInteger(this.id) && this.id > Item.maxId)
-                    Item.maxId = this.id;
+        if(!url || !mime)
+            return;
 
-                if(0 === this.id) {
-                    Item.maxId++;
-                    this.id = Item.maxId;
-                }
-        }
+        /* gravatars are often supplied as media:content with medium='image'
+            so we do not treat such occurences as enclosures */
+        if (-1 !== url.indexOf('www.gravatar.com'))
+            return;
 
-        /**
-         * Add a media enclosure to the item
-         * 
-         * @param {*} url       valid URL
-         * @param {*} mime      MIME type or 'audio' or 'video'
-         * @param {*} length    (optional) duration in [s]
-         */
-        addMedia(url, mime, length = NaN) {
-            let l = NaN;
-            
-            try {
-                l = parseInt(length, 10);
-            // eslint-disable-next-line no-empty
-            } catch { }
+        /* Never add enclosures for images already contained in the description */
+        if (this.description && -1 !== this.description.indexOf(url))
+            return;
 
-            if(!url || !mime)
-                return;
+        this.media.push({ url, mime, length: l });
+    }
 
-            /* gravatars are often supplied as media:content with medium='image'
-               so we do not treat such occurences as enclosures */
-            if (-1 !== url.indexOf('www.gravatar.com'))
-                return;
+    setRead(read) {
+        if (this.read === read)
+            return;
 
-            /* Never add enclosures for images already contained in the description */
-            if (this.description && -1 !== this.description.indexOf(url))
-                return;
+        this.read = read;
+        this.save();
+        ev.dispatch('itemUpdated', this);
+    }
 
-            this.media.push({ url, mime, length: l });
-        }
+    static getById = async (itemId) => new Item(await DB.getById('aggregator', 'items', itemId));
 
-        setRead(read) {
-            if (this.read === read)
-                return;
+    async save() {
+        if(!this.nodeId)
+            console.error("item.save(): nodeId is not set!", this);
 
-            this.read = read;
-            this.save();
-            ev.dispatch('itemUpdated', this);
-        }
-
-        static getById = async (itemId) => new Item(await DB.get('aggregator', 'items', itemId));
-
-        save = async () => await DB.set('aggregator', 'items', this.id, {
-            id          : this.id,
+        const resultId = await DB.set('aggregator', 'items', this.id, {
             nodeId      : this.nodeId,
             read        : this.read,
             starred     : this.starred,
@@ -93,4 +85,9 @@ export class Item {
             media       : this.media,
             metadata    : this.metadata
         });
+        if(!this.id) {
+            console.log("New item saved with id ", resultId, this.title);
+            this.id = resultId;
+        }
+    }
 }

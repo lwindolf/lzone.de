@@ -103,7 +103,7 @@ export class DB {
             cursorRequest.onsuccess = (evt) => {
                 const cursor = evt.target.result;
                 if (cursor) {
-                    results.push(cursor.value);
+                    results.push({ id: cursor.id, ...cursor.value });
                     cursor.continue();
                 } else {
                     resolve(results);
@@ -148,13 +148,18 @@ export class DB {
         });
     }
 
+    static getById = async (dbName, storeName, id) => {
+        const result = await this.get(dbName, storeName, id);
+        return { id, ...result };
+    }
+
     static async set(dbName, storeName, name, value) {
         const db = await this.#getDB(dbName);
 
         await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readwrite").objectStore(storeName);
             try {
-                const res = store.put({ id: name, value });
+                const res = store.put(name ? { id: name, value } : { value });
                 res.onsuccess = function () {
                     resolve();
                 }
