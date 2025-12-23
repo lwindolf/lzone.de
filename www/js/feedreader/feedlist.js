@@ -111,6 +111,9 @@ export class FeedList {
             await this.add(new Feed(f), false);
         }
 
+        // Cleanup orphaned feed items
+        DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));
+
         // Do not update immediately to avoid blocking startup
         // FIXME: devise better more snappy solution
         setTimeout(() => FeedList.update(), 2000);

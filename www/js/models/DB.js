@@ -185,4 +185,33 @@ export class DB {
             }
         });
     }
+
+    // Remove all orphaned items with a foreign key not in the keyIds array
+    static async removeOrphans(dbName, storeName, key, keyIds) {
+        const db = await this.#getDB(dbName);
+
+        await new Promise((resolve, reject) => {
+            const store = db.transaction(storeName, "readwrite").objectStore(storeName);
+            try {
+                let cleanCount = 0;
+                const index = store.index(key);
+                const range = IDBKeyRange.lowerBound(0);
+                index.openCursor(range).onsuccess = (evt) => {
+                    const cursor = evt.target.result;
+                    if (cursor) {
+                        if (!keyIds.includes(cursor.value.value[key])) {
+                            cursor.delete();
+                            cleanCount++;
+                        }
+                        cursor.continue();
+                    } else {
+                        console.info(`Removed ${cleanCount} orphaned items from DB '${dbName}' store '${storeName}'`);
+                        resolve();
+                    }
+                };
+            } catch (e) {
+                reject(`Error deleting orphaned items from DB '${dbName}' store '${storeName}': ${e}`);
+            }
+        });
+    }
 }
