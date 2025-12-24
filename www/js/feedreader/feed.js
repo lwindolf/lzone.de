@@ -85,17 +85,6 @@ export class Feed {
                                       x.title === i.title))))
                     return;
 
-                // If item has no title, create one from the description
-                if (!i.title || i.title.length === 0)
-                    if (i.description && i.description.length > 0) {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(i.description, 'text/html');
-                        const textContent = doc.body.textContent || '';
-                        i.title = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
-                    } else {
-                        i.title = 'No title';
-                    }
-
                 added++;
                 this.unreadCount++;
                 i.nodeId = this.id;

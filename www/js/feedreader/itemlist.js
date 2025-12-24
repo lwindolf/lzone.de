@@ -28,10 +28,23 @@ export class ItemList {
     `);
 
     static #itemUpdated(item) {
+        let title = item.title;
+
+        // For items that have no title, create one from the description
+        if (!title || title.length === 0)
+            if (item.description && item.description.length > 0) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(item.description, 'text/html');
+                const textContent = doc.body.textContent || '';
+            title = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
+        } else {
+            title = 'No title';
+        }
+
         render(`.item[data-id="${item.id}"]`, ItemList.#itemTemplate, {
             time: DateParser.getShortDateStr(item.time),
             read: item.read,
-            title: item.title
+            title
         });
     }
 

@@ -9,8 +9,13 @@ import { template, render } from '../helpers/render.js';
 export class ItemView {
     static #contentTemplate = template(`
         <h1 id='itemViewContentTitle'>
-            <a target='_system' href='{{item.source}}'>{{item.title}}</a>
+            {{#if item.title}}
+                <a target='_system' href='{{item.source}}'>{{item.title}}</a>
+            {{else}}
+                <a target='_system' class='missingTitle' href='{{item.source}}'>Link to post</a>
+            {{/if}}
         </h1>
+
         <span class='date'>{{time}}</span>
         <div class='date'></div>
     

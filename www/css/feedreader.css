@@ -81,11 +81,11 @@ header .title {
 
         line-height: 1.8;
 }
-#itemViewContent h1 {
+#itemViewContentTitle {
         line-height: 1.4;
         margin-bottom: 0.2rem;
 }
-#itemViewContent h1 a {
+#itemViewContentTitle a:not(.missingTitle) {
         background:none;
         color: var(--text);
 }
