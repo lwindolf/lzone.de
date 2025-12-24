@@ -33,9 +33,13 @@ export class ItemView {
 
     // load content of a single item
     static async #loadItem(feedId, id) {
-        let item = await Item.getById(id);
+        const item = await Item.getById(id);
 
-        render('#itemViewContent', ItemView.#contentTemplate, { item: item, time: DateParser.getShortDateStr(item.time) });
+        /* Set title for it to appear in e.g. desktop MPRIS playback controls */
+        if(item.title)
+            document.title = item.title;
+
+        render('#itemViewContent', ItemView.#contentTemplate, { item, time: DateParser.getShortDateStr(item.time) });
 
         document.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
     }

@@ -3,8 +3,8 @@
 A backend less content aggregator for Markdown and RSS. Collect and hoard knowledge like in the 90s!
 
 - Install tech knowledge from a curated catalog [lwindolf/lzone-cheat-sheets](https://github.com/lwindolf/lzone-cheat-sheets).
-- Integration with ollama / HuggingFace models
 - No AI slop! Real human expert knowledge.
+- Integration with local ollama / HuggingFace models
 
 ## What is this?
 
@@ -28,7 +28,9 @@ On the technical side
 1. Clone the repo
 2. `git submodule init`
 3. `git submodule update`
-4. Put the content of `www` into your webserver
+4. `npm i`
+5. `npm run build`
+6. Put the content of `www` into your webserver
 
 ## Configuration
 
@@ -39,10 +41,5 @@ On the technical side
 
 ## Building / Testing
 
-    npm install
     npm test
     npm start
-
-## Updating Dependencies
-
-    npm run build
