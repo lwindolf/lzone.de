@@ -42,10 +42,10 @@ export class ModalDialog {
             this.#onsubmit();
             e.preventDefault();
         });
-        this.#modal.addEventListener('keydown', this.#onkeydownFunc = (e) => {
+        document.addEventListener('keydown', this.#onkeydownFunc = (e) => {
             if(e.code === "Escape") {
-                this.destroy();
-                e.preventDefault();
+            this.destroy();
+            e.preventDefault();
             }
         });
     }

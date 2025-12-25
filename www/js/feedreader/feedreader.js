@@ -6,7 +6,6 @@ import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
 import { Action } from '../Action.js';
-import { HelpDialog } from '../dialogs/help.js';
 import { keydown } from '../helpers/events.js';
 
 // The FeedReader class implements a two pane feed view with one pane for the list
@@ -16,10 +15,10 @@ import { keydown } from '../helpers/events.js';
 
 export class FeedReader {
     // member variables for easier console debugging
-    feedlist = new FeedList();
-    feedinfo = new FeedInfo();
-    itemlist = new ItemList();
-    itemview = new ItemView();
+    static feedlist = new FeedList();
+    static feedinfo = new FeedInfo();
+    static itemlist = new ItemList();
+    static itemview = new ItemView();
 
     #selectedFeedId = null;
 
@@ -32,11 +31,16 @@ export class FeedReader {
 
     constructor() {
         // global hotkeys
-        keydown('#feedreader', /* F1 */            (e) => (e.keyCode === 112),             () => new HelpDialog());
-        keydown('#feedreader', /* C-right arrow */ (e) => (e.keyCode === 39 && e.ctrlKey), () => ItemList.nextUnread());
 
-        keydown('#feedreader', /* C-S-m */ (e) => (e.keyCode === 77 && e.ctrlKey && e.shiftKey), () => FeedList.markAllRead(this.#selectedFeedId));
-        keydown('#feedreader', /* C-S-u */ (e) => (e.keyCode === 85 && e.ctrlKey && e.shiftKey), () => FeedList.update());
+        // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
+        // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
+
+        // FIXME: perform feed / item specific hotkeys only when feed node is selected or items view is focused
+        keydown('body', /* F1 */            (e) => (e.keyCode === 112),             () => new HelpDialog());
+        keydown('body', /* C-right arrow */ (e) => (e.keyCode === 39 && e.ctrlKey), () => ItemList.nextUnread());
+
+        keydown('body', /* C-A-r */ (e) => (e.keyCode === 82 && e.ctrlKey && e.altKey),    () => FeedList.markAllRead(this.#selectedFeedId));
+        keydown('body', /* C-A-u */ (e) => (e.keyCode === 85 && e.ctrlKey && e.altKey),    () => FeedList.update());
 
         this.#selectedFeedId = parseInt(document.location.hash.match(/Feed\/(\d+)/)?.[1] || 0);
     }

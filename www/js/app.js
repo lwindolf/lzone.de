@@ -9,6 +9,8 @@ import { ContentView } from './views/Content.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
 import { FeedReader } from './feedreader/feedreader.js';
+import { HelpDialog } from './dialogs/help.js';
+import { keydown } from './helpers/events.js';
 
 export class App {
     static #getParams() {
@@ -81,13 +83,13 @@ export class App {
                 console.error('ServiceWorker registration failed: ', error);
             });
 
-        new Layout();
         window.app = {
+            Layout      : new Layout(),
             Commands,
-            FeedReader : new FeedReader()
+            FeedReader  : new FeedReader(),
+            Sidebar     : new Sidebar(document.getElementById('site-nav')),
+            ContentView : new ContentView(document.getElementById('main-content-wrap'))
         };
-        new Sidebar(document.getElementById('site-nav'));
-        new ContentView(document.getElementById('main-content-wrap'));
 
         await CheatSheetCatalog.update();
 
@@ -97,5 +99,10 @@ export class App {
         Search.init();
         new CLI('search-input');
         new ChecksView(document.getElementById('toolpanel'));
+
+        // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
+        // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
+
+        keydown('body', /* F1 */            (e) => (e.keyCode === 112),             () => new HelpDialog());
     }
 }
