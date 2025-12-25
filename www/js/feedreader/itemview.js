@@ -32,7 +32,7 @@ export class ItemView {
     `);
 
     // load content of a single item
-    static async #loadItem(feedId, id) {
+    static async #loadItem(id) {
         const item = await Item.getById(id);
 
         /* Set title for it to appear in e.g. desktop MPRIS playback controls */
@@ -45,6 +45,6 @@ export class ItemView {
     }
 
     constructor() {
-        document.addEventListener('itemSelected', (e) => ItemView.#loadItem(e.detail.feed, e.detail.id));
+        document.addEventListener('itemSelected', (e) => ItemView.#loadItem(e.detail.id));
     }
 }

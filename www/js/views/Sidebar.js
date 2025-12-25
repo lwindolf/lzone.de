@@ -195,7 +195,9 @@ export class Sidebar {
         });
     
     static selectionChanged(path) {
-        const cssPath = path.replace(/\/$/, "").replaceAll(/\//g, ":::");
+        const cssPath = path.replace(/\/$/, "")
+                        .replaceAll(/\//g, ":::")
+                        .replace(/:::Item:::[^:]*$/, "");   // FIXME: feed reader special handling: ignoring "/Item/xxx" part      
 
         try {
             const sidebar = document.getElementById('sidebar');

@@ -6,7 +6,6 @@
 // emits
 // - feedlistUpdated
 // - nodeRemoved(id)
-// - feedSelected(id)
 // 
 // FIXME: implement the tree (currently only flat list of feeds) 
 // FIXME: convert the feed list to a generic AggregatorTree
@@ -117,10 +116,6 @@ export class FeedList {
         // Do not update immediately to avoid blocking startup
         // FIXME: devise better more snappy solution
         setTimeout(() => FeedList.update(), 2000);
-    }
-
-    constructor() {
-        FeedList.setup();
     }
 
     // Recursively update folder

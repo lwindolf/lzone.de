@@ -85,9 +85,7 @@ export class Item {
             media       : this.media,
             metadata    : this.metadata
         });
-        if(!this.id) {
-            console.log("New item saved with id ", resultId, this.title);
+        if(!this.id)
             this.id = resultId;
-        }
     }
 }

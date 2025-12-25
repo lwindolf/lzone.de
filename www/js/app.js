@@ -8,9 +8,9 @@ import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
 import { ChecksView } from './views/Checks.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
-import { FeedReader } from './feedreader/feedreader.js';
 import { HelpDialog } from './dialogs/help.js';
 import { keydown } from './helpers/events.js';
+import { FeedReader } from './feedreader/feedreader.js';
 
 export class App {
     static #getParams() {
@@ -84,9 +84,10 @@ export class App {
             });
 
         window.app = {
+            debug       : true,
+            FeedReader  : new FeedReader(),
             Layout      : new Layout(),
             Commands,
-            FeedReader  : new FeedReader(),
             Sidebar     : new Sidebar(document.getElementById('site-nav')),
             ContentView : new ContentView(document.getElementById('main-content-wrap'))
         };

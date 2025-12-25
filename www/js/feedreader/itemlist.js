@@ -17,9 +17,11 @@ export class ItemList {
 
     static #listTemplate = template(`
         <div class='newItems hidden'>Click to show new items</div>
-        {{#each items}}
-            <div class='item' data-id='{{id}}' data-feed='{{nodeId}}'></div>
-        {{/each}}
+        <div>
+            {{#each items}}
+                <div class='item' data-id='{{id}}' data-feed='{{nodeId}}'></div>
+            {{/each}}
+        </div>
     `);
 
     static #itemTemplate = template(`
@@ -27,7 +29,7 @@ export class ItemList {
         <span class='title' data-read='{{read}}'>{{title}}</span>
     `);
 
-    static #itemUpdated(item) {
+    #itemUpdated(item) {
         let title = item.title;
 
         // For items that have no title, create one from the description
@@ -49,11 +51,12 @@ export class ItemList {
     }
 
     // load all items from the given node id
-    static async #loadFeed(id) {
+    async #loadFeed(id) {
         const node = FeedList.getNodeById(id);
         const items = await node.getItems();
 
-        ItemList.displayedFeedId = id;
+        this.selected = undefined;
+        this.displayedFeedId = id;
 
         // FIXME: handle folders
 
@@ -64,11 +67,10 @@ export class ItemList {
             node,
             items: items.sort((a, b) => b.time - a.time)
         });
-        items.forEach((i) => ItemList.#itemUpdated(i));
+        items.forEach((i) => this.#itemUpdated(i));
     }
 
-    // toggle read status
-    static async #toggleItemRead(id) {
+    async #toggleItemRead(id) {
         const item = await Item.getById(id);
         const node = FeedList.getNodeById(item.nodeId);
 
@@ -76,9 +78,11 @@ export class ItemList {
         node.updateUnread(item.read?-1:1);
     }
 
-    // select an item
-    static async select(feedId, id) {
+    async #itemSelected(id, nodeId) {
         const item = await Item.getById(id);
+        
+        if(nodeId !== this.displayedFeedId)
+            await this.#loadFeed(nodeId);
 
         [...document.querySelectorAll('.item.selected')]
             .forEach((n) => n.classList.remove('selected'));
@@ -88,20 +92,18 @@ export class ItemList {
         
         document.getElementById('itemlist').focus();
 
-        ItemList.selected = item;
+        this.selected = item;
         if(!item.read)
-            await ItemList.#toggleItemRead(id);
-
-        ev.dispatch('itemSelected', { feed: feedId, id: item.id });
+            await this.#toggleItemRead(id);
     }
 
     // select next unread
-    static async nextUnread() {
+    async nextUnread() {
         let item, node, id;
 
-        if(ItemList.selected) {
-            node = FeedList.getNodeById(ItemList.selected.nodeId)
-            id = ItemList.selected.id;
+        if(this.selected) {
+            node = FeedList.getNodeById(this.selected.nodeId)
+            id = this.selected.id;
         } else {
             // select first node if none is selected
             node = FeedList.getNextUnreadNode(0);
@@ -118,33 +120,30 @@ export class ItemList {
         }
 
         // FIXME: folder recursion
-        if(item) {
-            await FeedReader.select(node.id);
-            await ItemList.select(node.id, item.id);
-        }
+
+        if(item)
+            FeedReader.select(node.id, item.id);
     }
 
-    static #openItemLink = async (id) =>
+    #openItemLink = async (id) =>
         window.open((await Item.getById(id)).source, '_system', 'location=yes');
 
     constructor() {
-        document.addEventListener('itemUpdated',  (e) => ItemList.#itemUpdated(e.detail));
-        document.addEventListener('feedSelected', (e) => {
-            ItemList.selected = undefined;
-            ItemList.#loadFeed(parseInt(e.detail.id));
-        });
+        document.addEventListener('itemUpdated',  (e) => this.#itemUpdated(e.detail));
+        document.addEventListener('itemSelected', (e) => this.#itemSelected(e.detail.id, e.detail.feedId));
+        document.addEventListener('feedSelected', (e) => this.#loadFeed(e.detail.id));
         document.addEventListener('itemsAdded',   (e) => {
-            if(e.detail.feedId == ItemList.displayedFeedId)
+            if(e.detail.feedId == this.displayedFeedId)
                 document.querySelector('#itemlistViewContent .newItems').classList.remove('hidden');
         });
 
         // handle mouse events
-        ev.connect('auxclick', '.item', (el) => ItemList.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
-        ev.connect('click',    '.item', (el) => ItemList.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
-        ev.connect('dblclick', '.item', (el) => ItemList.#openItemLink(parseInt(el.dataset.id)));
+        ev.connect('click',    '.item', (el) => FeedReader.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
+        ev.connect('auxclick', '.item', (el) => this.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
+        ev.connect('dblclick', '.item', (el) => this.#openItemLink(parseInt(el.dataset.id)));
         ev.connect('click',    '.newItems', () => {
             document.querySelector('.newItems').classList.add('hidden');
-            ItemList.#loadFeed(ItemList.displayedFeedId);
+            this.#loadFeed(this.displayedFeedId);
         });
 
         // handle cursor keys
@@ -171,7 +170,7 @@ export class ItemList {
             }
             if(e.key === 'Enter') {
                 if(selected) {
-                    ItemList.#openItemLink(parseInt(selected.dataset.id));
+                    this.#openItemLink(parseInt(selected.dataset.id));
                     e.preventDefault();
                 }
             }
