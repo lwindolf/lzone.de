@@ -54,8 +54,7 @@ export class Config {
         }
     };
 
-    // Apps for the 'Pinned Apps' web component, for each URL the manifest.json is loaded
-    // to gather app name and icon
+    // Apps catalog for the 'Pinned Apps' web component
     static apps = {
         'Development': {
             'Regex101': {
