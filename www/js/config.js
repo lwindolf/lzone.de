@@ -74,7 +74,12 @@ export class Config {
             'ezgif': {
                 url         : 'https://ezgif.com/',
                 description : 'GIF, PNG, JPG image editor'
-            }
+            },
+			'keyjs': {
+				url         : 'https://keyjs.dev/',
+				description : 'Get Javascript key codes',
+				favicon     : 'https://keyjs.dev/logo/keyjs-t-32.png'
+			},
         },
         'DevOps - Playgrounds': {
             'awk, sed, grep': {
