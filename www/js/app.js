@@ -84,7 +84,7 @@ export class App {
             });
 
         window.app = {
-            debug       : true,
+            debug       : false,
             FeedReader  : new FeedReader(),
             Layout      : new Layout(),
             Commands,

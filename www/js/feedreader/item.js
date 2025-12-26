@@ -67,6 +67,15 @@ export class Item {
         ev.dispatch('itemUpdated', this);
     }
 
+    setStarred(starred) {
+        if (this.starred === starred)
+            return;
+
+        this.starred = starred;
+        this.save();
+        ev.dispatch('itemUpdated', this);
+    }
+
     static getById = async (itemId) => new Item(await DB.getById('aggregator', 'items', itemId));
 
     async save() {

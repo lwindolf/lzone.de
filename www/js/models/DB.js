@@ -150,6 +150,8 @@ export class DB {
 
     static getById = async (dbName, storeName, id) => {
         const result = await this.get(dbName, storeName, id);
+        if(!result)
+            return null;
         return { id, ...result };
     }
 

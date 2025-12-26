@@ -48,8 +48,6 @@ export class ContextMenu {
                     el = el.parentElement;
                 }
                 if (el && el.id && ContextMenu.#menues.has(el.id)) {
-                    console.log("Context menu opened", ContextMenu.#menues.get(el.id));
-
                     ev.preventDefault();
                     this.createMenu(el, ev, ContextMenu.#menues.get(el.id));
                 }

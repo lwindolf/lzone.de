@@ -2,6 +2,7 @@
 
 import { FeedList } from "../feedreader/feedlist.js";
 import { Section } from "../models/Section.js";
+import { Action } from "../Action.js";
 
 import * as r from "../helpers/render.js";
 
@@ -111,18 +112,35 @@ export class Sidebar {
         });
 
         document.addEventListener('sections-updated', this.#render);
-        document.addEventListener('click', (e) => {
+
+        // Left click focusses parent and changes selection
+        el.addEventListener('click', (ev) => {
+            var target = ev.target;            
             this.#el.focus();
 
-            var target = e.target;
             while (target && !(target.classList && target.classList.contains('nav-list-expander'))) { 
                 target = target.parentNode;
             }
             if (target) {
-                e.preventDefault();
+                ev.preventDefault();
                 target.parentNode.classList.toggle('active');
             }
         });
+
+        /* For middle clicks we trigger an action "<type>::auxclick" so
+           specific node types can register an optional handler */
+        el.addEventListener('auxclick', (ev) => {
+            var target = ev.target;
+
+            while (target && !target.classList.contains('nav-list-item')) { 
+                target = target.parentNode;
+            }
+            if (target && target.classList.contains('nav-list-item')) {
+                ev.preventDefault();
+                Action.dispatch(`${target.dataset.type}:auxclick`, target.dataset);
+            }            
+        });
+        // Note: Right click "context-menu" is handled globally by ContextMenu.js
     }
 
     #onDrop(e) {

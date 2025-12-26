@@ -75,12 +75,16 @@ export class FeedReader {
 
         new ContextMenu('itemlist', [
             {
+                label: 'Open Link',
+                action: 'feedreader:openItemLink'
+            },
+            {
                 label: 'Toggle Read',
                 action: 'feedreader:toggleItemRead'
             },
             {
-                label: 'Toggle Flag',
-                action: 'feedreader:toggleItemFlag'
+                label: 'Toggle Star',
+                action: 'feedreader:toggleItemStar'
             }
         ]);
 
@@ -88,11 +92,20 @@ export class FeedReader {
         this.itemlist = new ItemList();
         this.itemview = new ItemView();
 
+        // Feed actions
         Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(params.id));
         Action.register('feedreader:updateNode', (params) => FeedList.update(params.id));
         Action.register('feedreader:removeNode', (params) => FeedList.remove(params.id));
-        Action.register('feedreader:select',     (params) => FeedReader.select(params.itemId, params.nodeId));
-        Action.register('feedreader:nextUnread', () => this.itemlist.nextUnread());
+
+        // Item actions
+        Action.register('feedreader:nextUnread',     () => this.itemlist.nextUnread());
+        Action.register('feedreader:select',         (params) => FeedReader.select(params.itemId, params.nodeId));
+        Action.register('feedreader:toggleItemRead', (params) => this.itemlist.toggleItemRead(parseInt(params.id)));
+        Action.register('feedreader:toggleItemStar', (params) => this.itemlist.toggleItemStar(parseInt(params.id)));
+        Action.register('feedreader:openItemLink',   (params) => this.itemlist.openItemLink(parseInt(params.id)));
+
+        // Sidebar middle click handler
+        Action.register('feed:auxclick',         (params) => FeedList.markAllRead(params.id));
 
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU

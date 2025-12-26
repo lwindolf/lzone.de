@@ -26,7 +26,10 @@ export class ItemList {
 
     static #itemTemplate = template(`
         <span class='date'>{{time}}</span>
-        <span class='title' data-read='{{read}}'>{{title}}</span>
+        <span class='title' data-read='{{read}}'>
+            {{#if starred}}⭐{{/if}}
+            {{title}}
+        </span>
     `);
 
     #itemUpdated(item) {
@@ -46,6 +49,7 @@ export class ItemList {
         render(`.item[data-id="${item.id}"]`, ItemList.#itemTemplate, {
             time: DateParser.getShortDateStr(item.time),
             read: item.read,
+            starred: item.starred,
             title
         });
     }
@@ -70,12 +74,18 @@ export class ItemList {
         items.forEach((i) => this.#itemUpdated(i));
     }
 
-    async #toggleItemRead(id) {
+    async toggleItemRead(id) {
+        console.log("toggleItemRead",id);
         const item = await Item.getById(id);
         const node = FeedList.getNodeById(item.nodeId);
 
         item.setRead(!item.read);
         node.updateUnread(item.read?-1:1);
+    }
+
+    async toggleItemStar(id) {
+        const item = await Item.getById(id);
+        item.setStarred(!item.starred);
     }
 
     async #itemSelected(id, nodeId) {
@@ -94,7 +104,7 @@ export class ItemList {
 
         this.selected = item;
         if(!item.read)
-            await this.#toggleItemRead(id);
+            await this.toggleItemRead(id);
     }
 
     // select next unread
@@ -125,7 +135,7 @@ export class ItemList {
             FeedReader.select(node.id, item.id);
     }
 
-    #openItemLink = async (id) =>
+    openItemLink = async (id) =>
         window.open((await Item.getById(id)).source, '_system', 'location=yes');
 
     constructor() {
@@ -139,8 +149,8 @@ export class ItemList {
 
         // handle mouse events
         ev.connect('click',    '.item', (el) => FeedReader.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
-        ev.connect('auxclick', '.item', (el) => this.#toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
-        ev.connect('dblclick', '.item', (el) => this.#openItemLink(parseInt(el.dataset.id)));
+        ev.connect('auxclick', '.item', (el) => this.toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
+        ev.connect('dblclick', '.item', (el) => this.openItemLink(parseInt(el.dataset.id)));
         ev.connect('click',    '.newItems', () => {
             document.querySelector('.newItems').classList.add('hidden');
             this.#loadFeed(this.displayedFeedId);
@@ -170,7 +180,7 @@ export class ItemList {
             }
             if(e.key === 'Enter') {
                 if(selected) {
-                    this.#openItemLink(parseInt(selected.dataset.id));
+                    this.openItemLink(parseInt(selected.dataset.id));
                     e.preventDefault();
                 }
             }
