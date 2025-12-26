@@ -227,7 +227,12 @@ export class Config {
 				url          : 'https://excalidraw.com/',
 				favicon      : 'https://excalidraw.com/apple-touch-icon.png',
 				description  : 'Collaborative drawing whiteboard'
-			}
+			},
+            'SankeyMATIC': {
+                url          : 'https://sankeymatic.com/build/',
+                favicon      : 'https://sankeymatic.com/favicon.ico',
+                description  : 'Create Sankey diagrams'
+            }
         },
         'Chat': {
             'Cinny': {
