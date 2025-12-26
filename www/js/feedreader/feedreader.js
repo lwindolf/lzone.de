@@ -4,6 +4,7 @@ import { FeedList } from './feedlist.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { ContextMenu } from '../ContextMenu.js';
 import { Action } from '../Action.js';
 import * as ev from '../helpers/events.js';
 
@@ -31,6 +32,57 @@ export class FeedReader {
     // async constructor
     async #setup() {
         await FeedList.setup();
+
+        new ContextMenu('sidebar', [
+            // Feed options
+            {
+                label: 'Mark Read',
+                action: 'feedreader:markRead',
+                type: 'feed'
+            },
+            {
+                label: 'Update',
+                action: 'feedreader:updateNode',
+                type: 'feed'
+            },
+            /*{
+                label: 'Remove',
+                action: 'feedreader:removeNode',
+                type: 'feed'
+            },*/
+            // Folder options
+            /*{
+                label: 'Add Feed',
+                action: 'feedreader:addFeed',
+                type: 'folder'
+            },
+            {
+                label: 'Mark All Read',
+                action: 'feedreader:markRead',
+                type: 'folder'
+            },
+            {
+                label: 'Update',
+                action: 'feedreader:updateNode',
+                type: 'folder'
+            },
+            {
+                label: 'Remove',
+                action: 'feedreader:removeNode',
+                type: 'folder'
+            }*/
+        ]);        
+
+        new ContextMenu('itemlist', [
+            {
+                label: 'Toggle Read',
+                action: 'feedreader:toggleItemRead'
+            },
+            {
+                label: 'Toggle Flag',
+                action: 'feedreader:toggleItemFlag'
+            }
+        ]);
 
         this.feedlist = new FeedList();
         this.itemlist = new ItemList();

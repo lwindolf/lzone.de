@@ -6,8 +6,8 @@
 import { FeedList } from './feedlist.js';
 import { FeedReader } from './feedreader.js';
 import { Item } from './item.js';
-import { template, render } from '../helpers/render.js';
 import { DateParser } from './parsers/date.js';
+import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
 export class ItemList {
@@ -19,7 +19,7 @@ export class ItemList {
         <div class='newItems hidden'>Click to show new items</div>
         <div>
             {{#each items}}
-                <div class='item' data-id='{{id}}' data-feed='{{nodeId}}'></div>
+                <div class='item context-node' data-id='{{id}}' data-feed='{{nodeId}}'></div>
             {{/each}}
         </div>
     `);

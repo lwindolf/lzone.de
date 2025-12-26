@@ -5,7 +5,8 @@
 import { Action } from './Action.js';
 
 /* Usage:
-   - pass a element selector (of the container element)
+   - pass the element id (of the container element)
+   - ensure clickable elements have class 'context-node' and data attributes as needed
    - pass an options object like this
 
         [
@@ -21,7 +22,7 @@ import { Action } from './Action.js';
         ]
 
     Note:
-    - passing a type will show the option only if the clicked element has that type
+    - passing a type will show the option only if the clicked element has that type in attribute data-type
     - no nesting for now
     - when calling the action, all data attributes of the clicked elements closest parent
       of class context-node will be passed as argument
@@ -29,19 +30,38 @@ import { Action } from './Action.js';
 export class ContextMenu {
     fresh = false;
 
-    constructor(el, options) {      
-        el.addEventListener('contextmenu', (ev) => {
-            ev.preventDefault();
-            this.createMenu(el, ev, options);
-        });
+    // state
+    static #listener;
+    static #menues = new Map();
 
-        document.addEventListener('click', () => this.checkRemove(el));
-        document.addEventListener('auxclick', () => this.checkRemove(el))
+    constructor(selector, options) {
+        ContextMenu.#menues.set(selector, options);
+
+        if (!ContextMenu.#listener)
+            ContextMenu.#listener = document.addEventListener('contextmenu', (ev) => {
+                /* find parent with matching id */
+                let el = ev.target;
+                while (el) {
+                    if (el.id && ContextMenu.#menues.has(el.id))
+                        break;
+
+                    el = el.parentElement;
+                }
+                if (el && el.id && ContextMenu.#menues.has(el.id)) {
+                    console.log("Context menu opened", ContextMenu.#menues.get(el.id));
+
+                    ev.preventDefault();
+                    this.createMenu(el, ev, ContextMenu.#menues.get(el.id));
+                }
+            });
+
+        document.addEventListener('click', () => this.checkRemove());
+        document.addEventListener('auxclick', () => this.checkRemove());
     }
 
-    checkRemove(el) {
-        if(!this.fresh)
-            el.querySelectorAll('.context-menu').forEach(menu => menu.remove());
+    checkRemove() {
+        if (!this.fresh)
+            document.querySelectorAll('.context-menu').forEach(menu => menu.remove());
         else
             this.fresh = false;
     }
@@ -52,15 +72,15 @@ export class ContextMenu {
 
         // only open when there is a parent element with class context-node
         const parent = ev.target.closest('.context-node');
-        if(!parent)
+        if (!parent)
             return;
 
         this.fresh = true;
         this.menu = document.createElement('div');
         this.menu.className = 'context-menu';
         options.forEach(item => {
-                if(item.type && parent.dataset['type'] !== item.type)
-                        return;
+            if (item.type && parent.dataset['type'] !== item.type)
+                return;
 
             const menuItem = document.createElement('div');
             menuItem.className = 'context-menu-item';
@@ -72,7 +92,6 @@ export class ContextMenu {
         this.menu.style.setProperty('--mouse-x', ev.pageX + 'px');
         this.menu.style.setProperty('--mouse-y', ev.pageY + 'px');
         this.menu.style.display = 'block';
-
 
         el.appendChild(this.menu);
     }
