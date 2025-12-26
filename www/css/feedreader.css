@@ -335,6 +335,7 @@ header .title {
 
 #itemlist .date {
         float: right;
+        margin-left: 0.8rem;
 }
 
 #itemview .date {
