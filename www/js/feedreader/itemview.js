@@ -36,14 +36,16 @@ export class ItemView {
     static async #loadItem(id) {
         const item = await Item.getById(id);
 
-        /* Set title for it to appear in e.g. desktop MPRIS playback controls */
+        /* Set title for it to appear in e.g. desktop MPRIS playback controls 
+           Do not do it if there is no media as a constantly changing tab title
+           (when paging through items) is visually distracting */
         if(item.title && item.media && item.media.length > 0)
             document.title = Config.siteName + " | " + item.title;
 
         render('#itemViewContent', ItemView.#contentTemplate, { item, time: DateParser.getShortDateStr(item.time) });
 
-        document.getElementById('itemViewContent').dataset.set("mode", "item");
-        document.getElementById('itemViewContent').dataset.set("id", id);
+        document.getElementById('itemViewContent').dataset.mode = "item";
+        document.getElementById('itemViewContent').dataset.id = id;
         document.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
     }
 

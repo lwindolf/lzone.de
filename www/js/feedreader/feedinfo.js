@@ -69,6 +69,7 @@ export class FeedInfo {
     constructor() {
         document.addEventListener('nodeUpdated', (e) => {
             const el = document.getElementById('itemViewContent');
+            console.log(el.dataset, e.detail.id);
             if ((e.detail.id == parseInt(el.dataset.id)) &&
                 (el.dataset.mode === 'feed'))
                 this.#render(e.detail.id)
@@ -79,8 +80,8 @@ export class FeedInfo {
     #render(id) {
         let feed = FeedList.getNodeById(id);
 
-        document.getElementById('itemViewContent').dataset.set("mode", "feed");
-        document.getElementById('itemViewContent').dataset.set("id", id);
+        document.getElementById('itemViewContent').dataset.mode = "feed";
+        document.getElementById('itemViewContent').dataset.id = id;
 
         render('#itemViewContent', FeedInfo.#contentTemplate, {
             feed,
