@@ -1,6 +1,8 @@
 // vim: set ts=4 sw=4:
 
+import { Feed } from './feed.js';
 import { FeedList } from './feedlist.js';
+import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
@@ -26,6 +28,7 @@ export class FeedReader {
     static #selectedItem;
 
     feedlist;
+    feedinfo;
     itemlist;
     itemview;
 
@@ -36,13 +39,13 @@ export class FeedReader {
         new ContextMenu('sidebar', [
             // Feed options
             {
-                label: 'Mark Read',
-                action: 'feedreader:markRead',
+                label: 'Update',
+                action: 'feedreader:updateNode',
                 type: 'feed'
             },
             {
-                label: 'Update',
-                action: 'feedreader:updateNode',
+                label: 'Mark Read',
+                action: 'feedreader:markRead',
                 type: 'feed'
             },
             /*{
@@ -89,10 +92,12 @@ export class FeedReader {
         ]);
 
         this.feedlist = new FeedList();
+        this.feedinfo = new FeedInfo();
         this.itemlist = new ItemList();
         this.itemview = new ItemView();
 
         // Feed actions
+        Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title })));
         Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(params.id));
         Action.register('feedreader:updateNode', (params) => FeedList.update(params.id));
         Action.register('feedreader:removeNode', (params) => FeedList.remove(params.id));

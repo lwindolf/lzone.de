@@ -3,6 +3,8 @@
 // app customization
 
 export class Config {
+    static siteName = 'LZone';  // used for HTML document title
+    
     static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
 
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery

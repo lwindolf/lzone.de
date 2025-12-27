@@ -75,7 +75,6 @@ export class ItemList {
     }
 
     async toggleItemRead(id) {
-        console.log("toggleItemRead",id);
         const item = await Item.getById(id);
         const node = FeedList.getNodeById(item.nodeId);
 
@@ -90,7 +89,7 @@ export class ItemList {
 
     async #itemSelected(id, nodeId) {
         const item = await Item.getById(id);
-        
+
         if(nodeId !== this.displayedFeedId)
             await this.#loadFeed(nodeId);
 

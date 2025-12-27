@@ -8,10 +8,7 @@ import { FeedList } from './feedlist.js';
 import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
-export class FeedInfo {
-    // state
-    #displayedId;   // id of the feed that is currently displayed
-
+export class FeedInfo {   
     static #errorTemplate = template(`
         {{#if feed.error}}
             <div class='feedInfoErrorBox'>
@@ -71,7 +68,9 @@ export class FeedInfo {
 
     constructor() {
         document.addEventListener('nodeUpdated', (e) => {
-            if ((e.detail.id == this.#displayedId) && ItemList.selected === undefined)
+            const el = document.getElementById('itemViewContent');
+            if ((e.detail.id == parseInt(el.dataset.id)) &&
+                (el.dataset.mode === 'feed'))
                 this.#render(e.detail.id)
         });
         document.addEventListener('feedSelected', (e) => this.#render(e.detail.id));
@@ -79,7 +78,9 @@ export class FeedInfo {
 
     #render(id) {
         let feed = FeedList.getNodeById(id);
-        this.#displayedId = id;
+
+        document.getElementById('itemViewContent').dataset.set("mode", "feed");
+        document.getElementById('itemViewContent').dataset.set("id", id);
 
         render('#itemViewContent', FeedInfo.#contentTemplate, {
             feed,

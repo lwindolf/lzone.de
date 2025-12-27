@@ -2,10 +2,11 @@
 
 import * as r from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
-import { Feed } from '../feedreader/feed.js';
+import { Action } from '../Action.js';
 import { FeedList } from '../feedreader/feedlist.js';
 import { linkAutoDiscover, parserAutoDiscover } from '../feedreader/parsers/autodiscover.js';
 import { pfetch } from '../feedreader/net.js';
+
 
 // A view giving an overview on feed subscriptions
 // and allows adding/removing feeds
@@ -175,11 +176,10 @@ export class FeedsView {
 
         // FIXME: let user choose which feed to use
         if(links.length > 0) {
-            FeedList.add(new Feed({
-                title: 'New Feed',
-                id: FeedList.maxId + 1,
-                source: links[0]
-            }));
+            Action.dispatch('feedreader:addFeed', {
+                title  : "New Feed",
+                source : links[0]
+            });
             this.#updateSubscribeStatus({
                 fetching : false,
                 result   : links[0],

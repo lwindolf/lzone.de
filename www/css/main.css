@@ -626,6 +626,10 @@ a[data-path]:not([data-path*=":::"]) {
         font-style: italic;
 }
 
+audio {
+        width: 100%;
+}
+
 .video:hover {
         opacity: 0.8;
 }

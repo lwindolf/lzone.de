@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { Config } from '../config.js';
 import { Section } from '../models/Section.js';
 import { HomeView } from './Home.js';
 import { CheatSheetRenderer } from './renderers/CheatSheet.js';
@@ -173,6 +174,8 @@ export class ContentView {
     /* Switch different type of content views and return content element */
     static #switch(name) {
         let el;
+
+        document.title = Config.siteName;  // always reset title on content view switch
 
         if(name === 'feedreader') {
             document.getElementById('main-content-wrap').style.display = 'none';
