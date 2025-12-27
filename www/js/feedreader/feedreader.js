@@ -7,7 +7,7 @@ import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
 import { ContextMenu } from '../ContextMenu.js';
-import { Action } from '../Action.js';
+import { Action } from '../helpers/Action.js';
 import * as ev from '../helpers/events.js';
 
 // The FeedReader class implements a two pane feed view with one pane for the list

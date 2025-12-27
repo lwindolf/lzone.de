@@ -1,7 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { Config } from '../config.js';
-import { Action } from '../Action.js';
+import { Action } from '../helpers/Action.js';
 
 import * as r from '../helpers/render.js';
 

@@ -2,7 +2,7 @@
 
 /* Context menu (used for the side bar only) with for actions and data binding */
 
-import { Action } from './Action.js';
+import { Action } from './helpers/Action.js';
 
 /* Usage:
    - pass the element id (of the container element)

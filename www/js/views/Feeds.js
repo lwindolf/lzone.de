@@ -2,7 +2,7 @@
 
 import * as r from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
-import { Action } from '../Action.js';
+import { Action } from '../helpers/Action.js';
 import { FeedList } from '../feedreader/feedlist.js';
 import { linkAutoDiscover, parserAutoDiscover } from '../feedreader/parsers/autodiscover.js';
 import { pfetch } from '../feedreader/net.js';

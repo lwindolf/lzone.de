@@ -3,13 +3,23 @@
 // Feed info rendering
 
 import { Settings } from '../models/Settings.js';
-import { ItemList } from './itemlist.js';
 import { FeedList } from './feedlist.js';
 import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
 export class FeedInfo {   
-    static #errorTemplate = template(`
+    static #contentTemplate = template(`
+        <h1 id='itemViewContentTitle'>
+            <a target='_system' href='{{feed.homepage}}'>{{feed.title}}</a>
+        </h1>
+
+        <p>
+            Source: <a target='_system' href='{{feed.source}}'>{{feed.source}}</a><br>
+        </p>
+    
+        <p>{{{feed.description}}}</p>
+
+        <div class='feedInfoError'>
         {{#if feed.error}}
             <div class='feedInfoErrorBox'>
                 <span>There was a problem when fetching this subscription!</span>
@@ -48,19 +58,7 @@ export class FeedInfo {
                 {{/unless}}
             </div>
         {{/if}}
-    `);
-    static #contentTemplate = template(`
-        <h1 id='itemViewContentTitle'>
-            <a target='_system' href='{{feed.homepage}}'>{{feed.title}}</a>
-        </h1>
-
-        <p>
-            Source: <a target='_system' href='{{feed.source}}'>{{feed.source}}</a><br>
-        </p>
-    
-        <p>{{{feed.description}}}</p>
-
-        <div class='feedInfoError'></div>
+        </div>
 
         Last updated: <span class='feedLastUpdated'>{{lastUpdated}}</span><br>
         <button class='btn' id='feedUpdate'>Update Now</button>
@@ -69,7 +67,6 @@ export class FeedInfo {
     constructor() {
         document.addEventListener('nodeUpdated', (e) => {
             const el = document.getElementById('itemViewContent');
-            console.log(el.dataset, e.detail.id);
             if ((e.detail.id == parseInt(el.dataset.id)) &&
                 (el.dataset.mode === 'feed'))
                 this.#render(e.detail.id)
@@ -87,7 +84,6 @@ export class FeedInfo {
             feed,
             lastUpdated: feed.last_updated ? new Date(feed.last_updated * 1000).toLocaleString() : 'never'
         });
-        render('#itemViewContent .feedInfoError', FeedInfo.#errorTemplate, { feed });
         
         ev.connect('click', '#feedUpdate', async () => {
             const button = document.querySelector('#feedUpdate');

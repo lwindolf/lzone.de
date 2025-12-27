@@ -2,7 +2,7 @@
 
 import { FeedList } from "../feedreader/feedlist.js";
 import { Section } from "../models/Section.js";
-import { Action } from "../Action.js";
+import { Action } from "../helpers/Action.js";
 
 import * as r from "../helpers/render.js";
 
