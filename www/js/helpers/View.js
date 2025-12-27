@@ -81,7 +81,7 @@ export class View {
 
     async #render() {
         const input = this.#mapper ? await this.#mapper(this.#data) : this.#data;
-        const newHTML = this.#template(input);
+        const newHTML = this.#template(input, this.#data);
         if (this.#eventContainer.innerHTML !== newHTML) {  // Simple diff
             this.#eventContainer.innerHTML = newHTML;
         }

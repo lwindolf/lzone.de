@@ -4,14 +4,21 @@
 
 export class Config {
     static siteName = 'LZone';  // used for HTML document title
+
+    static welcome = `
+        <p>
+            LZone is a progressive web app by <a href="https://lzone.de/consulting/en">Lars Windolf</a> that supports
+            installing a ton of Sysadmin / DevOps / System Architecture related content
+            so that you can search and read all of it in one place.
+        </p>`;
     
     static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
 
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
 
-    // URLs with content indizes to add to the app
+    // Content tree definition
     //
-    // These are basically Github repos with 
+    // These are basically Github repos with
     // - an optional catalog JSON of other installable repos
     // - repo local markdown files (actual content)
     //
@@ -20,11 +27,11 @@ export class Config {
     //
     // Fields:
     // - `removable`(optional, default: true) if the group can be deactivated
-    // - `install` (optional) Github repo definition to install, repo content will be automatically added to the sidebar
+    // - `install` (optional) Github repo definition to install, repo content will be automatically added
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
     static groups = {
         'Lars Windolf': {
-            removable : true,
+            removable : false,
             install : {
                 'About': {
                     github: 'lwindolf/blogs',
@@ -33,7 +40,7 @@ export class Config {
             }
         },
         'Cheat Sheets': {
-            removable : false,
+            removable : false,      // section with main catalog should not be removable
             install : {
                 'LZone Cheat Sheets': {
                     github: 'lwindolf/lzone-cheat-sheets',
@@ -50,7 +57,7 @@ export class Config {
             }
         },
         'Feeds': {
-            removable : false,
+            removable : false,      // feed reader should not be removable
             defaultFeeds: [
                 { title: "LZone Blog",       source: "https://lzone.de/feed/devops.xml" },
                 { title: "Liferea Blog",     source: "https://lzone.de/liferea/blog/feed.xml" }
@@ -298,12 +305,4 @@ export class Config {
             enabled    : false
         }
     };
-
-    // welcome text
-    static welcome = `
-        <p>
-            LZone is a progressive web app by <a href="https://lzone.de/consulting/en">Lars Windolf</a> that supports
-            installing a ton of Sysadmin / DevOps / System Architecture related content
-            so that you can search and read all of it in one place.
-        </p>`;
 }

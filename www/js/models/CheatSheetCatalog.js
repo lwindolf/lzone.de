@@ -39,6 +39,18 @@ export class CheatSheetCatalog {
                 })
             :{};
 
+    // Installs a section group (as defined in Config.groups)
+    static async #installGroup(group) {
+        try {
+            for (const name of Object.keys(Config.groups[group].install)) {
+                const repo = Config.groups[group].install[name];
+                await this.install(group, name, repo, undefined, false);
+            }
+        } catch (e) {
+            console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
+        }
+    }
+
     // Updates the index of all installed sections if they need updating
     // Installs default cheat sheets on uninitialized app.
     static async update() {
@@ -60,6 +72,14 @@ export class CheatSheetCatalog {
                     }
                 }
             }
+
+            console.log('Checking for missing sections...');
+            for(const name of Object.keys(Config.groups)) {
+                if(!sections.nodes[name] && !Config.groups[name].removable && name !== "Feeds") {
+                    console.log(`Installing missing section: ${name}`);
+                    this.#installGroup(name);
+                }
+            }
             return;
         }
 
@@ -75,16 +95,8 @@ export class CheatSheetCatalog {
             // FIXME: do update the index from time to time
             if(sections.nodes[group])
                 continue;
-                
-            try {                
-                for (const name of Object.keys(Config.groups[group].install)) {
-                    const repo = Config.groups[group].install[name];
-                    await this.install(group, name, repo, undefined, false);
-                }
-            } catch (e) {
-                console.error(`Error fetching index ${Config.indexUrls[group].index}: ${e}`);
-            }
 
+            this.#installGroup(group);
         }
 
         await Settings.set('initialRun', false);

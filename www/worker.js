@@ -15,7 +15,6 @@ var filesToCache = [
     '/js/components/dns-checker/js/settings.js',
     '/js/components/dns-checker/css/style.css',
 
-    '/js/Action.js',
     '/js/app.js',
     '/js/CLI.js',
     '/js/commands.js',
@@ -25,9 +24,11 @@ var filesToCache = [
     '/js/libraries.js',
     '/js/search.js',
 
+    '/js/helpers/Action.js',
     '/js/helpers/debounce.js',
     '/js/helpers/render.js',
     '/js/helpers/events.js',
+    '/js/helpers/View.js',
 
     '/js/models/CheatSheetCatalog.js',
     '/js/models/DB.js',
