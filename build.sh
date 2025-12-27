@@ -24,6 +24,3 @@ cp -r mermaid/dist/chunks/mermaid.esm.min ../www/js/vendor/chunks
 # PDF.js viewer has to be copied as well
 test -d ../www/js/vendor/pdf_viewer || mkdir ../www/js/vendor/pdf_viewer
 cp -r pdfjs-dist/web/* ../www/js/vendor/pdf_viewer
-
-# Run build.sh for rss-finder
-( cd ../www/rss-finder; npm run build )

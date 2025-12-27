@@ -121,7 +121,15 @@ export class FeedReader {
         this.#setup();
     }
 
-    update() {
+    async render(el) {        
+         el.innerHTML = `
+            <div id="itemlist" tabindex="1">
+                <div id="itemlistViewContent"></div>
+            </div>
+            <div id="itemview" tabindex="2">
+                <div id="itemViewContent"></div>
+            </div>`;
+
         FeedReader.#onLocationChange();
     }
 

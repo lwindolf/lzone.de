@@ -26,20 +26,15 @@ On the technical side
 ## Setup
 
 1. Clone the repo
-2. `git submodule init`
-3. `git submodule update`
-4. `npm i`
-5. `npm run build`
-6. Put the content of `www` into your webserver
-
-## Configuration
-
-- To customize the PWA edit `www/js/config.js`.
-- To add/remove CLI commands edit `www/js/command.js`
-- Customize check tools in `www/js/views/Checks.js`
-- Update base URL + title in `www/index.html` and `www/manifest.json`
+2. Customize
+  - To customize the PWA edit `www/js/config.js`.
+  - To add/remove CLI commands edit `www/js/command.js`
+  - Customize check tools in `www/js/views/Checks.js`
+  - Update base URL + title in `www/index.html` and `www/manifest.json`
+3. Copy the content of `www` into your webserver
 
 ## Building / Testing
 
+    npm run build
     npm test
     npm start

@@ -5,6 +5,8 @@
 export class Config {
     static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
 
+    static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
+
     // URLs with content indizes to add to the app
     //
     // These are basically Github repos with 
@@ -270,9 +272,9 @@ export class Config {
     // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
-            import     : '../components/saas-multi-status/js/MultiStatusCloud.js',
-            embed      : `<x-multistatus-cloud data-path="/js/components/saas-multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
-            settings   : `<x-multistatus-settings data-path="/js/components/saas-multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
+            import     : '/multi-status/js/MultiStatusCloud.js',
+            embed      : `<x-multistatus-cloud data-path="/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
+            settings   : `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
             enabled    : true
         },
         'DNS Change Detector': {

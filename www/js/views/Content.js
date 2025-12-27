@@ -31,7 +31,7 @@ export class ContentView {
         pdf      : PdfRenderer
     };
 
-    // routing
+    // location hash based routing to views
     static #internalRoutes = {
         Catalog  : {
             switch : 'content',

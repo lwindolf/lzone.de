@@ -1,7 +1,0 @@
-[submodule "www/multi-status"]
-	path = www/multi-status
-	url = https://github.com/lwindolf/multi-status.git
-
-[submodule "www/rss-finder"]
-	path = www/rss-finder
-	url = https://github.com/lwindolf/rss-finder.git

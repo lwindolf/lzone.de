@@ -15,11 +15,6 @@ var filesToCache = [
     '/js/components/dns-checker/js/settings.js',
     '/js/components/dns-checker/css/style.css',
 
-    '/js/components/saas-multi-status/js/MultiStatus.js',
-    '/js/components/saas-multi-status/js/MultiStatusCloud.js',
-    '/js/components/saas-multi-status/js/settings.js',
-    '/js/components/saas-multi-status/css/style.css',
-
     '/js/Action.js',
     '/js/app.js',
     '/js/CLI.js',

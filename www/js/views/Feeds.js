@@ -73,8 +73,6 @@ export class FeedsView {
     }
 
     async #render() {
-        await import('../components/rss-finder/js/widget.js');
-
         r.renderElement(this.#el, FeedsView.#template, {
             tree       : FeedList.root.children
         });
