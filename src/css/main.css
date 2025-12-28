@@ -112,7 +112,7 @@ code pre {
         padding: 0;
 }
 
-a {
+a[href] {
         color: var(--tblue);
 }
 
