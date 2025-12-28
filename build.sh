@@ -3,24 +3,13 @@
 
 set -euo pipefail
 
-cd node_modules
-cp \
-	dompurify/dist/purify.es.mjs \
-	handlebars/dist/handlebars.min.js \
-	webamp/built/webamp.bundle.min.js \
-	lunr/lunr.min.js \
-	mermaid/dist/mermaid.esm.min.mjs \
-	split.js/dist/split.es.js \
-	rst2html/dist/rst2html.min.js \
-	pdfjs-dist/build/pdf.mjs \
-	pdfjs-dist/build/pdf.sandbox.mjs \
-	pdfjs-dist/build/pdf.worker.mjs \
-	../www/js/vendor
+test -d www/ && find www/ -delete
+mkdir -vp www/js
+cp -vL src/js/config.js www/js
+cp -vrL src/js/vendor www/js
+cp -vr src/css www
+( cd src && cp -vL *.png *.ico *.svg *.xml *.json worker.js index.html ../www )
 
-# Mermaid has chunks it wants to load
-test -d ../www/js/vendor/chunks || mkdir ../www/js/vendor/chunks
-cp -r mermaid/dist/chunks/mermaid.esm.min ../www/js/vendor/chunks
+sed -i "s/devMode = true/devMode = false/" www/index.html
 
-# PDF.js viewer has to be copied as well
-test -d ../www/js/vendor/pdf_viewer || mkdir ../www/js/vendor/pdf_viewer
-cp -r pdfjs-dist/web/* ../www/js/vendor/pdf_viewer
+npx webpack ${@-}

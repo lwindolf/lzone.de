@@ -1,39 +1,45 @@
 {
-        "name": "lzone.de",
-        "version": "0.9.0",
-        "description": "Content aggregator for feeds and markdown content",
-        "scripts": {
-                "test": "eslint --ignore-pattern vendor www/js && jest --coverage",
-                "start": "cd www && npx serve",
-                "build": "./build.sh"
+    "name": "lzone.de",
+    "version": "0.9.0",
+    "description": "Content aggregator for feeds and markdown content",
+    "type": "module",
+    "scripts": {
+        "test": "eslint --ignore-pattern vendor www/js && jest --coverage",
+        "start": "cd www && npx serve",
+        "startDev": "cd src && npx serve -S",
+        "build": "./build.sh"
+    },
+    "dependencies": {
+        "asciidoctor": "^3.0.3",
+        "dompurify": "^3.2.3",
+        "handlebars": "^4.7.8",
+        "lunr": "^2.3.6",
+        "mermaid": "^11.10.0",
+        "pdfjs-dist": "^5.2.133",
+        "rst2html": "^1.0.0",
+        "split.js": "^1.6.5",
+        "webamp": "^1.5.0"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.22.20",
+        "babel-jest": "^29.7.0",
+        "eslint": "^8.49.0",
+        "fake-indexeddb": "^6.0.1",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^28.1.3",
+        "whatwg-fetch": "^3.6.19"
+    },
+    "jest": {
+        "verbose": true,
+        "transform": {
+            "^.+\\.js?$": "babel-jest"
         },
-        "dependencies": {
-                "asciidoctor": "^3.0.3",
-                "dompurify": "^3.2.3",
-                "handlebars": "^4.7.8",
-                "lunr": "^2.3.6",
-                "mermaid": "^11.10.0",
-                "pdfjs-dist": "^5.2.133",
-                "rst2html": "^1.0.0",
-                "split.js": "^1.6.5",
-                "webamp": "^1.5.0"
-        },
-        "devDependencies": {
-                "@babel/preset-env": "^7.22.20",
-                "babel-jest": "^29.7.0",
-                "eslint": "^8.49.0",
-                "fake-indexeddb": "^6.0.1",
-                "jest": "^29.7.0",
-                "jest-environment-jsdom": "^28.1.3",
-                "whatwg-fetch": "^3.6.19"
-        },
-        "jest": {
-                "verbose": true,
-                "transform": {
-                        "^.+\\.js?$": "babel-jest"
-                },
-                "testEnvironment": "jest-environment-jsdom",
-                "roots": ["./tests"],
-                "setupFiles": ["./global.mock.js"]
-        }
+        "testEnvironment": "jest-environment-jsdom",
+        "roots": [
+            "./tests"
+        ],
+        "setupFiles": [
+            "./global.mock.js"
+        ]
+    }
 }

@@ -23,18 +23,27 @@ On the technical side
 - backend-less offline content caching app
 - for now: Web only (mobile is not focus)
 
-## Setup
+## Deploying
 
-1. Clone the repo
-2. Customize
-  - To customize the PWA edit `www/js/config.js`.
-  - To add/remove CLI commands edit `www/js/command.js`
-  - Customize check tools in `www/js/views/Checks.js`
-  - Update base URL + title in `www/index.html` and `www/manifest.json`
-3. Copy the content of `www` into your webserver
+You can copy the `www` directly into your webserver root.
+
+Although you might want to customize stuff first:
+
+1. To customize the PWA edit `src/js/config.js`.
+2. To add/remove CLI commands edit `src/js/command.js`
+3. Update base URL + title in `src/index.html` and `src/manifest.json`
 
 ## Building / Testing
 
+Update dependencies
+
+    npm i
+
+Test source without bundling in `src`
+
+    npm run startDev
+
+Bundle and test production source in `www`
+
     npm run build
-    npm test
     npm start

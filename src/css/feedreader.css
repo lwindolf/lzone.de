@@ -1,0 +1,359 @@
+:root,
+[data-theme="light"] {
+        --box-bg: rgba(135, 135, 135, 0.085);
+        --box-radius: 0.35rem;
+        --box-padding: 0.75rem 1.5rem;
+        --box-margin: 0.75rem 0;
+        --box-text-color: #111;
+
+        --error-bg: #ffa;
+
+        --body-font-family: "Red Hat Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        --body-font-scale: 0.95;
+        --body-font-size: calc(var(--body-font-scale) * clamp(16px, 1vw, 18px));
+        --body-font-weight: normal;
+
+        --preferred-content-width: 90ch;
+        /* The preferred width for the readable content */
+}
+
+@media (prefers-color-scheme: dark) {
+        :root {
+                --box-bg: rgba(135, 135, 135, 0.1);
+                --box-text-color: #fff;
+                color-scheme: dark;
+        }
+}
+
+#itemlist,
+#itemview {
+        overflow-y: auto;
+}
+
+blockquote {
+        border-left: 3px solid var(--primary);
+        background: var(--box-bg);
+        padding: var(--box-padding);
+        margin: var(--box-margin);
+        border-radius: var(--box-radius);
+        font-style: italic;
+        clear: both;
+}
+
+#itemview strong,
+#itemview b {
+        font-weight: 600;
+}
+
+header {
+        background: var(--box-bg);
+        border-bottom: 1px solid var(--text-color-light);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+
+        display: flex;
+}
+
+header .title {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        min-width: 0;
+        flex: 10 10;
+}
+
+#feedlistViewTitle .addBtn {
+        padding: 0 0.4rem;
+}
+
+#feedlistViewTitle .addBtn:hover {
+        background: #ccc;
+        cursor: pointer;
+}
+
+#itemViewContent {
+        padding: 0.8rem;
+        padding-top: 0.01rem;
+
+        max-width: 800px;
+        margin: 0 auto;
+
+        line-height: 1.8;
+}
+#itemViewContentTitle {
+        line-height: 1.4;
+        margin-bottom: 0.2rem;
+}
+#itemViewContentTitle a:not(.missingTitle) {
+        background:none;
+        color: var(--text);
+}
+
+.feed,
+.item {
+        cursor: pointer;
+        overflow: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+}
+
+.feed {
+        display: flex;
+        align-items: center;
+}
+
+.feed img {
+        width: 1.4rem;
+        height: 1.4rem;
+        margin-right: 0.5rem;
+}
+
+.feed .title {
+        flex: 10 10;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        min-width: 0;
+}
+
+.feed .count {
+        background: var(--darkerbg);
+        padding: 0.1rem 0.4rem;
+        color: var(--text);
+        font-size: 80%;
+        font-weight: 600;
+        border-radius: 0.2rem;
+}
+
+.selected .feed .count,
+.feed:hover .count {
+        background: hsl(from var(--darkerbg) h s calc(l - 10));
+}
+
+.feed .count[data-count="0"] {
+        display: none;
+}
+
+.item {
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--box-bg);
+}
+
+.item .title[data-read="false"] {
+        font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+.item {
+        border-bottom: 1px solid hsl(from var(--text) h s calc(l - 80));
+}
+
+.item:not(.selected) .title[data-read="true"] {
+        color: hsl(from var(--text) h s calc(l - 25));
+}
+}
+
+::-webkit-scrollbar {
+        width: 0.3rem;
+}
+
+::-webkit-scrollbar-track {
+        background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+        border-radius: 0.5rem;
+        border: transparent;
+}
+
+/* split.js */
+
+.gutter {
+        background-color: var(--box-bg);
+
+        background-repeat: no-repeat;
+        background-position: 50%;
+}
+
+.gutter:hover {
+        cursor: col-resize;
+}
+
+/* modal dialog */
+
+#modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1000;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+}
+
+#modalContent {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 800px;
+}
+
+#modalContent input[type="text"] {
+        width: 100%;
+        display: block;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+}
+
+#modal .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+}
+
+#modal .close:hover,
+#modal .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+}
+
+#modal table {
+        border-collapse: collapse;
+}
+
+#modal table td {
+        border: 1px solid #ccc;
+        padding: 1rem;
+}
+
+/* link hover indication */
+
+#linkHover {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        display: none;
+        background: #f0f0f0;
+        text-overflow: clip;
+        padding: 0.2rem;
+}
+
+/* feed fetch error warning */
+
+.feedInfoErrorBox {
+        border: 0.05rem solid black;
+        margin: 0.8rem 1.6rem;
+        padding: 0.8rem;
+        background: #ffa;
+        color: black;
+        margin: 0;
+}
+
+.feedInfoErrorBox li {
+        list-style: none;
+}
+
+.feedInfoErrorBox ul {
+        padding-left: 0.8rem;
+}
+
+/* dark mode image glaring */
+@media (prefers-color-scheme: dark) {
+        img {
+                filter: brightness(.8) contrast(1.2);
+        }
+}
+
+#feedreader {
+        display: none;
+        height: 100%;
+}
+.feedViewSplit {
+        height: 100%;
+}
+
+#itemlistViewContent,
+#itemViewContent {
+        height: 100%;
+        width: 100%;
+}
+
+#itemlistViewContent .newItems {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--darkbg);
+        padding: 0.3rem 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        z-index: 1000;
+        font-size:small;
+        border-bottom: 1px solid var(--darkbgborder);
+}
+#itemlistViewContent .newItems:hover {
+        background: var(--darkerbg);
+        color: var(--text);
+}
+
+#itemview,
+#itemlistViewContent {
+        overflow: auto;
+}
+
+#itemlist:focus,
+#feedlist:focus,
+#itemview:focus {
+        border: 1px solid var(--focusborder);
+}
+#itemlist:not(:focus),
+#feedlist:not(:focus),
+#itemview:not(:focus) {
+        border: 1px solid rgba(0, 0, 0, 0);
+}
+
+#itemlist .date {
+        float: right;
+        margin-left: 0.8rem;
+}
+
+#itemview .date {
+        margin: 6px 0 32px 0;
+}
+
+#itemview .date,
+#itemlist .date {
+        filter: brightness(50%);
+        font-size: 0.8rem;
+}
+
+
+.selected {
+        background: var(--darkerbg);
+}
+
+div:focus .selected {
+        background: var(--darkerbg);
+        color: var(--text);
+}

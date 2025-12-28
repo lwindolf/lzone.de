@@ -1,0 +1,203 @@
+// vim: set ts=4 sw=4:
+
+import { CheatSheetCatalog } from '../models/CheatSheetCatalog.js';
+import { Section } from '../models/Section.js';
+import * as r from '../helpers/render.js';
+import * as ev from '../helpers/events.js';
+
+// A view giving an overview on installed and installable cheat sheets
+// and allows adding/removing cheat sheets
+
+export class CatalogView {
+    // state
+    #repos = {};
+    #el;
+    #group;
+
+    static #template = r.template(`
+        <h1>Folder "{{ group }}"</h1>
+
+        {{#if properties.removable }}
+            <button id='removeFolder' data-group='{{ group }}'>Remove folder</button>
+        {{/if}}
+
+        <h2>Installed Content</h2>
+
+        <p>
+            <div id='installedSections'>
+            {{#each tree.nodes }}
+                {{#if this.name}}
+                    <div class='installed'>
+                        <button data-section='{{ this.name }}'>Remove</button>
+                        <a href="{{ this.url }}">{{ this.name }}</a>
+                    </div>
+                {{/if}}
+            {{/each }}
+            </div>
+        </p>
+
+        {{#if properties.catalog }}
+        <h2>
+            Installable Content
+            {{#if properties.catalog.editUrl }}
+                <a href="{{ properties.catalog.editUrl }}" target="_blank">
+                    <button id="editBtn" class="btn">Edit</button>
+                </a>
+            {{/if }}
+        </h2>
+
+        <p id='installableFilter'>
+            <b>Filter by:</b> Type
+            <select id='filterType'>
+                <option value='*'>All</option>
+                {{#each types }}
+                    <option value='{{ this }}'>{{ this }}</option>
+                {{/each }}
+            </select>
+            Category
+            <select id='filterCategory'>
+                <option value='*'>All</option>
+                {{#each categories }}
+                    <option value='{{ this }}'>{{ this }}</option>
+                {{/each }}
+            </select>
+        </p>
+
+        <p>
+            <div id='installableSections'>
+            {{#each catalog }}
+                <div class='installable'>
+                    <button data-section='{{ @key }}'>Add</button>
+                    <a href="https://github.com/{{ this.github }}">{{ @key }}</a>
+                    <span class='sectionCategory' type='{{ this.type }}'>{{this.category}}</span>
+                </div>
+            {{/each }}
+            </div>
+        </p>
+
+        <h2>Custom Installation</h2>
+        
+        <p>
+            Add a Github repo of your own to the app:
+
+            <div id='customInstall'>
+                <table>
+                    <tr>
+                        <td>Name:</td>
+                        <td><input type='text' id='customName' placeholder='Title' required/></td>
+                    </tr>
+                    <tr>
+                        <td>Repo:</td>
+                        <td><input type='text' id='customRepo' placeholder='<user>/<repo>' required pattern='\\w+/[\\w.]+'/>
+                    </tr>
+                    <tr>
+                        <td>File Pattern: (optional Regex with exactly one capture group to extract names)<br/>
+                        <td><input type='text' id='customFilePattern' placeholder='^path/(.*)\\.md$'/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><button class="btn">Add</button></td>
+                    </tr>
+                <table>
+            </div>
+        </p>
+        {{/if}}
+
+        <h2>Storage Usage</h2>
+
+        <p>
+            As cheat sheets are stored in your browser they can eat up some space.
+        </p>
+        <p>
+            Your current usage is: {{ diskUsage}}
+        </p>        
+    `);
+
+    constructor(el, path) {
+        this.#el = el;
+        this.#group = decodeURI(path);
+        this.#render();
+
+        document.addEventListener('sections-updated', this.#render.bind(this));
+    }
+
+    async #render() {
+        this.#repos = await CheatSheetCatalog.getInstallable(this.#group);
+
+        r.renderElement(this.#el, CatalogView.#template, {
+            group      : this.#group,
+            catalog    : Object.keys(this.#repos).sort().reduce((acc, key) => {
+                acc[key] = this.#repos[key];
+                return acc;
+            }, {}),
+            types      : this.#repos ? Object.keys(this.#repos).map(r => this.#repos[r].type).filter((v, i, a) => a.indexOf(v) === i).sort() : [],
+            categories : this.#repos ? Object.keys(this.#repos).map(r => this.#repos[r].category).filter((v, i, a) => a.indexOf(v) === i).sort() : [],
+            properties : window.Config.groups[this.#group],
+            removable  : window.Config.groups[this.#group].removable,
+            diskUsage  : await this.#getDiskUsage(),
+            tree       : (await Section.getTree()).nodes[this.#group]
+        });
+
+        ev.connect('change', '#installableFilter select', () => {
+            const type = document.getElementById('filterType').value;
+            const category = document.getElementById('filterCategory').value;
+            const sections = document.querySelectorAll('#installableSections .installable');
+            console.log(`Filtering sections by type: ${type}, category: ${category}`);
+            sections.forEach((section) => {
+                console.log(`Checking section: ${section.querySelector('.sectionCategory').textContent}`);
+                if ((type     === '*' || section.querySelector('.sectionCategory').getAttribute('type') === type) &&
+                    (category === '*' || section.querySelector('.sectionCategory').textContent === category)) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        ev.connect('click', '#customInstall button', (e) => {
+            const repo = {
+                github: document.getElementById('customRepo').value,
+                type: 'github',
+                filePattern: document.getElementById('customFilePattern').value
+            };
+    
+            if (repo.filePattern.length == 0)
+                repo.filePattern = null;
+    
+            CheatSheetCatalog.install(
+                this.#group,
+                document.getElementById('customName').value,
+                repo,
+                e.target
+            );
+        });
+
+        ev.connect('click', 'button#removeFolder', (e) =>
+            CheatSheetCatalog.removeGroup(e.getAttribute('data-group')));
+
+        ev.connect('click', '.installable button', (e) =>           
+            CheatSheetCatalog.install(
+                this.#group,
+                e.getAttribute('data-section'),
+                this.#repos[e.getAttribute('data-section')],
+                e
+            ));
+
+        ev.connect('click', '.installed button', async (e) =>
+            CheatSheetCatalog.remove(
+                this.#group,
+                e.getAttribute('data-section')
+            ));
+    }
+
+    async #getDiskUsage() {
+        if (!navigator.storage)
+            return "Sorry: Browser does not report usage!";
+
+        const estimate = await navigator.storage.estimate();
+        const used = Math.floor(estimate.usage / 1024 / 1024);
+        const available = Math.floor((estimate.quota - estimate.usage) / 1024 / 1024);
+
+        return `${used} MB used / ${available} MB available`;
+    }
+}
