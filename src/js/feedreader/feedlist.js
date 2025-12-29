@@ -133,3 +133,5 @@ export class FeedList {
 
     static update = () => this.#updateFolder(this.root);
 }
+
+await FeedList.setup();

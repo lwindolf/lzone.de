@@ -6,6 +6,7 @@ import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { Libraries } from "../libraries.js";
 import { ContextMenu } from '../ContextMenu.js';
 import { Action } from '../helpers/Action.js';
 import * as ev from '../helpers/events.js';
@@ -22,19 +23,36 @@ import * as ev from '../helpers/events.js';
 export class FeedReader {
     // config
     static #hashRouteBase = '#/-/Feed/';
+    static #selector = '#feedreader';
 
     // state
     static #selectedFeed;
     static #selectedItem;
 
-    feedlist;
-    feedinfo;
-    itemlist;
-    itemview;
+    static feedlist;
+    static feedinfo;
+    static itemlist;
+    static itemview;
 
     // async constructor
-    async #setup() {
-        await FeedList.setup();
+    static async #setup() {
+        document.querySelector(this.#selector).innerHTML = `
+            <div id="itemlist" tabindex="1">
+                <div id="itemlistViewContent"></div>
+            </div>
+            <div id="itemview" tabindex="2">
+                <div id="itemViewContent"></div>
+            </div>`;
+
+        Libraries.get('Split').then(Split => {
+            Split(['#itemlist', '#itemview'], {
+                sizes: [30, 70],
+                minSize: [100, 100],
+                gutterSize: 3,
+                expandToMin: true,
+                direction: 'vertical'
+            });
+        });
 
         new ContextMenu('sidebar', [
             // Feed options
@@ -104,7 +122,7 @@ export class FeedReader {
 
         // Item actions
         Action.register('feedreader:nextUnread',     () => this.itemlist.nextUnread());
-        Action.register('feedreader:select',         (params) => FeedReader.select(params.itemId, params.nodeId));
+        Action.register('feedreader:select',         (params) => this.select(params.itemId, params.nodeId));
         Action.register('feedreader:toggleItemRead', (params) => this.itemlist.toggleItemRead(parseInt(params.id)));
         Action.register('feedreader:toggleItemStar', (params) => this.itemlist.toggleItemStar(parseInt(params.id)));
         Action.register('feedreader:openItemLink',   (params) => this.itemlist.openItemLink(parseInt(params.id)));
@@ -115,58 +133,50 @@ export class FeedReader {
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
 
-        Action.hotkey('C-A-KeyR',     'feedreader:markRead',   FeedReader.#hashRouteBase, () => { return { id: FeedReader.#selectedFeed }; });
-        Action.hotkey('C-A-KeyU',     'feedreader:updateNode', FeedReader.#hashRouteBase, () => { return { id: FeedReader.#selectedFeed }; });
-        Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', FeedReader.#hashRouteBase);
+        Action.hotkey('C-A-KeyR',     'feedreader:markRead',   this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
+        Action.hotkey('C-A-KeyU',     'feedreader:updateNode', this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
+        Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', this.#hashRouteBase);
 
-        window.addEventListener('hashchange', () => FeedReader.#onLocationChange());
+        window.addEventListener('hashchange', () => this.#onLocationChange());
     }
 
-    constructor() {
-        this.#setup();
-    }
+    // only needs to be called once
+    static render() {
+        if (!this.feedlist)
+            this.#setup();
 
-    async render(el) {        
-         el.innerHTML = `
-            <div id="itemlist" tabindex="1">
-                <div id="itemlistViewContent"></div>
-            </div>
-            <div id="itemview" tabindex="2">
-                <div id="itemViewContent"></div>
-            </div>`;
-
-        FeedReader.#onLocationChange();
+        this.#onLocationChange();
     }
 
     // location hash based item/feed selection routing
 
     static #onLocationChange() {
-        const oldFeed = FeedReader.#selectedFeed;
-        const oldItem = FeedReader.#selectedItem;
+        const oldFeed = this.#selectedFeed;
+        const oldItem = this.#selectedItem;
 
-        if (!document.location.hash.startsWith(FeedReader.#hashRouteBase))
+        if (!document.location.hash.startsWith(this.#hashRouteBase))
             return;
 
         const match = document.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
-        FeedReader.#selectedFeed = match.groups.feedId ? parseInt(match.groups.feedId) : null;
-        FeedReader.#selectedItem = match.groups.itemId ? parseInt(match.groups.itemId) : null;
+        this.#selectedFeed = match.groups.feedId ? parseInt(match.groups.feedId) : null;
+        this.#selectedItem = match.groups.itemId ? parseInt(match.groups.itemId) : null;
 
-        if ((oldFeed != FeedReader.#selectedFeed) ||
-            (oldItem != FeedReader.#selectedItem)) {
-            if (FeedReader.#selectedItem)
-                ev.dispatch('itemSelected', { feedId: FeedReader.#selectedFeed, id: FeedReader.#selectedItem });
+        if ((oldFeed != this.#selectedFeed) ||
+            (oldItem != this.#selectedItem)) {
+            if (this.#selectedItem)
+                ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
             else
-                ev.dispatch('feedSelected', { id: FeedReader.#selectedFeed });
+                ev.dispatch('feedSelected', { id: this.#selectedFeed });
         }
     }
 
     // select a new feed (and optionally an item)
     static select(nodeId, itemId = undefined) {
-        window.location.hash = `${FeedReader.#hashRouteBase}${nodeId}${itemId ? `/Item/${itemId}` : ''}`;
+        window.location.hash = `${this.#hashRouteBase}${nodeId}${itemId ? `/Item/${itemId}` : ''}`;
     }
 
     // select a new item (of the currently displayed feed)
     static selectItem(id) {
-        window.location.hash = `${FeedReader.#hashRouteBase}${FeedReader.#selectedFeed}/Item/${id}`;
+        window.location.hash = `${this.#hashRouteBase}${this.#selectedFeed}/Item/${id}`;
     }
 }

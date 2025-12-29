@@ -6,6 +6,8 @@ import { ChatView } from "./views/Chat.js";
 import { Search } from "./search.js";
 
 // A CLI prompt for multiple types of command (AI, commands, search)
+//
+// Instantiate only once!
 export class CLI {
     constructor(id) {
         const input = document.getElementById(id);

@@ -1,84 +1,56 @@
 // vim: set ts=4 sw=4:
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20251228;
+var cacheVersion = 20251229;
 var cacheName = cachePrefix + '-' + cacheVersion;
 var filesToCache = [
     '/',
     '/css/main.css',
     '/css/feedreader.css',
 
-    '/js/components/pinned-apps/js/PinnedApps.js',
-    '/js/components/badge-checker/js/BadgeChecker.js',
     '/js/components/badge-checker/css/style.css',
-    '/js/components/dns-checker/js/DnsChecker.js',
-    '/js/components/dns-checker/js/settings.js',
     '/js/components/dns-checker/css/style.css',
 
-    '/js/app.js',
-    '/js/CLI.js',
-    '/js/commands.js',
     '/js/config.js',
-    '/js/ContextMenu.js',
-    '/js/layout.js',
-    '/js/libraries.js',
-    '/js/search.js',
-
-    '/js/helpers/Action.js',
-    '/js/helpers/debounce.js',
-    '/js/helpers/render.js',
-    '/js/helpers/events.js',
-    '/js/helpers/View.js',
-
-    '/js/models/CheatSheetCatalog.js',
-    '/js/models/DB.js',
-    '/js/models/GithubRepo.js',
-    '/js/models/SearchIndex.js',
-    '/js/models/Section.js',
-    '/js/models/Settings.js',
+    '/js/bundle-main.js',
+    '/js/bundle-components.js',
 
     '/js/vendor/handlebars.min.js',
     '/js/vendor/lunr.min.js',
     '/js/vendor/purify.es.mjs',
     '/js/vendor/showdown.min.js',
-    '/js/vendor/split.es.js',
-
-    '/js/views/renderers/CheatSheet.js',
-    '/js/views/renderers/Pdf.js',
-
-    '/js/views/Catalog.js',
-    '/js/views/Chat.js',
-    '/js/views/Checks.js',
-    '/js/views/Content.js',
-    '/js/views/Discover.js',
-    '/js/views/FeedReader.js',
-    '/js/views/Feeds.js',
-    '/js/views/FileBrowser.js',
-    '/js/views/Folder.js',
-    '/js/views/Home.js',
-    '/js/views/Settings.js',
-    '/js/views/Sidebar.js'
+    '/js/vendor/split.es.js'
 ];
 
-/* Start the service worker and cache all of the app's content */
-self.addEventListener('install', function (e) {
-    console.log('[ServiceWorker] Install');
-    e.waitUntil(
-        caches.open(cacheName).then(function (cache) {
-            return cache.addAll(filesToCache).then(() => {
-                /* Cleanup deprecated cache versions */
-                caches.keys().then((keyList) => {
-                    for (const k of keyList) {
-                        if (0 == k.indexOf(cachePrefix) && k !== cacheName) {
-                            console.log(`Dropping cache version ${k}`);
-                            caches.delete(k);
-                        }
-                    }
+self.addEventListener('install', async (e) => {
+    console.log('Install');
+
+    e.waitUntil(async () => {
+        const cache = await caches.open(cacheName);
+        for (const file of filesToCache) {
+            await cache.add(file);
+            self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage('log [worker] Cached ' + file);
                 });
             });
-        })
-    );
-    console.log('[ServiceWorker] Install success!');
+        }
+    });
+});
+
+self.addEventListener('activate', async (e) => {
+    console.log("Activate version " + cacheVersion);
+
+    e.waitUntil(async () => {
+        /* Cleanup deprecated cache versions */
+        const keyList = await caches.keys();
+        for (const k of keyList) {
+            if (0 == k.indexOf(cachePrefix) && k !== cacheName) {
+                console.log(`Dropping cache version ${k}`);
+                await caches.delete(k);
+            }
+        }
+    });
 });
 
 /* Serve cached content when offline */
@@ -86,8 +58,7 @@ self.addEventListener('fetch', async (e) => {
     var pathname = new URL(e.request.url).pathname;
     /* cache all webapp files of the following types (to cache stuff like chunks/images) */
     if ((new URL(e.request.url).host === location.host) &&
-        pathname.match(/\.(mjs|js|css|svg|png|ico)$/)) {
-        console.log("cache check for " + pathname);
+        pathname.match(/\.(mjs|js|css|svg|png|ico|json|xml)$/)) {
         e.respondWith(caches.open(cacheName).then((cache) => {
             return cache.match(e.request).then((cachedResponse) => {
                 return cachedResponse || fetch(e.request.url).then((fetchedResponse) => {

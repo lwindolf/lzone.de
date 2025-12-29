@@ -84,12 +84,14 @@ export class App {
             });
 
         window.app = {
-            debug       : false,
-            FeedReader  : new FeedReader(),
-            Layout      : new Layout(),
+            ChecksView  : new ChecksView(document.getElementById('toolpanel')),
+            CLI         : new CLI('search-input'),            
             Commands,
-            Sidebar     : new Sidebar(document.getElementById('site-nav')),
-            ContentView : new ContentView(document.getElementById('main-content-wrap'))
+            ContentView : new ContentView(document.getElementById('main-content-wrap')),
+            debug       : false,
+            FeedReader,
+            Layout      : new Layout(),
+            Sidebar     : new Sidebar(document.getElementById('site-nav'))            
         };
 
         await CheatSheetCatalog.update();
@@ -97,9 +99,7 @@ export class App {
         window.addEventListener("hashchange", this.#onLocationHashChange);
         this.#onLocationHashChange();
 
-        Search.init();
-        new CLI('search-input');
-        new ChecksView(document.getElementById('toolpanel'));
+        Search.init();      
 
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
