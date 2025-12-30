@@ -72,7 +72,8 @@ header .title {
         cursor: pointer;
 }
 
-#itemViewContent {
+#itemViewContent,
+#feedViewContent {
         padding: 0.8rem;
         padding-top: 0.01rem;
 
@@ -294,7 +295,8 @@ header .title {
 }
 
 #itemlistViewContent,
-#itemViewContent {
+#itemViewContent,
+#feedViewContent {
         height: 100%;
         width: 100%;
 }
@@ -318,7 +320,8 @@ header .title {
 }
 
 #itemview,
-#itemlistViewContent {
+#itemlistViewContent,
+#feedViewContent {
         overflow: auto;
 }
 

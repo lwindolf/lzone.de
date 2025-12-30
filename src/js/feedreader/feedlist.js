@@ -57,7 +57,7 @@ export class FeedList {
     }
 
     static allowCorsProxy(id, allow) {
-        FeedList.#nodeById[id].corsProxyAllowed = allow;
+        FeedList.#nodeById[id].allowCorsProxy = allow;
         FeedList.#save();
     }
 
@@ -117,21 +117,23 @@ export class FeedList {
         setTimeout(() => FeedList.update(), 2000);
     }
 
-    // Recursively update folder
-    static #updateFolder(folder) {
-        if(!folder.children)
+    // Recursively update a node
+    static updateNode(node, force = false) {
+        console.log(`Updating node ${node.id}`);
+        if(!node.children) {
+            if(node.constructor.name === "Feed")
+                node.update(force);
             return;
+        }
 
-        folder.children.forEach(node => {
-            if(node.constructor.name === "Feed") {
-                node.update();
-            } else {
-                this.#updateFolder(node);
-            }
+        node.children.forEach(child => {
+            this.updateNode(child, force);
         });
     }
 
-    static update = () => this.#updateFolder(this.root);
+    static update() {
+        this.updateNode(this.root);
+    }
 }
 
 await FeedList.setup();

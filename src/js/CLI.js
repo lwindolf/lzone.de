@@ -73,7 +73,6 @@ export class CLI {
                 event.preventDefault();
                 return;
             } else {
-                console.log("CLI input event in mode:", this.getMode());
                 if ((this.#input.value.length > 1) &&
                     (this.getMode() === "Search")) {
                     // type ahead find switch to search content view

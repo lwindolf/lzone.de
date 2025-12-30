@@ -6,7 +6,11 @@ import { Action } from "../helpers/Action.js";
 
 import * as r from "../helpers/render.js";
 
-/* Dynamic sidebar building for installed content */
+/* Dynamic sidebar building for installed content 
+
+   triggers action:
+   - sidebar:<type>::middleClick
+ */
 
 export class Sidebar {
     // state
@@ -127,17 +131,20 @@ export class Sidebar {
             }
         });
 
-        /* For middle clicks we trigger an action "<type>::auxclick" so
+        /* For middle clicks we trigger an action "sidebar:<type>::middleClick" so
            specific node types can register an optional handler */
         el.addEventListener('auxclick', (ev) => {
             var target = ev.target;
+
+            if (ev.button !== 1)
+                return;
 
             while (target && !target.classList.contains('nav-list-item')) { 
                 target = target.parentNode;
             }
             if (target && target.classList.contains('nav-list-item')) {
                 ev.preventDefault();
-                Action.dispatch(`${target.dataset.type}:auxclick`, target.dataset);
+                Action.dispatch(`sidebar:${target.dataset.type}:middleClick`, target.dataset);
             }            
         });
         // Note: Right click "context-menu" is handled globally by ContextMenu.js

@@ -46,11 +46,13 @@ export class View {
     #mapper;
     #eventContainer;    // target element for rendering and event binding
     #boundRender;
+    #postRender;
 
     constructor(options) {
         this.#template = window.Handlebars.compile(options.template);
         this.#data = options.data || {};
         this.#mapper = options.mapper;
+        this.#postRender = options.postRender;
 
         // Create an event listener container for event binding this allows us to 
         // automatically get rid of the event listeners when it is removed from the DOM
@@ -68,6 +70,8 @@ export class View {
         this.#boundRender = this.#render.bind(this);
         options.events.forEach(eventName => {
             this.#eventContainer.addEventListener(eventName, (event) => {
+                if (window?.app?.debug)
+                    console.log(`View event ${eventName} received`, event.detail);
                 // Check if event details fields match all fields in this.#data
                 for (const key in this.#data) {
                     if (event.detail[key] !== this.#data[key]) {
@@ -75,6 +79,8 @@ export class View {
                     }
                 }
                 this.#boundRender();
+                if (this.#postRender)
+                    this.#postRender();
             });
         });
     }
@@ -88,6 +94,9 @@ export class View {
     }
 
     setData(newData) {
+        if (window?.app?.debug)
+            console.log(`View new data received`, newData);
+
         this.#data = { ...this.#data, ...newData };
         for(const key in this.#data)
             this.#eventContainer.dataset[key] = this.#data[key];

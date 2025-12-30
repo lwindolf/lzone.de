@@ -5,14 +5,13 @@
 import { parserAutoDiscover } from './parsers/autodiscover.js';
 import { Favicon } from './parsers/favicon.js';
 import { Feed } from './feed.js';
-import { pfetch } from './net.js';
 
 export class FeedUpdater {
     // returns a feed properties or at least error code (e.g. "{ error: Feed.ERROR_XML }")
     // result should be merged into the feed being updated
-    static async fetch(url, corsProxyAllowed = false) {
+    static async fetch(url, allowCorsProxy = false) {
         console.info(`Updating ${url}`);
-        var feed = await pfetch(url, {}, corsProxyAllowed)
+        var feed = await fetch(url, { allowCorsProxy })
             .then((response) => {
                 // FIXME: proper network state handling
                 return response.text()
@@ -33,7 +32,7 @@ export class FeedUpdater {
 
                 if(!feed.icon && feed.homepage)
                     try {
-                        feed.icon = await Favicon.discover(feed.homepage, corsProxyAllowed);
+                        feed.icon = await Favicon.discover(feed.homepage, allowCorsProxy);
                     } catch(e) { 
                         // ignore
                     }

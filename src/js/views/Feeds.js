@@ -5,8 +5,6 @@ import * as ev from '../helpers/events.js';
 import { Action } from '../helpers/Action.js';
 import { FeedList } from '../feedreader/feedlist.js';
 import { linkAutoDiscover, parserAutoDiscover } from '../feedreader/parsers/autodiscover.js';
-import { pfetch } from '../feedreader/net.js';
-
 
 // A view giving an overview on feed subscriptions
 // and allows adding/removing feeds
@@ -147,7 +145,7 @@ export class FeedsView {
         
         try {
             // Fetch content the URL points to
-            str = await pfetch(url).then((response) => response.text());
+            str = await fetch(url).then((response) => response.text());
         } catch (e) {
             console.error(`Error fetching URL %s`, url, e);
             this.#updateSubscribeStatus({

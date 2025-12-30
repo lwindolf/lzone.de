@@ -5,9 +5,9 @@ import { Section } from "../models/Section.js";
 import { View } from "../helpers/View.js";
 
 export class HomeView extends View {
-    constructor(el) {
+    constructor(root) {
         super({
-            root: el,
+            root,
             template: `
                 <div class="about">
                     {{{ welcome }}}

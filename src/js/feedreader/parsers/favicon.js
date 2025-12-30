@@ -19,7 +19,6 @@
 // 3.) links poiting to smaller icons
 
 import { XPath } from './xpath.js';
-import { pfetch } from '../net.js';
 
 class Favicon {
     static searches = [
@@ -33,12 +32,12 @@ class Favicon {
         { type: "Apple small",      order: 7, xpath: "/html/head/link[@rel='apple-touch-icon' or @rel='apple-touch-icon-precomposed'][@sizes]/@href" }
     ].sort((a, b) => (a.order - b.order));
 
-    static async discover(url, corsProxyAllowed = false) {
+    static async discover(url, allowCorsProxy = false) {
         let result;
 
         try {
             // Parse HTML
-            let doc = await pfetch(url, {}, corsProxyAllowed)
+            let doc = await fetch(url, { allowCorsProxy })
                 .then((response) => response.text())
                 .then((str) => {
                     return new DOMParser().parseFromString(str, 'text/html');
@@ -66,7 +65,7 @@ class Favicon {
 
         // If nothing found see if there is a 'favicon.ico' on the homepage
         if(!result)
-            result = await pfetch(url + '/favicon.ico', {}, corsProxyAllowed)
+            result = await fetch(url + '/favicon.ico', { allowCorsProxy })
                 .then((response) => response.text())
                 .then(() => url + '/favicon.ico');
 

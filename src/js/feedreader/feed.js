@@ -18,7 +18,7 @@ export class Feed {
     orig_source;
     last_updated;
     etag;
-    corsProxyAllowed = false; // whether the user allowed CORS proxy for this feed
+    allowCorsProxy = false; // whether the user allowed CORS proxy for this feed
     newItems = [];            // temporarily set to items discovered during update
     unreadCount = 0;          // number of unread items in this feed
 
@@ -52,20 +52,26 @@ export class Feed {
             icon             : this.icon,
             source           : this.source,
             last_updated     : this.last_updated,
-            corsProxyAllowed : this.corsProxyAllowed,
+            allowCorsProxy : this.allowCorsProxy,
             unreadCount      : this.unreadCount,
             metadata         : this.metadata
         };
     }
 
-    async update() {
+    async update(force = false) {
+        // Force update by resetting last_updated
+        if (force) {
+            console.info(`Forcing update of ${this.source}`);
+            this.last_updated = 0;
+        }
+        
         // Do not update too often (for now hard-coded 1h)
         if (this.last_updated && (Date.now() / 1000 - this.last_updated < 60*60)) {
             console.info(`Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
             return;
         }
 
-        const f = await FeedUpdater.fetch(this.source, this.corsProxyAllowed);
+        const f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
         if (Feed.ERROR_NONE == f.error) {
             let added = 0;
 
@@ -98,19 +104,13 @@ export class Feed {
 
             // feed provided favicon should always win
             if (f.icon)
-                this.icon = this.corsProxyAllowed?`https://corsproxy.io/?${f.icon}`:f.icon;
+                this.icon = this.allowCorsProxy?`https://corsproxy.io/?${f.icon}`:f.icon;
 
         }
 
         this.last_updated = f.last_updated;
         this.error = f.error;
         ev.dispatch('nodeUpdated', this);
-    }
-
-    forceUpdate() {
-        // Force update by resetting last_updated
-        this.last_updated = 0;
-        this.update();
     }
 
     getItems = async () => 

@@ -3,7 +3,6 @@
 import { ChatView } from "./views/Chat.js";
 import { Libraries } from "./libraries.js";
 import { Settings } from "./models/Settings.js";
-import { pfetch } from './feedreader/net.js';
 
 // Poor man helper functions, cheaply implemented
 
@@ -69,7 +68,7 @@ export class Commands {
 			summary: 'Fetch URL using CORS proxy and optionally save to OPFS',
 			func: async (cmd) => {
 				const url = cmd[1];
-				const response = await pfetch(url);
+				const response = await fetch(url);
 				if (!response.ok) {
 					return ["text", `ERROR: ${response.status} ${response.statusText}`];
 				}

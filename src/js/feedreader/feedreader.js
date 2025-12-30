@@ -23,9 +23,9 @@ import * as ev from '../helpers/events.js';
 export class FeedReader {
     // config
     static #hashRouteBase = '#/-/Feed/';
-    static #selector = '#feedreader';
 
     // state
+    static #el;
     static #selectedFeed;
     static #selectedItem;
 
@@ -34,14 +34,19 @@ export class FeedReader {
     static itemlist;
     static itemview;
 
-    // async constructor
-    static async #setup() {
-        document.querySelector(this.#selector).innerHTML = `
+    static async setup(el) {
+        this.#el = el;
+
+        // setup fetch support with CORS proxy
+        await import('./net.js');
+
+        this.#el.innerHTML = `
             <div id="itemlist" tabindex="1">
                 <div id="itemlistViewContent"></div>
             </div>
             <div id="itemview" tabindex="2">
-                <div id="itemViewContent"></div>
+                <div id="itemViewContent" style="display: none"></div>
+                <div id="feedViewContent"></div>
             </div>`;
 
         Libraries.get('Split').then(Split => {
@@ -53,6 +58,11 @@ export class FeedReader {
                 direction: 'vertical'
             });
         });
+
+        this.feedlist = new FeedList();
+        this.feedinfo = new FeedInfo(this.#el.ownerDocument.getElementById('feedViewContent'));
+        this.itemlist = new ItemList();
+        this.itemview = new ItemView(this.#el.ownerDocument.getElementById('itemViewContent'));
 
         new ContextMenu('sidebar', [
             // Feed options
@@ -109,16 +119,22 @@ export class FeedReader {
             }
         ]);
 
-        this.feedlist = new FeedList();
-        this.feedinfo = new FeedInfo();
-        this.itemlist = new ItemList();
-        this.itemview = new ItemView();
-
         // Feed actions
         Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title })));
         Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(params.id));
-        Action.register('feedreader:updateNode', (params) => FeedList.update(params.id));
+        Action.register('feedreader:updateNode', (params) => FeedList.updateNode(FeedList.getNodeById(params.id), true));
         Action.register('feedreader:removeNode', (params) => FeedList.remove(params.id));
+        Action.register('feedreader:allowCorsProxy', (params) => {
+            const feed = FeedList.getNodeById(params.id);
+            if(params.global === 'true') {
+                Settings.set('allowCorsProxy', true);
+            } else {
+                FeedList.allowCorsProxy(feed.id, true);
+            }
+            feed.update();
+        });
+
+        Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(params.id));
 
         // Item actions
         Action.register('feedreader:nextUnread',     () => this.itemlist.nextUnread());
@@ -126,9 +142,6 @@ export class FeedReader {
         Action.register('feedreader:toggleItemRead', (params) => this.itemlist.toggleItemRead(parseInt(params.id)));
         Action.register('feedreader:toggleItemStar', (params) => this.itemlist.toggleItemStar(parseInt(params.id)));
         Action.register('feedreader:openItemLink',   (params) => this.itemlist.openItemLink(parseInt(params.id)));
-
-        // Sidebar middle click handler
-        Action.register('feed:auxclick',         (params) => FeedList.markAllRead(params.id));
 
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
@@ -138,13 +151,6 @@ export class FeedReader {
         Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', this.#hashRouteBase);
 
         window.addEventListener('hashchange', () => this.#onLocationChange());
-    }
-
-    // only needs to be called once
-    static render() {
-        if (!this.feedlist)
-            this.#setup();
-
         this.#onLocationChange();
     }
 
@@ -154,19 +160,26 @@ export class FeedReader {
         const oldFeed = this.#selectedFeed;
         const oldItem = this.#selectedItem;
 
-        if (!document.location.hash.startsWith(this.#hashRouteBase))
+        if (!window.location.hash.startsWith(this.#hashRouteBase))
             return;
 
-        const match = document.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
+        const match = window.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
         this.#selectedFeed = match.groups.feedId ? parseInt(match.groups.feedId) : null;
         this.#selectedItem = match.groups.itemId ? parseInt(match.groups.itemId) : null;
 
         if ((oldFeed != this.#selectedFeed) ||
             (oldItem != this.#selectedItem)) {
-            if (this.#selectedItem)
+            if (this.#selectedItem) {
+                this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'block';
+                this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'none';
+                this.itemview.setData({ id: this.#selectedItem });
                 ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
-            else
+            } else {
+                this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'none';
+                this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'block';
+                this.feedinfo.setData({ id: this.#selectedFeed });
                 ev.dispatch('feedSelected', { id: this.#selectedFeed });
+            }
         }
     }
 
