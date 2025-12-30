@@ -1,1 +1,1 @@
-"use strict";(self.webpackChunklzone_de=self.webpackChunklzone_de||[]).push([[845],{845:(e,d,r)=>{r.r(d),r.d(d,{FeedReaderView:()=>s});class s{constructor(){window.app.FeedReader.render()}}}}]);
+"use strict";(self.webpackChunklzone_de=self.webpackChunklzone_de||[]).push([[845],{845:(e,i,d)=>{d.r(i),d.d(i,{FeedReaderView:()=>t});class t{static#e=!1;constructor(){t.#e||window.app.FeedReader.setup(document.getElementById("feedreader")),t.#e=!0}}}}]);

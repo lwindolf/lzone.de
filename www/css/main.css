@@ -210,7 +210,6 @@ a:not([class]) {
         border: 1px solid rgba(0, 0, 0, 0);
 }
 
-
 .search-input-wrap {
         height: 2.2rem;
         overflow: hidden;
@@ -218,6 +217,21 @@ a:not([class]) {
         border-top: 1px solid var(--darkerbgborder);
         background: var(--darkerbg);
         display: flex;
+}
+
+.search-input-wrap label {
+        height: 100%;
+        padding: 0.25rem 0.75rem;
+        display: flex;
+        align-items: center;
+}
+.search-input-wrap label[data-mode="Cmd"] {
+        background: var(--lightbg);
+        color: var(--text)
+}
+.search-input-wrap label[data-mode="Chat"] {
+        background: var(--tblue);
+        color: white;
 }
 
 .search-input-wrap input {
@@ -235,6 +249,7 @@ a:not([class]) {
 
 .search-input-wrap input:focus {
         border: 1px solid var(--focusborder);
+        outline: none;
 }
 .search-input-wrap input:not(:focus) {
         border: 1px solid rgba(0, 0, 0, 0);
