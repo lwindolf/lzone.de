@@ -1,0 +1,36 @@
+To be fixed
+===========
+
+- handle feeds that return HTTP 403 when fetched via Cloudflare (e.g. https://feeds.megaphone.fm/GLT4787413333)
+- feed delete does not remove from sidebar
+- feed with download failure should have error icons
+- feeds without favicon should have feed default icon
+
+Refactor
+========
+
+- even with allowCorsProxy=true try fetching directly first (to avoid exposing to Cloudflare)
+- webpack mjs vendor libs
+- late load CSS for pdfjs
+- Section (ContentTree)
+  - move document:: and section:: settings to DB aggregator
+  - load entire tree in one generic way from sidebar
+- isolate "LZone" aggegrator from instance "lzone.de"
+  - two repos
+  - lzone.de specific components not in "LZone"
+  - maybe provide other "LZone" instances for philosophy or gardening
+
+Future
+======
+
+- LZone: support WebDAV syncing
+- LZone: implement WebDAV based backup/restore
+- LZone: implement notes component
+- LZone: Allow PDFs as data source instead of repo
+- LZone: maybe allow for PDF collections linked from Markdown as data source too
+  - maybe ad-hoc install those
+- LZone: build a shallow h1/h2 index on all content from extra-cheat-sheets.json using an e.g. monthly CICD pipeline
+  - make search check this index too
+  - results should rank lower than installed ones
+  - when user selects a match in this index, suggest installing the cheat sheet 
+- lzone.de: Implement CVE Tracker component

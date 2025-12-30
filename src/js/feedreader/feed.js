@@ -16,9 +16,10 @@ export class Feed {
     id;
     error;
     orig_source;
-    last_updated;
+    last_updated = 0;
+    last_updated_favicon = 0;
     etag;
-    allowCorsProxy = false; // whether the user allowed CORS proxy for this feed
+    allowCorsProxy = false;   // whether the user allowed CORS proxy for this feed
     newItems = [];            // temporarily set to items discovered during update
     unreadCount = 0;          // number of unread items in this feed
 
@@ -26,7 +27,8 @@ export class Feed {
     title;
     source;
     description;
-    icon;
+    icon;                       // icon URL
+    iconData;                   // icon data as data URL
     metadata = {};
 
     // error code constants
@@ -50,8 +52,10 @@ export class Feed {
             description      : this.description,
             homepage         : this.homepage,
             icon             : this.icon,
+            iconData         : this.iconData,
             source           : this.source,
             last_updated     : this.last_updated,
+            last_updated_favicon : this.last_updated_favicon,
             allowCorsProxy : this.allowCorsProxy,
             unreadCount      : this.unreadCount,
             metadata         : this.metadata
@@ -63,6 +67,7 @@ export class Feed {
         if (force) {
             console.info(`Forcing update of ${this.source}`);
             this.last_updated = 0;
+            this.last_updated_favicon = 0;
         }
         
         // Do not update too often (for now hard-coded 1h)
@@ -80,6 +85,8 @@ export class Feed {
             this.homepage = f.homepage;
             this.description = f.description;
             this.metadata = f.metadata;
+            this.icon = f.icon;
+            this.iconData = f.iconData;
 
             const items = await this.getItems();
             this.unreadCount = items.filter((i) => !i.read).length;
@@ -102,10 +109,38 @@ export class Feed {
 
             // FIXME: truncate set of items to match max per-feed cache size
 
-            // feed provided favicon should always win
-            if (f.icon)
-                this.icon = this.allowCorsProxy?`https://corsproxy.io/?${f.icon}`:f.icon;
+            // Do not update too often (for now hard-coded 30d)
+            if ((Date.now() / 1000 - this.last_updated_favicon > 30*24*60*60)) {
+                if(window.app.debug)
+                    console.log(`Updating favicon for ${this.source} (${this.icon})`);
 
+                // See also https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
+                const response = await fetch(this.icon);
+                if (response.ok) {                       
+                    const blob = await response.blob();
+                    const data = await new Promise((resolve, reject) => {
+                        try {
+                            const reader = new FileReader();
+                            reader.onload = function() { resolve(this.result); };
+                            reader.readAsDataURL(blob);
+                        } catch(e) {
+                            reject(e);
+                        }
+                    });
+                    if (data && data.startsWith('data:image')) {
+                        this.iconData = data;
+                        if (window.app.debug)
+                            console.log(`Update favicon for ${this.source} (${this.icon}) was successful`);
+                    } else {
+                        console.warn(`Favicon update for feed ${this.id} failed`);
+                    }
+                    this.last_updated_favicon = Date.now() / 1000;
+                } else {
+                    console.warn(`Favicon response for feed ${this.id} failed`);
+                }
+            } else {
+                console.warn(`Favicon fetch for feed ${this.id} failed`);
+            }
         }
 
         this.last_updated = f.last_updated;

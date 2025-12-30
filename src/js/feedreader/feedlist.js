@@ -4,7 +4,6 @@
 // subscriptions (e.g. local, Google Reader API, ...)
 //
 // emits
-// - feedlistUpdated
 // - nodeRemoved(id)
 // 
 // FIXME: implement the tree (currently only flat list of feeds) 
@@ -61,7 +60,10 @@ export class FeedList {
         FeedList.#save();
     }
 
-    // Add a new node (e.g. on subscribing)
+    // Add a node
+    // 
+    // 1. on subscribing
+    // 2. on feed list loading
     static async add(f, update = true) {
         this.root.children.push(f);
 
@@ -77,7 +79,6 @@ export class FeedList {
             await f.update();
 
         FeedList.#save();
-        ev.dispatch('feedlistUpdated', undefined);
     }
 
     static remove(id) {
@@ -111,15 +112,10 @@ export class FeedList {
 
         // Cleanup orphaned feed items
         DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));
-
-        // Do not update immediately to avoid blocking startup
-        // FIXME: devise better more snappy solution
-        setTimeout(() => FeedList.update(), 2000);
     }
 
     // Recursively update a node
     static updateNode(node, force = false) {
-        console.log(`Updating node ${node.id}`);
         if(!node.children) {
             if(node.constructor.name === "Feed")
                 node.update(force);

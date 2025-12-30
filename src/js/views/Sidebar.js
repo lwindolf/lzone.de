@@ -47,17 +47,19 @@ export class Sidebar {
         {{/each}}
 
         {{#* inline "sidebarChildFeed"}}
-            {{#if feed.error}}
+            {{#if error}}
                 ⛔&nbsp;
             {{else}}
-                {{#if feed.icon}}
-                    <img class='icon' src='{{feed.icon}}'/>
+                {{#if iconData}}
+                    <img class='icon' src='{{iconData}}'/>
+                {{else}}
+                    <img class='icon' src='default.svg'/>
                 {{/if}}
             {{/if}}
             <span class='title'>
-                {{{feed.title}}}
+                {{{title}}}
             </span>
-            <span class='count' data-count='{{feed.unreadCount}}'>{{feed.unreadCount}}</span>
+            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
         {{/inline}}
    
         <!-- FeedReader section -->
@@ -74,7 +76,7 @@ export class Sidebar {
                     <li class='nav-list-item context-node' data-type='feed' data-id='{{id}}'>
                         <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
                             <div class="feed">
-                                {{> sidebarChildFeed feed=this }}
+                                {{> sidebarChildFeed }}
                             </div>
                         </a>
                     </li>
@@ -107,9 +109,9 @@ export class Sidebar {
                 if (unreadCount.textContent != '' + ev.detail.unreadCount)
                     unreadCount.textContent = ev.detail.unreadCount;
                 unreadCount.dataset.count = ev.detail.unreadCount;
-                if (icon && ev.detail.icon && icon.src != ev.detail.icon) {
-                    icon.src = ev.detail.icon;
-                }
+
+                if (icon && ev.detail.iconData)
+                    icon.src = ev.detail.iconData;
             } else {
                 this.#render();
             }

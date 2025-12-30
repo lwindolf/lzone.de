@@ -34,6 +34,7 @@ export class FeedReader {
     static itemlist;
     static itemview;
 
+    // view setup
     static async setup(el) {
         this.#el = el;
 
@@ -64,6 +65,12 @@ export class FeedReader {
         this.itemlist = new ItemList();
         this.itemview = new ItemView(this.#el.ownerDocument.getElementById('itemViewContent'));
 
+        window.addEventListener('hashchange', () => this.#onLocationChange());
+        this.#onLocationChange();
+    }
+
+    // controller setup
+    static registerActions() {
         new ContextMenu('sidebar', [
             // Feed options
             {
@@ -149,9 +156,6 @@ export class FeedReader {
         Action.hotkey('C-A-KeyR',     'feedreader:markRead',   this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
         Action.hotkey('C-A-KeyU',     'feedreader:updateNode', this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
         Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', this.#hashRouteBase);
-
-        window.addEventListener('hashchange', () => this.#onLocationChange());
-        this.#onLocationChange();
     }
 
     // location hash based item/feed selection routing
@@ -193,3 +197,5 @@ export class FeedReader {
         window.location.hash = `${this.#hashRouteBase}${this.#selectedFeed}/Item/${id}`;
     }
 }
+
+FeedReader.registerActions();
