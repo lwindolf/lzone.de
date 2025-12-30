@@ -9,42 +9,76 @@ import { Search } from "./search.js";
 //
 // Instantiate only once!
 export class CLI {
+    // state
+    #input;
+    #modeLabel;
+
+    setMode(mode) {
+        const hints = {
+            "Cmd": "",
+            "Chat": "AI prompt",
+            "Search": "Type ahead find"
+        }
+        this.#modeLabel.textContent = mode;
+        this.#modeLabel.dataset.mode = mode;
+        this.#input.placeholder = "";
+    }
+
+    getMode() {
+        return this.#modeLabel.dataset.mode;
+    }
+
     constructor(id) {
-        const input = document.getElementById(id);
-        input.focus();
-        input.addEventListener('keydown', async (event) => {           
+        this.#modeLabel = document.querySelector('.search-input-wrap .mode');
+        this.#input = document.getElementById(id);
+        this.#input.focus();
+        this.#input.addEventListener('input', async (event) => {
+            // Handle leading ? and ! to switch mode
+            if (this.#input.value[0] == '!') {
+                this.setMode("Cmd");
+                this.#input.value = this.#input.value.slice(1);
+                return;
+            } else if (this.#input.value[0] == '?') {
+                this.setMode("Chat");
+                this.#input.value = this.#input.value.slice(1);
+                return;
+            }
+        });
+
+        this.#input.addEventListener('keydown', async (event) => {
             if (event.key === 'Enter' || event.keyCode === 13) {
                 window.location.hash = '/-/CLI';
 
-                // Decide what the user want
-                //
-                // 1. Check if user wants to run a command (prefix "!")
-                // 2. Check if user wants an AI prompt (prefix "?")
-                // 3. Perform a normal search
-                if (input.value[0] == '!') {
-                    const str = input.value.slice(1);
-                    CLI.#runCommand(str);
+                if (this.getMode() === "Cmd") {
+                    CLI.#runCommand(this.#input.value);
 
-                } else if (input.value[0] == '?') {
-                    const str = input.value.slice(1);
-                    ChatView.submitPrompt(str);
+                } else if (this.getMode() === "Chat") {
+                    ChatView.submitPrompt(this.#input.value);
 
                 } else {
                     Search.selectResult();
                 }
 
                 // Reset prompt field
-                input.value = "";
+                this.#input.value = "";
                 event.preventDefault();
+                return;
             } else if (event.key === 'Escape' || event.keyCode === 27) {
-                // Close search results and show content again
-                ContentView.hideSearch();
+                if(this.#input.value.length > 0) {
+                    // Close search results and show content again
+                    ContentView.hideSearch();
+                } else {
+                    this.setMode("Search");
+                }
+                event.preventDefault();
+                return;
             } else {
-                if ((input.value.length > 1) &&
-                    (input.value[0] != '!') &&
-                    (input.value[0] != '?')) {
+                console.log("CLI input event in mode:", this.getMode());
+                if ((this.#input.value.length > 1) &&
+                    (this.getMode() === "Search")) {
                     // type ahead find switch to search content view
                     ContentView.showSearch();
+                    return;
                 }
             }
         });
@@ -56,6 +90,8 @@ export class CLI {
                 e.preventDefault();
             }
         });
+
+        this.setMode("Search");
     }
 
     static #focusSearch = () => document.getElementById('search-input').focus();
