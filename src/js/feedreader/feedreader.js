@@ -181,18 +181,10 @@ export class FeedReader {
             (oldItem != this.#selectedItem)) {
 
             console.log('feedreader selection needs to be changed: item', this.#selectedItem, 'feed', this.#selectedFeed);
-
-            if (this.#selectedItem) {
+            if (this.#selectedItem)
                 ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
-                if (!this.#el)
-                    return;
-
-                this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'block';
-                this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'none';
-                this.itemview.setData({ id: this.#selectedItem });
-            } else {
+            else
                 ev.dispatch('feedSelected', { id: this.#selectedFeed });
-            }
         }
     }
 

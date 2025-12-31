@@ -64,11 +64,14 @@ export class FeedInfo extends View {
                 Last updated: <span class='feedLastUpdated'>{{lastUpdated}}</span><br>
                 <button class='btn' data-action='feedreader:updateNode' data-id='{{feed.id}}'>Update Now</button>
             `,
-            events: [
-                'nodeUpdated',
+            updateEvents: [
+                'nodeUpdated'
+            ],
+            dataEvents: [
                 'feedSelected'
             ],
             mapper: async (data) => {
+                console.log("render feedinfo", data.id)
                 const feed = FeedList.getNodeById(data.id);
                 if (!feed)
                     return {};
@@ -76,6 +79,11 @@ export class FeedInfo extends View {
                     feed,
                     lastUpdated: feed.last_updated ? new Date(feed.last_updated * 1000).toLocaleString() : 'never'
                 }
+            },
+            postRender: () => {
+                // Feed info and item view share the same screen area, only one must be visible at any time
+                root.ownerDocument.getElementById('itemViewContent').style.display = 'none';
+                root.ownerDocument.getElementById('feedViewContent').style.display = 'block';
             }
         });
     }

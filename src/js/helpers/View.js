@@ -21,7 +21,10 @@
 //         data     : { id: 123 },
 //
 //         /* optional events to trigger re-rendering, the event details needs to match all fields of the data above exactly */
-//         events   : [ "content-update"],
+//         updateEvents : [ "content-update"],
+//
+//         /* optional events to change the view data trigger re-rendering */
+//         dataEvents   : [ "content-set"],
 //
 //         /* optional data mapping function, only mapped data is used for rendering */
 //         mapper   : async (data) => {
@@ -45,7 +48,6 @@ export class View {
     #data;
     #mapper;
     #eventContainer;    // target element for rendering and event binding
-    #boundRender;
     #postRender;
 
     constructor(options) {
@@ -63,24 +65,26 @@ export class View {
         // Trigger initial render
         this.setData(this.#data);
 
-        // Bind events
-        if (!options.events)
-            return;
-
-        this.#boundRender = this.#render.bind(this);
-        options.events.forEach(eventName => {
-            this.#eventContainer.addEventListener(eventName, (event) => {
-                if (window?.app?.debug)
-                    console.log(`View event ${eventName} received`, event.detail);
+        // Bind update events
+        options.updateEvents?.forEach(eventName => {
+            console.log(`View binding to update event ${eventName}`);
+            this.#eventContainer.ownerDocument.addEventListener(eventName, (event) => {
                 // Check if event details fields match all fields in this.#data
                 for (const key in this.#data) {
-                    if (event.detail[key] !== this.#data[key]) {
+                    if (event.detail[key]+"" !== this.#data[key]+"") {
                         return;
                     }
                 }
-                this.#boundRender();
-                if (this.#postRender)
-                    this.#postRender(this.#data);
+                console.log(`View update event ${eventName} received`, event.detail);
+                this.#render();
+            });
+        });
+
+        // Bind data events
+        options.dataEvents?.forEach(eventName => {
+            console.log(`View binding to data event ${eventName}`);
+            this.#eventContainer.ownerDocument.addEventListener(eventName, (event) => {
+                this.setData(event.detail);
             });
         });
     }
@@ -91,13 +95,15 @@ export class View {
         if (this.#eventContainer.innerHTML !== newHTML) {  // Simple diff
             this.#eventContainer.innerHTML = newHTML;
         }
+
+        if (this.#postRender)
+            this.#postRender(this.#data);
     }
 
     setData(newData) {
-        if (window?.app?.debug)
-            console.log(`View new data received`, newData);
-
         this.#data = { ...this.#data, ...newData };
+        console.log(`View new data received`, this.#data);
+        
         for(const key in this.#data)
             this.#eventContainer.dataset[key] = this.#data[key];
         this.#render();

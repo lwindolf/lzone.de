@@ -2,6 +2,7 @@ To be fixed
 ===========
 
 - feed with download failure should have error icons
+- feed info has no indication of updating state
 
 Refactor
 ========

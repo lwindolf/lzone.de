@@ -33,7 +33,7 @@ export class ItemView extends View {
 
                 <p>{{{item.description}}}</p>
             `,
-            events: [
+            dataEvents: [
                 "itemSelected"
             ],
             mapper: async (data) => {
@@ -50,9 +50,14 @@ export class ItemView extends View {
                 Do not do it if there is no media as a constantly changing tab title
                 (when paging through items) is visually distracting */
                 if(item.title && item.media && item.media.length > 0)
-                    document.title = window.Config.siteName + " | " + item.title;
+                    window.title = window.Config.siteName + " | " + item.title;
 
-                document.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
+                root.ownerDocument.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
+
+                // Feed info and item view share the same screen area, only one must be visible at any time
+                root.ownerDocument.getElementById('itemViewContent').style.display = 'block';
+                root.ownerDocument.getElementById('feedViewContent').style.display = 'none';
+
             }
         });
     }

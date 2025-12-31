@@ -94,11 +94,17 @@ export class App {
             debug       : {
                 // set all=true to enable all logging
                 all         : false,
-                // or selectively set trace topics
+
+                // or selectively set class trace topics
                 feedreader  : false,
                 feedlist    : false,
                 feedupdater : false,
-                itemlist    : false
+                itemlist    : false,
+                // ...
+                
+                // or generic helpers
+                events      : false,
+                View        : false
                 // ...
             },
             FeedReader,
