@@ -27,7 +27,7 @@ export class ItemList {
     static #itemTemplate = template(`
         <span class='date'>{{time}}</span>
         <span class='title' data-read='{{read}}'>
-            {{#if starred}}⭐{{/if}}
+            {{#if starred}}<span class='star'>⭐</span>{{/if}}
             {{title}}
         </span>
     `);

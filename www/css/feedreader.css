@@ -351,6 +351,12 @@ header .title {
         font-size: 0.8rem;
 }
 
+@media (prefers-color-scheme: light) {
+#itemlist .star {
+        text-shadow: -1px -1px 0 var(--text), 1px -1px 0 var(--text), -1px 1px 0 var(--text), 1px 1px 0 var(--text);
+        margin-right: 0.2rem;
+}
+}
 
 .selected {
         background: var(--darkerbg);

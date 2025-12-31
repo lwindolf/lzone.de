@@ -49,8 +49,10 @@ export class ItemView extends View {
                 /* Set title for it to appear in e.g. desktop MPRIS playback controls 
                 Do not do it if there is no media as a constantly changing tab title
                 (when paging through items) is visually distracting */
-                if(item.title && item.media && item.media.length > 0)
-                    window.title = window.Config.siteName + " | " + item.title;
+                if(item.title && item.media && item.media.length > 0) {
+                    console.log('itemview media detected setting window.document.title');
+                    window.document.title = window.Config.siteName + " | " + item.title;
+                }
 
                 root.ownerDocument.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
 
