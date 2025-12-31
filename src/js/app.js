@@ -91,7 +91,16 @@ export class App {
             CLI         : new CLI('search-input'),            
             Commands,
             ContentView : new ContentView(document.getElementById('main-content-wrap')),
-            debug       : { all: true },
+            debug       : {
+                // set all=true to enable all logging
+                all         : false,
+                // or selectively set trace topics
+                feedreader  : false,
+                feedlist    : false,
+                feedupdater : false,
+                itemlist    : false
+                // ...
+            },
             FeedReader,
             Layout      : new Layout(),
             Sidebar     : new Sidebar(document.getElementById('site-nav'))            

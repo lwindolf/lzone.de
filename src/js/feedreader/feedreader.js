@@ -84,11 +84,11 @@ export class FeedReader {
                 action: 'feedreader:markRead',
                 type: 'feed'
             },
-            /*{
+            {
                 label: 'Remove',
                 action: 'feedreader:removeNode',
                 type: 'feed'
-            },*/
+            },
             // Folder options
             /*{
                 label: 'Add Feed',
@@ -192,12 +192,6 @@ export class FeedReader {
                 this.itemview.setData({ id: this.#selectedItem });
             } else {
                 ev.dispatch('feedSelected', { id: this.#selectedFeed });
-                if (!this.#el)
-                    return;
-
-                this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'none';
-                this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'block';
-                this.feedinfo.setData({ id: this.#selectedFeed });
             }
         }
     }
