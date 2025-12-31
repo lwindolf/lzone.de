@@ -80,7 +80,7 @@ export class View {
                 }
                 this.#boundRender();
                 if (this.#postRender)
-                    this.#postRender();
+                    this.#postRender(this.#data);
             });
         });
     }

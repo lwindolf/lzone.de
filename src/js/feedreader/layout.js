@@ -24,7 +24,7 @@ export class Layout {
 
     static isMobile = () => Layout.#isMobile;
 
-    static update() {
+    static async update() {
         let theme = document.getElementById('theme');
         let before = Layout.#isSmall;
 

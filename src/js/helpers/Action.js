@@ -23,8 +23,6 @@ export class Action {
         document.addEventListener('click', (ev) => {
             const action = ev.target;
             if (action && action.dataset.action) {
-                if(window.app.debug)
-                    console.log("Action dispatched", action.dataset);
                 Action.dispatch(action.dataset.action, action.dataset);
                 ev.preventDefault();
             }
@@ -71,9 +69,10 @@ export class Action {
 
     static dispatch(name, ...args) {
         if (this.handlers[name]) {
+            console.log("Action dispatched", { name, args });
             return this.handlers[name](...args);
         } else {
-            console.warn(`No handler for action "${name}"`);
+            console.warn(`Action No handler for action "${name}"`);
         }
     }
 }

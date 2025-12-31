@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { RSSParser } from '../www/js/feedreader/parsers/rss';
+import { RSSParser } from '../src/js/feedreader/parsers/rss';
 
 test('rss 1.1 parse', () => {
         let feed = RSSParser.parse(`<Channel xmlns="http://purl.org/net/rss1.1#" 

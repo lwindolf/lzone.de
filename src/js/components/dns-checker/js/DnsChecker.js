@@ -179,7 +179,7 @@ class DnsChecker extends HTMLElement {
 		const results = {};
 
 		for(const record of ['A', 'AAAA', 'NS', 'SOA', 'TXT', 'CNAME', 'PTR', 'SRV', 'MX', 'CAA']) {
-			const response = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${record}`, {
+			await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=${record}`, {
 				headers: {
 					'Accept': 'application/dns-json'
 				}

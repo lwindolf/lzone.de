@@ -1,7 +1,5 @@
 // vim: set ts=4 sw=4:
 
-import { Libraries } from '../../libraries.js';
-
 export class PdfRenderer {
     static async load(e, d) {
         const pdfjsLib = await import(/* webpackIgnore: true */"./vendor/pdf.mjs");

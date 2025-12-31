@@ -1,4 +1,4 @@
-import { AtomParser } from "../www/js/feedreader/parsers/atom";
+import { AtomParser } from "../src/js/feedreader/parsers/atom";
 
 test("atom parse", () => {
         let feed = AtomParser.parse(`<?xml version="1.0" encoding="utf-8"?>

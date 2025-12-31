@@ -43,7 +43,9 @@ export class ItemView extends View {
                     time: DateParser.getShortDateStr(item.time)
                 };
             },
-            postRender: () => {
+            postRender: async (data) => {
+                const item = await Item.getById(data.id);
+
                 /* Set title for it to appear in e.g. desktop MPRIS playback controls 
                 Do not do it if there is no media as a constantly changing tab title
                 (when paging through items) is visually distracting */

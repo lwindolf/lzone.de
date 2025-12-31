@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { DB } from '../www/js/models/DB.js';
+import { DB } from '../src/js/models/DB.js';
 
 test('DB.get', async () => {
 	expect(await DB.get('aggregator', 'tree', 'tree', {}) !== undefined).toBe(true);

@@ -3,10 +3,12 @@
 window.Handlebars = require('handlebars');
 
 // no "imports" because of Handlebars requirement above
-const { Feed } = require('../www/js/feedreader/feed');
-const { Item } = require('../www/js/feedreader/item');
-const { FeedList } = require('../www/js/feedreader/feedlist');
-const { ItemList } = require('../www/js/feedreader/itemlist');
+const { TestData } = require('./testdata.js');
+const { FeedReader } = require('../src/js/feedreader/feedreader');
+const { Feed } = require('../src/js/feedreader/feed');
+const { Item } = require('../src/js/feedreader/item');
+const { FeedList } = require('../src/js/feedreader/feedlist');
+const { ItemList } = require('../src/js/feedreader/itemlist');
 
 const mockFeeds = [
     new Feed({ title: 'abc', id: 1, unreadCount: 0}),
@@ -21,26 +23,24 @@ const mockFeeds = [
     { id: 104, nodeId: 2, time: 203304944 }
 ].forEach(async (d) => await (new Item(d)).save());
 
-test('Itemlist.nextUnread', async () => {
-    new ItemList();
-
+test('Itemlist.nextUnread', async () => { 
     await FeedList.add(mockFeeds[0], false /* update */);
     await FeedList.add(mockFeeds[1], false /* update */);
 
-    document.dispatchEvent(new CustomEvent("feedSelected", { detail: { id: 2 } }));
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    await ItemList.select(2, 102);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    FeedReader.select(2, 102);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(FeedReader.itemlist.selected.id).toBe(102);
 
-    expect(ItemList.selected.id).toBe(102);
+    await FeedReader.itemlist.nextUnread();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(FeedReader.itemlist.selected.id).toBe(103);
 
-    await ItemList.nextUnread();
-    expect(ItemList.selected.id).toBe(103);
+    await FeedReader.itemlist.nextUnread();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(FeedReader.itemlist.selected.id).toBe(104);
 
-    await ItemList.nextUnread();
-    expect(ItemList.selected.id).toBe(104);
-
-    await ItemList.nextUnread();
-    expect(ItemList.selected.id).toBe(104); // selection stays if there is nothing more
+    await FeedReader.itemlist.nextUnread();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(FeedReader.itemlist.selected.id).toBe(104); // selection stays if there is nothing more
 });
 

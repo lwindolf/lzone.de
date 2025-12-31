@@ -3,9 +3,9 @@
 window.Handlebars = require('handlebars');
 
 // no "imports" because of Handlebars requirement above
-const { Feed } = require('../www/js/feedreader/feed');
-const { FeedList } = require('../www/js/feedreader/feedlist');
 const { TestData } = require('./testdata.js');
+const { Feed } = require('../src/js/feedreader/feed');
+const { FeedList } = require('../src/js/feedreader/feedlist');
 
 const mockFeedlistChildren = [
     new Feed({ title: 'abc', id: 1, unreadCount: 0 }),

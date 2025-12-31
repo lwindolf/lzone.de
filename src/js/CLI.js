@@ -14,11 +14,6 @@ export class CLI {
     #modeLabel;
 
     setMode(mode) {
-        const hints = {
-            "Cmd": "",
-            "Chat": "AI prompt",
-            "Search": "Type ahead find"
-        }
         this.#modeLabel.textContent = mode;
         this.#modeLabel.dataset.mode = mode;
         this.#input.placeholder = "";
@@ -32,7 +27,7 @@ export class CLI {
         this.#modeLabel = document.querySelector('.search-input-wrap .mode');
         this.#input = document.getElementById(id);
         this.#input.focus();
-        this.#input.addEventListener('input', async (event) => {
+        this.#input.addEventListener('input', async () => {
             // Handle leading ? and ! to switch mode
             if (this.#input.value[0] == '!') {
                 this.setMode("Cmd");

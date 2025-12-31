@@ -1,7 +1,9 @@
-import { Feed } from '../www/js/feedreader/feed';
+import { Config } from '../src/js/config.js';
+import { Feed } from '../src/js/feedreader/feed';
+import '../src/js/helpers/log.js';
 
 // provide a default fetch mock with static feed returned
-global['fetch'] = jest.fn().mockImplementation(() =>
+global['fetch'] = jest.fn().mockImplementation(async () =>
     Promise.resolve({
         text: () => Promise.resolve(`<?xml version="1.0" encoding="ISO-8859-1"?>
 
@@ -70,10 +72,30 @@ global['fetch'] = jest.fn().mockImplementation(() =>
     })
 );
 
+window.Config = Config;
+window.app = {
+    debug: {
+        all         : false,
+        favicon     : false,
+        feedupdater : false,
+        itemlist    : false,
+        feed        : false,
+        feedreader  : false
+    }
+}
+
 export class TestData {
     static slashdotFeed = new Feed({
         id: 1,
         source: 'https://rss.slashdot.org/Slashdot/slashdotMain',
-        title: 'Slashdot'
+        title: 'Slashdot',
+        items: [
+            {
+                title: 'Slashdot feed item',
+                link: 'https://tech.slashdot.org/story/23/09/16/2226218/wordpress-blogs-can-now-be-followed-in-the-fediverse-including-mastodon',
+                description: 'some description',
+                id: 105
+            }
+        ]
     });
 }

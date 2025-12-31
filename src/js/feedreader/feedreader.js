@@ -6,6 +6,7 @@ import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { Settings } from '../models/Settings.js';
 import { Libraries } from "../libraries.js";
 import { ContextMenu } from '../ContextMenu.js';
 import { Action } from '../helpers/Action.js';
@@ -37,10 +38,6 @@ export class FeedReader {
     // view setup
     static async setup(el) {
         this.#el = el;
-
-        // setup fetch support with CORS proxy
-        await import('./net.js');
-
         this.#el.innerHTML = `
             <div id="itemlist" tabindex="1">
                 <div id="itemlistViewContent"></div>
@@ -60,17 +57,21 @@ export class FeedReader {
             });
         });
 
-        this.feedlist = new FeedList();
         this.feedinfo = new FeedInfo(this.#el.ownerDocument.getElementById('feedViewContent'));
-        this.itemlist = new ItemList();
         this.itemview = new ItemView(this.#el.ownerDocument.getElementById('itemViewContent'));
 
-        window.addEventListener('hashchange', () => this.#onLocationChange());
-        this.#onLocationChange();
+        this.feedinfo.setData({ id: this.#selectedFeed });
+        this.itemview.setData({ id: this.#selectedItem });
     }
 
     // controller setup
-    static registerActions() {
+    static async registerActions() {
+
+        this.feedlist = new FeedList();
+        this.itemlist = new ItemList();
+
+        await FeedList.setup();
+
         new ContextMenu('sidebar', [
             // Feed options
             {
@@ -156,6 +157,9 @@ export class FeedReader {
         Action.hotkey('C-A-KeyR',     'feedreader:markRead',   this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
         Action.hotkey('C-A-KeyU',     'feedreader:updateNode', this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
         Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', this.#hashRouteBase);
+
+        window.addEventListener('hashchange', () => this.#onLocationChange());
+        this.#onLocationChange();
     }
 
     // location hash based item/feed selection routing
@@ -167,22 +171,33 @@ export class FeedReader {
         if (!window.location.hash.startsWith(this.#hashRouteBase))
             return;
 
+        console.log('feedreader onLocationChange', window.location.hash);
+
         const match = window.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
         this.#selectedFeed = match.groups.feedId ? parseInt(match.groups.feedId) : null;
         this.#selectedItem = match.groups.itemId ? parseInt(match.groups.itemId) : null;
 
         if ((oldFeed != this.#selectedFeed) ||
             (oldItem != this.#selectedItem)) {
+
+            console.log('feedreader selection needs to be changed: item', this.#selectedItem, 'feed', this.#selectedFeed);
+
             if (this.#selectedItem) {
+                ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
+                if (!this.#el)
+                    return;
+
                 this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'block';
                 this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'none';
                 this.itemview.setData({ id: this.#selectedItem });
-                ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
             } else {
+                ev.dispatch('feedSelected', { id: this.#selectedFeed });
+                if (!this.#el)
+                    return;
+
                 this.#el.ownerDocument.getElementById('itemViewContent').style.display = 'none';
                 this.#el.ownerDocument.getElementById('feedViewContent').style.display = 'block';
                 this.feedinfo.setData({ id: this.#selectedFeed });
-                ev.dispatch('feedSelected', { id: this.#selectedFeed });
             }
         }
     }

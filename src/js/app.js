@@ -12,6 +12,9 @@ import { HelpDialog } from './dialogs/help.js';
 import { keydown } from './helpers/events.js';
 import { FeedReader } from './feedreader/feedreader.js';
 
+import './helpers/net.js';
+import './helpers/log.js';
+
 export class App {
     static #getParams() {
         let params = {};
@@ -88,7 +91,7 @@ export class App {
             CLI         : new CLI('search-input'),            
             Commands,
             ContentView : new ContentView(document.getElementById('main-content-wrap')),
-            debug       : false,
+            debug       : { all: true },
             FeedReader,
             Layout      : new Layout(),
             Sidebar     : new Sidebar(document.getElementById('site-nav'))            

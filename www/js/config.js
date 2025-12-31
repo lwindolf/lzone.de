@@ -11,8 +11,8 @@ export class Config {
             installing a ton of Sysadmin / DevOps / System Architecture related content
             so that you can search and read all of it in one place.
         </p>`;
-    
-    static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
+
+    static corsProxy = 'https://api.cors.lol/?url='; // CORS proxy to use for fetching feed (note Cloudflare corsproxy.io should not be used due to the 1MB size limit which prevents auto discovery)
 
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
 

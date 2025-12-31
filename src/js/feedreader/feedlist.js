@@ -43,7 +43,7 @@ export class FeedList {
         return this.root.children.find((n) => n.unreadCount > 0);
     }
 
-    static #save() {     
+    static #save() {
         function serializeNode(node) {
             const serialized = node.serialize();
             if (node.children)
@@ -104,6 +104,8 @@ export class FeedList {
 
     // Load folders/feeds from DB
     static async setup() {
+        console.log('feedlist setup')
+
         document.addEventListener('nodeUpdated', () => FeedList.#save());
 
         for(const f of (await DB.get('aggregator', 'tree', 'tree', window.Config.groups.Feeds.defaultFeeds))){
@@ -112,6 +114,8 @@ export class FeedList {
 
         // Cleanup orphaned feed items
         DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));
+
+        console.log('feedlist setup done')
     }
 
     // Recursively update a node
@@ -131,5 +135,3 @@ export class FeedList {
         this.updateNode(this.root);
     }
 }
-
-await FeedList.setup();

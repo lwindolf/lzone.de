@@ -18,7 +18,7 @@ export class Feed {
     orig_source;
     last_updated = 0;
     last_updated_favicon = 0;
-    etag;
+    etag;                     // FIXME: implement etag handling
     allowCorsProxy = false;   // whether the user allowed CORS proxy for this feed
     newItems = [];            // temporarily set to items discovered during update
     unreadCount = 0;          // number of unread items in this feed
@@ -163,11 +163,15 @@ export class Feed {
         const items = await this.getItems();
         items.find((i) => { idx++; return (i.id === id); });   // find current item index
         item = items.slice(idx).find((i) => !i.read);     // find next unread item
+
+        console.log('feed getNextUnread find forward result:', item);
         if (item)
             return item;
 
         // if nothing found search from start of feed
-        return items.find((i) => !i.read);
+        item = items.find((i) => !i.read);
+        console.log('feed getNextUnread find from start result:', item);
+        return item;
     }  
 
     // Only used during parsing time

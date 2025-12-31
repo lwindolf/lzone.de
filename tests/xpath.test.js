@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-import { XPath } from "../www/js/feedreader/parsers/xpath";
+import { XPath } from "../src/js/feedreader/parsers/xpath";
 
 const parser = new DOMParser();
 const doc = parser.parseFromString("<div><p><span>abc</span></p><p>def</p></div>", "application/xml");

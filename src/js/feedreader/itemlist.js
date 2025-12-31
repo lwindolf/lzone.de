@@ -64,8 +64,7 @@ export class ItemList {
 
         // FIXME: handle folders
 
-        if(window.app.debug)
-            console.debug(`Loading items for feed ${node.title}`, items);
+        console.log(`itemlist Loading items for feed ${node.title}`, items);
 
         render('#itemlistViewContent', ItemList.#listTemplate, {
             node,
@@ -101,6 +100,7 @@ export class ItemList {
         
         document.getElementById('itemlist').focus();
 
+        console.log('itemlist Item selected:', item);
         this.selected = item;
         if(!item.read)
             await this.toggleItemRead(id);
@@ -118,6 +118,7 @@ export class ItemList {
             node = FeedList.getNextUnreadNode(0);
             id = 0;
         }
+        console.log('itemlist nextUnread: starting at node id', node.id, 'item id', id);
 
         // Try looking in same feed/folder
         item = await node.getNextUnread(id);
@@ -130,6 +131,7 @@ export class ItemList {
 
         // FIXME: folder recursion
 
+        console.log('itemlist nextUnread: result', item);
         if(item)
             FeedReader.select(node.id, item.id);
     }

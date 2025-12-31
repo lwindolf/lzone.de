@@ -1,6 +1,5 @@
 // vim: set ts=4 sw=4:
 
-import { Node } from './Node.js';
 import { Settings } from './Settings.js';
 
 /* Handling the installed cheat sheet sections tree and documents leaves in IndexedDB.

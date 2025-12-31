@@ -35,15 +35,20 @@ class Favicon {
     static async discover(url, allowCorsProxy = false) {
         let result;
 
+        console.log(`favicon discovery for ${url}`);
+
         try {
             // Parse HTML
-            let doc = await fetch(url, { allowCorsProxy })
+            let doc = await window.fetch(url, { allowCorsProxy })
                 .then((response) => response.text())
                 .then((str) => {
+                    console.log("favicon discovery got HTML ", str);
                     return new DOMParser().parseFromString(str, 'text/html');
                 });
 
             if(doc) {
+                console.log("favicon discovery HTML parse success");
+
                 // DOCTYPE node is first child when parsing HTML5, we need to 
                 // find the <html> root node in this case
                 let root = doc.firstChild;
@@ -52,6 +57,8 @@ class Favicon {
                 }
 
                 if(root) {
+                    console.log("favicon discovery root element found");
+
                     // Check all XPath search pattern
                     for(let i = 0; i < Favicon.searches.length; i++) {
                         result = XPath.lookup(root, Favicon.searches[i].xpath)
@@ -60,8 +67,9 @@ class Favicon {
                     }
                 }
             }
-        // eslint-disable-next-line no-empty
-        } catch { }
+        } catch(e) {
+            console.log("favicon discovery HTML processing failed", e);
+        }
 
         // If nothing found see if there is a 'favicon.ico' on the homepage
         if(!result)
@@ -70,10 +78,13 @@ class Favicon {
                 .then(() => url + '/favicon.ico');
 
         if(result) {
+            console.log(`favicon discovery found '${result}'`);
             if(result.includes('://'))
                 return result;
             else
                 return url + '/' + result;
+        } else {
+            console.log("favicon discovery nothing found");
         }
     }
 }

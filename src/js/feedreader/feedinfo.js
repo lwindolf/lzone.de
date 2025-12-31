@@ -70,6 +70,8 @@ export class FeedInfo extends View {
             ],
             mapper: async (data) => {
                 const feed = FeedList.getNodeById(data.id);
+                if (!feed)
+                    return {};
                 return {
                     feed,
                     lastUpdated: feed.last_updated ? new Date(feed.last_updated * 1000).toLocaleString() : 'never'

@@ -10,7 +10,7 @@ export class FeedUpdater {
     // returns a feed properties or at least error code (e.g. "{ error: Feed.ERROR_XML }")
     // result should be merged into the feed being updated
     static async fetch(url, allowCorsProxy = false) {
-        console.info(`Updating ${url}`);
+        console.log(`feedupdater updating ${url}`);
         var feed = await fetch(url, { allowCorsProxy })
             .then((response) => {
                 // FIXME: proper network state handling
@@ -18,12 +18,16 @@ export class FeedUpdater {
             })
             .then(async (str) => {
                 let parser = parserAutoDiscover(str, url);
-                if(!parser)
+                if(!parser) {
+                    console.log(`feedupdater No suitable parser found for ${url}`);
                     return new Feed({ error: Feed.ERROR_DISCOVER });
+                } else {
+                    console.log('feedupdater using parser', parser);
+                }
 
                 let feed = parser.parse(str);
                 if(!feed) {
-                    console.error(`Failed to parse feed from ${url}`);
+                    console.log(`feedupdater Failed to parse feed from ${url}`);
                     return new Feed({ error: Feed.ERROR_XML });
                 }
                 feed.source = url;
@@ -32,19 +36,21 @@ export class FeedUpdater {
 
                 if(!feed.icon && feed.homepage)
                     try {
+                        console.log('feedupdater no icon in feed, starting favicon autodiscovery')
                         feed.icon = await Favicon.discover(feed.homepage, allowCorsProxy);
                     } catch(e) { 
                         // ignore
                     }
-
                 return feed;
             })
             .catch((e) => {
-                console.log(e);
-                
+                console.log(`feedupdater Failed to download feed from ${url}`, e);
+
                 // FIXME: provide HTTP status too
                 return new Feed({ error: Feed.ERROR_NET });
             });
+
+        console.log('feedupdater result', feed);
         return feed;
     }
 }

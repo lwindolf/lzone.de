@@ -1,8 +1,8 @@
 // vim: set ts=4 sw=4:
 
-import { Feed } from '../www/js/feedreader/feed';
-import { Item } from '../www/js/feedreader/item';
 import { TestData } from './testdata.js';
+import { Feed } from '../src/js/feedreader/feed';
+import { Item } from '../src/js/feedreader/item';
 
 const mockFeed = new Feed();
 mockFeed.getItems = async () => [
@@ -29,6 +29,7 @@ test('Feed.update', async () => {
     expect(TestData.slashdotFeed.description).toBe('News for nerds, stuff that matters');
     expect(TestData.slashdotFeed.icon).toBe('https://slashdot.org//favicon.ico');
 
-    expect((await TestData.slashdotFeed.getItems()).length).toBe(1);
-    expect((await Item.getById(105)).title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
+    const items = await TestData.slashdotFeed.getItems();
+    expect(items.length).toBe(1);
+    expect((await Item.getById(items[0].id)).title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
 });

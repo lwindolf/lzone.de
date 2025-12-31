@@ -1,7 +1,6 @@
 To be fixed
 ===========
 
-- handle feeds that return HTTP 403 when fetched via Cloudflare (e.g. https://feeds.megaphone.fm/GLT4787413333)
 - feed delete does not remove from sidebar
 - feed with download failure should have error icons
 - feeds without favicon should have feed default icon
@@ -9,7 +8,7 @@ To be fixed
 Refactor
 ========
 
-- even with allowCorsProxy=true try fetching directly first (to avoid exposing to Cloudflare)
+- support etag when feed fetching
 - webpack mjs vendor libs
 - late load CSS for pdfjs
 - Section (ContentTree)

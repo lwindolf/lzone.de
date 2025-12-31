@@ -27,7 +27,7 @@ function parserAutoDiscover(str, url = "") {
     const parser = new DOMParser();
     const doc = parser.parseFromString(str, 'application/xml');
 
-    console.info(`auto discover ${url}`)
+    console.log(`autodiscover ${url}`)
     for (let i = 0; i < parsers.length; i++) {
         for (let j = 0; j < parsers[i].autoDiscover.length; j++) {
             try {
@@ -50,7 +50,7 @@ function linkAutoDiscover(str, baseURL) {
     try {
         doc = new DOMParser().parseFromString(str, 'text/html');
     } catch {
-        console.info("Link discovery: could not parse HTML!");
+        console.info("autodiscover could not parse HTML!");
     }
 
     if (!doc)

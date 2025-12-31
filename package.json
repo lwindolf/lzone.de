@@ -4,7 +4,7 @@
     "description": "Content aggregator for feeds and markdown content",
     "type": "module",
     "scripts": {
-        "test": "eslint --ignore-pattern vendor www/js && jest --coverage",
+        "test": "eslint --ignore-pattern vendor src/js && jest --coverage",
         "start": "cd www && npx serve",
         "startDev": "cd src && npx serve -S",
         "build": "./build.sh"
