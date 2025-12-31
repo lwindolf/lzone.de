@@ -18,10 +18,11 @@ export class Feed {
     orig_source;
     last_updated = 0;
     last_updated_favicon = 0;
-    etag;                     // FIXME: implement etag handling
     allowCorsProxy = false;   // whether the user allowed CORS proxy for this feed
     newItems = [];            // temporarily set to items discovered during update
     unreadCount = 0;          // number of unread items in this feed
+
+    // Note: no etag/last_modified state here, as this is done by the browser networking.
 
     // feed content
     title;

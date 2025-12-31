@@ -11,22 +11,24 @@ export class FeedUpdater {
     // result should be merged into the feed being updated
     static async fetch(url, allowCorsProxy = false) {
         console.log(`feedupdater updating ${url}`);
-        var feed = await fetch(url, { allowCorsProxy })
-            .then((response) => {
-                // FIXME: proper network state handling
-                return response.text()
+        /* No etag/last_modified handling here, as this is done by the browser networking.
+           We can update as often as we want without worrying about caching. */
+        let feed = await fetch(url, { allowCorsProxy })
+            .then(async (response) => {
+                console.log('feedupdater headers', response.headers);
+                return await response.text();
             })
-            .then(async (str) => {
-                let parser = parserAutoDiscover(str, url);
-                if(!parser) {
+            .then(async (text) => {
+                let parser = parserAutoDiscover(text, url);
+                if (!parser) {
                     console.log(`feedupdater No suitable parser found for ${url}`);
                     return new Feed({ error: Feed.ERROR_DISCOVER });
                 } else {
                     console.log('feedupdater using parser', parser);
                 }
 
-                let feed = parser.parse(str);
-                if(!feed) {
+                let feed = parser.parse(text);
+                if (!feed) {
                     console.log(`feedupdater Failed to parse feed from ${url}`);
                     return new Feed({ error: Feed.ERROR_XML });
                 }
@@ -34,11 +36,11 @@ export class FeedUpdater {
                 feed.last_updated = Date.now() / 1000;
                 feed.error = Feed.ERROR_NONE;
 
-                if(!feed.icon && feed.homepage)
+                if (!feed.icon && feed.homepage)
                     try {
                         console.log('feedupdater no icon in feed, starting favicon autodiscovery')
                         feed.icon = await Favicon.discover(feed.homepage, allowCorsProxy);
-                    } catch(e) { 
+                    } catch (e) {
                         // ignore
                     }
                 return feed;

@@ -1,14 +1,12 @@
 To be fixed
 ===========
 
-- feed delete does not remove from sidebar
+- feed deleted does not remove from sidebar
 - feed with download failure should have error icons
-- feeds without favicon should have feed default icon
 
 Refactor
 ========
 
-- support etag when feed fetching
 - webpack mjs vendor libs
 - late load CSS for pdfjs
 - Section (ContentTree)
