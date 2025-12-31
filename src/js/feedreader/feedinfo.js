@@ -17,8 +17,6 @@ export class FeedInfo extends View {
                 <p>
                     Source: <a target='_system' href='{{feed.source}}'>{{feed.source}}</a><br>
                 </p>
-            
-                <p>{{{feed.description}}}</p>
 
                 <div class='feedInfoError'>
                 {{#if feed.error}}
@@ -61,11 +59,19 @@ export class FeedInfo extends View {
                 {{/if}}
                 </div>
 
+                <p>{{{feed.description}}}</p>
+
+                {{#if feed.feedStatusMsg}}
+                    <div class='feedInfoStatus'>
+                        <span>{{feed.feedStatusMsg}}</span>
+                    </div>
+                {{/if}}
                 Last updated: <span class='feedLastUpdated'>{{lastUpdated}}</span><br>
                 <button class='btn' data-action='feedreader:updateNode' data-id='{{feed.id}}'>Update Now</button>
             `,
             updateEvents: [
-                'nodeUpdated'
+                'nodeUpdated',
+                'feedUpdating'
             ],
             dataEvents: [
                 'feedSelected'

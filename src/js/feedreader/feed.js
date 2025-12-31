@@ -32,6 +32,9 @@ export class Feed {
     iconData;                   // icon data as data URL
     metadata = {};
 
+    // non-persisted state
+    feedStatusMsg;              // provides a feedback message during updates (undefined otherwise)
+
     // error code constants
     static ERROR_NONE = 0;
     static ERROR_AUTH = 1 << 0;
@@ -57,23 +60,28 @@ export class Feed {
             source           : this.source,
             last_updated     : this.last_updated,
             last_updated_favicon : this.last_updated_favicon,
-            allowCorsProxy : this.allowCorsProxy,
+            allowCorsProxy   : this.allowCorsProxy,
             unreadCount      : this.unreadCount,
             metadata         : this.metadata
         };
     }
 
+    #updateStatus(msg) {
+        this.feedStatusMsg = msg;
+        ev.dispatch('feedUpdating', { id: this.id });
+    }
+
     async update(force = false) {
         // Force update by resetting last_updated
         if (force) {
-            console.info(`Forcing update of ${this.source}`);
+            this.#updateStatus(`Forcing update of ${this.source}`);
             this.last_updated = 0;
             this.last_updated_favicon = 0;
         }
         
         // Do not update too often (for now hard-coded 1h)
         if (this.last_updated && (Date.now() / 1000 - this.last_updated < 60*60)) {
-            console.info(`Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
+            this.#updateStatus(`Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
             return;
         }
 
@@ -112,8 +120,7 @@ export class Feed {
 
             // Do not update too often (for now hard-coded 30d)
             if ((Date.now() / 1000 - this.last_updated_favicon > 30*24*60*60)) {
-                if(window.app.debug)
-                    console.log(`Updating favicon for ${this.source} (${this.icon})`);
+                this.#updateStatus(`Updating favicon for ${this.source} (${this.icon})`);
 
                 // See also https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
                 const response = await fetch(this.icon);
@@ -130,8 +137,7 @@ export class Feed {
                     });
                     if (data && data.startsWith('data:image')) {
                         this.iconData = data;
-                        if (window.app.debug)
-                            console.log(`Update favicon for ${this.source} (${this.icon}) was successful`);
+                        console.log(`Favicon update for ${this.source} (${this.icon}) was successful`);
                     } else {
                         console.warn(`Favicon update for feed ${this.id} failed`);
                     }
@@ -142,6 +148,9 @@ export class Feed {
             } else {
                 console.warn(`Favicon fetch for feed ${this.id} failed`);
             }
+            this.#updateStatus(undefined);
+        } else {
+            this.#updateStatus(`Feed update failed: ${f.error}`);
         }
 
         this.last_updated = f.last_updated;
