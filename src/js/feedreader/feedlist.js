@@ -44,6 +44,8 @@ export class FeedList {
     }
 
     static #save() {
+        console.log('feedlist save', FeedList.root.children);
+        
         function serializeNode(node) {
             const serialized = node.serialize();
             if (node.children)
@@ -82,6 +84,8 @@ export class FeedList {
     }
 
     static remove(id) {
+        console.log('feedlist remove(' + id + ')');
+
         let node = FeedList.getNodeById(id);
         if(!node)
             return;

@@ -1,7 +1,6 @@
 To be fixed
 ===========
 
-- feed deleted does not remove from sidebar
 - feed with download failure should have error icons
 
 Refactor
@@ -16,6 +15,7 @@ Refactor
   - two repos
   - lzone.de specific components not in "LZone"
   - maybe provide other "LZone" instances for philosophy or gardening
+- last updated labels should have relative time (x ago)
 
 Future
 ======

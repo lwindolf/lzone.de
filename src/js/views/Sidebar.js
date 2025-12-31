@@ -96,7 +96,7 @@ export class Sidebar {
         el.addEventListener("drop",      this.#onDrop.bind(this));
 
         // Listen for feed updates
-        document.addEventListener('nodeRemoved', this.#render());
+        document.addEventListener('nodeRemoved', this.#render);
         document.addEventListener('nodeUpdated', (ev) => {    
             const id = ev.detail.id;       
             const feed = el.querySelector(`#feedlist .nav-list-item[data-id="${id}"]`);

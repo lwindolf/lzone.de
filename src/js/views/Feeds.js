@@ -23,7 +23,7 @@ export class FeedsView {
             <div id='installedSections'>
             {{#each tree }}
                 <div class='installed'>
-                    <button data-id='{{ this.id }}'>Remove</button>
+                    <button data-action='feedreader:removeNode' data-id='{{ this.id }}'>Remove</button>
                     <a href="{{ this.orig_source }}">{{ this.title }}</a>
                 </div>
             {{else}}
@@ -69,21 +69,18 @@ export class FeedsView {
             'web+feed', 
             '/?url=%s#/-/Feeds/Add'
         );
+
+        document.addEventListener('nodeRemoved', () => { this.#render(); });
     }
 
     async #render() {
         r.renderElement(this.#el, FeedsView.#template, {
-            tree       : FeedList.root.children
+            tree : FeedList.root.children
         });
 
         ev.connect('click', '#customInstall button', () => {
             const url = document.querySelector('#customInstall input#url').value.trim();
             this.#subscribe(url);
-        });
-
-        ev.connect('click', '#installedSections .installed button', async (e) => {
-            FeedList.remove(parseInt(e.getAttribute('data-id'), 10));
-            this.#render();
         });
     }
 

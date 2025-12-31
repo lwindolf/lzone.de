@@ -44,6 +44,9 @@ function keydown(selector, condition, callback) {
     });
 }
 
-const dispatch = (name, data) => document.dispatchEvent(new CustomEvent(name, { detail: data }));
+function dispatch(name, data) {
+	console.log('events dispatch', name, data);
+    document.dispatchEvent(new CustomEvent(name, { detail: data }));
+}
 
 export { connect, forward, keydown, dispatch };

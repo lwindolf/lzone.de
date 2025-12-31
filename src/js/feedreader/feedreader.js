@@ -129,9 +129,9 @@ export class FeedReader {
 
         // Feed actions
         Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title })));
-        Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(params.id));
+        Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(parseInt(params.id)));
         Action.register('feedreader:updateNode', (params) => FeedList.updateNode(FeedList.getNodeById(params.id), true));
-        Action.register('feedreader:removeNode', (params) => FeedList.remove(params.id));
+        Action.register('feedreader:removeNode', (params) => FeedList.remove(parseInt(params.id)));
         Action.register('feedreader:allowCorsProxy', (params) => {
             const feed = FeedList.getNodeById(params.id);
             if(params.global === 'true') {
@@ -142,7 +142,7 @@ export class FeedReader {
             feed.update();
         });
 
-        Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(params.id));
+        Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(parseInt(params.id)));
 
         // Item actions
         Action.register('feedreader:nextUnread',     () => this.itemlist.nextUnread());
