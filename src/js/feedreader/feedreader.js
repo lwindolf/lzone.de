@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { Feed } from './feed.js';
+import { Item } from './item.js';
 import { FeedList } from './feedlist.js';
 import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
@@ -30,10 +31,10 @@ export class FeedReader {
     static #selectedFeed;
     static #selectedItem;
 
-    static feedlist;
+    // views
     static feedinfo;
-    static itemlist;
     static itemview;
+    static itemlist;
 
     // view setup
     static async setup(el) {
@@ -59,17 +60,15 @@ export class FeedReader {
 
         this.feedinfo = new FeedInfo(this.#el.ownerDocument.getElementById('feedViewContent'));
         this.itemview = new ItemView(this.#el.ownerDocument.getElementById('itemViewContent'));
+        this.itemlist = new ItemList(this.#el.ownerDocument.getElementById('itemlistViewContent'));
 
         this.feedinfo.setData({ id: this.#selectedFeed });
         this.itemview.setData({ id: this.#selectedItem });
+        this.itemlist.setData({ id: this.#selectedFeed });
     }
 
     // controller setup
     static async registerActions() {
-
-        this.feedlist = new FeedList();
-        this.itemlist = new ItemList();
-
         await FeedList.setup();
 
         new ContextMenu('sidebar', [
@@ -145,11 +144,20 @@ export class FeedReader {
         Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(parseInt(params.id)));
 
         // Item actions
-        Action.register('feedreader:nextUnread',     () => this.itemlist.nextUnread());
+        Action.register('feedreader:nextUnread',     () => this.nextUnread(this.#selectedFeed, this.#selectedItem));
         Action.register('feedreader:select',         (params) => this.select(params.itemId, params.nodeId));
-        Action.register('feedreader:toggleItemRead', (params) => this.itemlist.toggleItemRead(parseInt(params.id)));
-        Action.register('feedreader:toggleItemStar', (params) => this.itemlist.toggleItemStar(parseInt(params.id)));
-        Action.register('feedreader:openItemLink',   (params) => this.itemlist.openItemLink(parseInt(params.id)));
+        Action.register('feedreader:toggleItemRead', async (params) => {
+            const item = await Item.getById(parseInt(params.id));
+            const node = FeedList.getNodeById(item.nodeId);
+
+            item.setRead(!item.read);
+            node.updateUnread(item.read?-1:1);
+        });
+        Action.register('feedreader:toggleItemStar', async (params) => {
+            const item = await Item.getById(parseInt(params.id));
+            item.setStarred(!item.starred);
+        });
+        Action.register('feedreader:openItemLink',   (params) => ItemList.openItemLink(parseInt(params.id)));
 
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
@@ -196,6 +204,39 @@ export class FeedReader {
     // select a new item (of the currently displayed feed)
     static selectItem(id) {
         window.location.hash = `${this.#hashRouteBase}${this.#selectedFeed}/Item/${id}`;
+    }
+
+    // select next unread (includes switching feeds)
+    static async nextUnread() {
+        let item, node, id;
+
+        if(this.#selectedFeed) {
+            node = FeedList.getNodeById(this.#selectedFeed);
+            id = this.#selectedItem;
+        } else {
+            // select first node if none is selected
+            node = FeedList.getNextUnreadNode(0);
+            id = 0;
+        }
+        console.log('itemlist nextUnread: starting at node id', node.id, 'item id', id);
+
+        if(!node)
+            return;
+
+        // Try looking in same feed/folder
+        item = await node.getNextUnread(id);
+
+        // Switch to next feed if needed
+        if(!item) {
+            node = FeedList.getNextUnreadNode(node.id);
+            item = await node.getNextUnread(id);
+        }
+
+        // FIXME: folder recursion
+
+        console.log('itemlist nextUnread: result', item);
+        if(item)
+            FeedReader.select(node.id, item.id);
     }
 }
 

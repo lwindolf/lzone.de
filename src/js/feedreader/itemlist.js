@@ -1,29 +1,21 @@
 // vim: set ts=4 sw=4:
 
-// Managing a list of currently visible items
-// for simplicity combined view and model
+// Item list rendering view
+//
+// Renders a list of items, allow selective item updates, on new items shows a banner
+// at the top to allow the user to show new items
 
 import { FeedList } from './feedlist.js';
 import { FeedReader } from './feedreader.js';
 import { Item } from './item.js';
 import { DateParser } from './parsers/date.js';
+
+import { Action } from '../helpers/Action.js';
+import { View } from '../helpers/View.js';
 import { template, render } from '../helpers/render.js';
 import * as ev from '../helpers/events.js';
 
-export class ItemList {
-    // state
-    displayedFeedId;    // id of the feed that is currently displayed
-    selected;           // selected item (or undefined)
-
-    static #listTemplate = template(`
-        <div class='newItems hidden'>Click to show new items</div>
-        <div>
-            {{#each items}}
-                <div class='item context-node' data-id='{{id}}' data-feed='{{nodeId}}'></div>
-            {{/each}}
-        </div>
-    `);
-
+export class ItemList extends View {
     static #itemTemplate = template(`
         <span class='date'>{{time}}</span>
         <span class='title' data-read='{{read}}'>
@@ -32,129 +24,58 @@ export class ItemList {
         </span>
     `);
 
-    #itemUpdated(item) {
-        let title = item.title;
+    // state
+    #items;         // currently displayed items
 
-        // For items that have no title, create one from the description
-        if (!title || title.trim().length === 0)
-            if (item.description && item.description.length > 0) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(item.description, 'text/html');
-                const textContent = doc.body.textContent || '';
-                title = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
-            } else {
-                title = 'No title';
+    constructor(root) {
+        super({
+            root,
+            template: `
+                <div class='newItems hidden'>Click to show new items</div>
+                <div>
+                {{#each items}}
+                        <div class='item context-node' data-id='{{id}}' data-feed='{{nodeId}}'></div>
+                {{/each}}
+                </div>
+            `,
+            dataEvents: [
+                "feedSelected"
+            ],
+            mapper: async (data) => {
+                const node = FeedList.getNodeById(data.id);
+                if(!node)
+                    return { };
+
+                this.#items = await node.getItems();
+
+                // FIXME: handle folders
+
+                console.log(`ItemList Loading items for node ${node.title}`, this.#items);
+
+                return {
+                    node,
+                    items: this.#items.sort((a, b) => b.time - a.time)
+                }
+            },
+            postRender: async () => {
+                this.#items.forEach((i) => this.#itemUpdated(i));
             }
-
-        render(`.item[data-id="${item.id}"]`, ItemList.#itemTemplate, {
-            time: DateParser.getShortDateStr(item.time),
-            read: item.read,
-            starred: item.starred,
-            title
         });
-    }
 
-    // load all items from the given node id
-    async #loadFeed(id) {
-        const node = FeedList.getNodeById(id);
-        const items = await node.getItems();
-
-        this.selected = undefined;
-        this.displayedFeedId = id;
-
-        // FIXME: handle folders
-
-        console.log(`itemlist Loading items for feed ${node.title}`, items);
-
-        render('#itemlistViewContent', ItemList.#listTemplate, {
-            node,
-            items: items.sort((a, b) => b.time - a.time)
-        });
-        items.forEach((i) => this.#itemUpdated(i));
-    }
-
-    async toggleItemRead(id) {
-        const item = await Item.getById(id);
-        const node = FeedList.getNodeById(item.nodeId);
-
-        item.setRead(!item.read);
-        node.updateUnread(item.read?-1:1);
-    }
-
-    async toggleItemStar(id) {
-        const item = await Item.getById(id);
-        item.setStarred(!item.starred);
-    }
-
-    async #itemSelected(id, nodeId) {
-        const item = await Item.getById(id);
-
-        if(nodeId !== this.displayedFeedId)
-            await this.#loadFeed(nodeId);
-
-        [...document.querySelectorAll('.item.selected')]
-            .forEach((n) => n.classList.remove('selected'));
-        let itemNode = document.querySelector(`.item[data-id="${id}"]`);
-        itemNode.classList.add('selected');
-        itemNode.scrollIntoView({ block: 'nearest' });
-        
-        document.getElementById('itemlist').focus();
-
-        console.log('itemlist Item selected:', item);
-        this.selected = item;
-        if(!item.read)
-            await this.toggleItemRead(id);
-    }
-
-    // select next unread
-    async nextUnread() {
-        let item, node, id;
-
-        if(this.selected) {
-            node = FeedList.getNodeById(this.selected.nodeId)
-            id = this.selected.id;
-        } else {
-            // select first node if none is selected
-            node = FeedList.getNextUnreadNode(0);
-            id = 0;
-        }
-        console.log('itemlist nextUnread: starting at node id', node.id, 'item id', id);
-
-        // Try looking in same feed/folder
-        item = await node.getNextUnread(id);
-
-        // Switch to next feed if needed
-        if(!item) {
-            node = FeedList.getNextUnreadNode(node.id);
-            item = await node.getNextUnread(id);
-        }
-
-        // FIXME: folder recursion
-
-        console.log('itemlist nextUnread: result', item);
-        if(item)
-            FeedReader.select(node.id, item.id);
-    }
-
-    openItemLink = async (id) =>
-        window.open((await Item.getById(id)).source, '_system', 'location=yes');
-
-    constructor() {
         document.addEventListener('itemUpdated',  (e) => this.#itemUpdated(e.detail));
         document.addEventListener('itemSelected', (e) => this.#itemSelected(e.detail.id, e.detail.feedId));
-        document.addEventListener('feedSelected', (e) => this.#loadFeed(e.detail.id));
         document.addEventListener('itemsAdded',   (e) => {
-            if(e.detail.feedId == this.displayedFeedId)
+            if(e.detail.feedId == this.getData().id)
                 document.querySelector('#itemlistViewContent .newItems').classList.remove('hidden');
         });
 
         // handle mouse events
         ev.connect('click',    '.item', (el) => FeedReader.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
-        ev.connect('auxclick', '.item', (el) => this.toggleItemRead(parseInt(el.dataset.id)), (e) => e.button == 1);
+        ev.connect('auxclick', '.item', (el) => Action.dispatch('feedreader:toggleItemRead', { id: parseInt(el.dataset.id) }, (e) => e.button == 1));
         ev.connect('dblclick', '.item', (el) => this.openItemLink(parseInt(el.dataset.id)));
         ev.connect('click',    '.newItems', () => {
             document.querySelector('.newItems').classList.add('hidden');
-            this.#loadFeed(this.displayedFeedId);
+            FeedReader.select(this.displayedFeedId, undefined);
         });
 
         // handle cursor keys
@@ -185,6 +106,48 @@ export class ItemList {
                     e.preventDefault();
                 }
             }
+        });
+    }
+
+    openItemLink = async (id) =>
+        window.open((await Item.getById(id)).source, '_system', 'location=yes');
+
+    async #itemSelected(id) {
+        const item = await Item.getById(id);
+
+        [...document.querySelectorAll('.item.selected')]
+            .forEach((n) => n.classList.remove('selected'));
+        let itemNode = document.querySelector(`.item[data-id="${id}"]`);
+        itemNode.classList.add('selected');
+        itemNode.scrollIntoView({ block: 'nearest' });
+        
+        document.getElementById('itemlist').focus();
+
+        console.log('ItemList Item selected:', item);
+        this.selected = item;
+        if(!item.read)
+            Action.dispatch('feedreader:toggleItemRead', { id });
+    }
+
+    #itemUpdated(item) {
+        let title = item.title;
+
+        // For items that have no title, create one from the description
+        if (!title || title.trim().length === 0)
+            if (item.description && item.description.length > 0) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(item.description, 'text/html');
+                const textContent = doc.body.textContent || '';
+                title = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
+            } else {
+                title = 'No title';
+            }
+
+        render(`.item[data-id="${item.id}"]`, ItemList.#itemTemplate, {
+            time: DateParser.getShortDateStr(item.time),
+            read: item.read,
+            starred: item.starred,
+            title
         });
     }
 }

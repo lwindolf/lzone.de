@@ -108,4 +108,6 @@ export class View {
             this.#eventContainer.dataset[key] = this.#data[key];
         this.#render();
     }
+
+    getData = () => this.#data;
 }

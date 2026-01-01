@@ -1,7 +1,8 @@
 To be fixed
 ===========
 
-- feed with download failure should have error icons
+- itemview show category labels
+- new item handling does not update itemlist
 
 Refactor
 ========
