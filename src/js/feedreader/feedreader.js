@@ -68,8 +68,15 @@ export class FeedReader {
     }
 
     // controller setup
-    static async registerActions() {
+    static async initialize() {
         await FeedList.setup();
+
+        Settings.addSchema({
+            'feedreader:::refreshInterval'     : { default: 24,      description: "The default refresh interval for the feed reader" },
+            'feedreader:::refreshIntervalUnit' : { default: 'hours', description: "The default refresh interval unit for the feed reader" },
+            'feedreader:::maxItems'            : { default: 100,     description: "The maximum number of items to display in the feed reader" },
+            'allowCorsProxy'                   : { default: false,   description: "Allow using a CORS proxy for feed + content requests" }
+        });
 
         new ContextMenu('sidebar', [
             // Feed options
@@ -240,4 +247,4 @@ export class FeedReader {
     }
 }
 
-FeedReader.registerActions();
+FeedReader.initialize();

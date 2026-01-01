@@ -9,8 +9,10 @@
 // FIXME: implement the tree (currently only flat list of feeds) 
 // FIXME: convert the feed list to a generic AggregatorTree
 
-import { DB } from '../models/DB.js'
 import { Feed } from './feed.js';
+
+import { DB } from '../models/DB.js'
+import { Settings } from '../models/Settings.js';
 import * as ev from '../helpers/events.js';
 
 export class FeedList {
@@ -22,6 +24,9 @@ export class FeedList {
 
     // currently known max feed id
     static maxId = 1;
+
+    // loading state, we must not save the feed list while loading
+    static #loading = true;
 
     // Return node by id
     static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
@@ -44,6 +49,10 @@ export class FeedList {
     }
 
     static #save() {
+        // Do not save while loading to avoid saving back a partial feed list
+        if(this.#loading)
+            return;
+
         console.log('feedlist save', FeedList.root.children);
         
         function serializeNode(node) {
@@ -110,11 +119,15 @@ export class FeedList {
     static async setup() {
         console.log('feedlist setup')
 
-        document.addEventListener('nodeUpdated', () => FeedList.#save());
-
         for(const f of (await DB.get('aggregator', 'tree', 'tree', window.Config.groups.Feeds.defaultFeeds))){
             await this.add(new Feed(f), false);
         }
+
+        this.#loading = false;
+        document.addEventListener('nodeUpdated', () => FeedList.#save());
+
+        if (Settings.get("feedreader:::updateAllOnStartup"))
+            FeedList.update();
 
         // Cleanup orphaned feed items
         DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));

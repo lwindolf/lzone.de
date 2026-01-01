@@ -60,7 +60,7 @@ export class CheatSheetCatalog {
             console.log('Checking for orphaned documents...');
             const result = await DB.getAllKeys("settings", "settings");
             for(const path of result) {
-                if(0 == path.indexOf('document:::')) {
+                if(typeof path === 'string' &&0 == path.indexOf('document:::')) {
                     const tmp = path.split(/:::/);
                     if(!sections.nodes[tmp[1]] ||
                        !sections.nodes[tmp[1]].nodes ||

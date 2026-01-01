@@ -10,6 +10,7 @@ import { DB } from '../models/DB.js';
 import { FeedUpdater } from './feedupdater.js';
 import { Item } from './item.js';
 import * as ev from '../helpers/events.js';
+import { Settings } from '../models/Settings.js';
 
 export class Feed {
     // state
@@ -67,11 +68,26 @@ export class Feed {
     }
 
     #updateStatus(msg) {
+        console.log(`Feed status update(${this.source}): ${msg}`);
         this.feedStatusMsg = msg;
         ev.dispatch('feedUpdating', { id: this.id });
     }
 
     async update(force = false) {
+        let updateInterval = await Settings.get('feedreader:::refreshInterval');
+        const updateIntervalUnit = await Settings.get('feedreader:::refreshIntervalUnit');
+
+        console.log(`Feed update(${this.source}, force=${force}) with interval ${updateInterval} ${updateIntervalUnit}`);
+
+        if (updateIntervalUnit === 'hours') {
+            updateInterval *= 60 * 60;
+        } else if (updateIntervalUnit === 'days') {
+            updateInterval *= 60 * 60 * 24;
+        } else {
+            console.error(`Unknown update interval unit: ${updateIntervalUnit}`);
+            return;
+        }
+
         // Force update by resetting last_updated
         if (force) {
             this.#updateStatus(`Forcing update of ${this.source}`);
@@ -79,9 +95,9 @@ export class Feed {
             this.last_updated_favicon = 0;
         }
         
-        // Do not update too often (for now hard-coded 1h)
-        if (this.last_updated && (Date.now() / 1000 - this.last_updated < 60*60)) {
-            this.#updateStatus(`Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
+        // Do not update too often
+        if (this.last_updated && (Date.now() / 1000 - this.last_updated < updateInterval)) {
+            console.log(`Feed Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
             return;
         }
 
@@ -118,8 +134,8 @@ export class Feed {
 
             // FIXME: truncate set of items to match max per-feed cache size
 
-            // Do not update too often (for now hard-coded 30d)
-            if ((Date.now() / 1000 - this.last_updated_favicon > 30*24*60*60)) {
+            // Do not update too often (hard-coded 30 * updateInterval)
+            if ((Date.now() / 1000 - this.last_updated_favicon > 30*updateInterval)) {
                 this.#updateStatus(`Updating favicon for ${this.source} (${this.icon})`);
 
                 // See also https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/

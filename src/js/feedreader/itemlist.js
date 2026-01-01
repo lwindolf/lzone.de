@@ -58,7 +58,7 @@ export class ItemList extends View {
                 }
             },
             postRender: async () => {
-                this.#items.forEach((i) => this.#itemUpdated(i));
+                this.#items?.forEach((i) => this.#itemUpdated(i));
             }
         });
 

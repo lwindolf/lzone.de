@@ -3,6 +3,7 @@ To be fixed
 
 - itemview show category labels
 - new item handling does not update itemlist
+- implement max item limit
 
 Refactor
 ========

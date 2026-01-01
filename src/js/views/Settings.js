@@ -62,10 +62,12 @@ export class SettingsView {
             if(v !== undefined)
                 select.value = v;
 
-            SettingsView.#updateVisibility(el, select.name);
+            if (select.dataset["updateVisibility"] === "true")
+                SettingsView.#updateVisibility(el, select.name);
 
             select.addEventListener('change', (e) => {
-                SettingsView.#updateVisibility(el, e.target.name);
+                if (select.dataset["updateVisibility"] === "true")
+                    SettingsView.#updateVisibility(el, e.target.name);
                 Settings.set(e.target.name, e.target.value, true /* send event */);
             });
         });
@@ -130,22 +132,27 @@ export class SettingsView {
                     Always allow using the CORS Proxy <code>${window.Config.corsProxy}</code>
                 </p>
 
-                <!--<h3>Feed Reader</h3>
+                <h3>Feed Reader</h3>
 
-                <div>
-                    <input type="checkbox" name="feedreader:::showFavicons"> Show favicons
-                </div>
-                <div>
-                    <input type="checkbox" name="feedreader:::updateAllOnStartup"> Update all feeds on startup
-                </div>
-                <div>
-                    Default update interval <input name="feedreader:::refreshInterval" type="number" value="24" size="1" min="1"> hours
-                </div>-->
+                <p>
+                    <input name="feedreader:::maxItems" type="number" value="100" size="1" min="1">
+                    <label for="feedreader:::maxItems">Maximum number of items to cache per feed</label>
+                </p>
+                <p>
+                    <input type="checkbox" name="feedreader:::updateAllOnStartup"> Automatically update out-dated feeds on startup
+                </p>
+                <p>
+                    Default update interval <input name="feedreader:::refreshInterval" type="number" value="24" size="1" min="1"> 
+                    <select name="feedreader:::refreshIntervalUnit">
+                        <option value="hours">hour(s)</option>
+                        <option value="days">day(s)</option>
+                    </select>
+                </p>
 
                 <h3>Configure Chat Bot</h3>
 
                 <p>
-                    Mode <select name="chatType">
+                    Mode <select name="chatType" data-update-visibility="true">
                         <option value="none">Disabled</option>
                         <option value="ollama">ollama API</option>
                         <option value="huggingFace">HuggingFace</option>
@@ -238,7 +245,9 @@ export class SettingsView {
             `), {
                 hfModels            : window.Config.chatBotModels,
                 huggingFaceToken    : await Settings.get('huggingFaceToken', ''),
-                ollamaModels
+                ollamaModels,
+                updateRefreshInterval     : await Settings.get('feedreader:::refreshInterval', 24),
+                updateRefreshIntervalUnit : await Settings.get('feedreader:::refreshIntervalUnit', 'hours')
             });
 
             el.querySelector('input[name="ollamaEndpoint"]').addEventListener('change', () => this.#updateOllamaModels(el));
