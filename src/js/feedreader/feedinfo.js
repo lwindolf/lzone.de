@@ -2,7 +2,9 @@
 
 // Feed info rendering
 
+import { FeedReader } from './feedreader.js';
 import { FeedList } from './feedlist.js';
+
 import { View } from '../helpers/View.js';
 
 export class FeedInfo extends View {   
@@ -87,6 +89,9 @@ export class FeedInfo extends View {
                 }
             },
             postRender: () => {
+                if(FeedReader.getSelectedItem())
+                    return; // item view is active
+
                 // Feed info and item view share the same screen area, only one must be visible at any time
                 root.ownerDocument.getElementById('itemViewContent').style.display = 'none';
                 root.ownerDocument.getElementById('feedViewContent').style.display = 'block';

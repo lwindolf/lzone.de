@@ -213,6 +213,8 @@ export class FeedReader {
         window.location.hash = `${this.#hashRouteBase}${this.#selectedFeed}/Item/${id}`;
     }
 
+    static getSelectedItem = () => this.#selectedItem;
+
     // select next unread (includes switching feeds)
     static async nextUnread() {
         let item, node, id;

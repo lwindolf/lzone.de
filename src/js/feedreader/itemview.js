@@ -2,8 +2,10 @@
 
 // Item rendering view
 
-import { DateParser } from './parsers/date.js';
+import { FeedReader } from './feedreader.js';
 import { Item } from './item.js';
+
+import { DateParser } from './parsers/date.js';
 import { View } from '../helpers/View.js';
 
 export class ItemView extends View {
@@ -55,6 +57,9 @@ export class ItemView extends View {
                 }
 
                 root.ownerDocument.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
+
+                if(!FeedReader.getSelectedItem())
+                    return; // feed info view is active
 
                 // Feed info and item view share the same screen area, only one must be visible at any time
                 root.ownerDocument.getElementById('itemViewContent').style.display = 'block';
