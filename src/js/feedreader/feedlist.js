@@ -18,7 +18,7 @@ import * as ev from '../helpers/events.js';
 
 export class FeedList {
     // hierarchical list of children
-    static root = { children: [] };
+    static root = { children: [], unreadCount: 0 };
 
     // id to node lookup map
     static #nodeById = {};
@@ -89,15 +89,15 @@ export class FeedList {
     // 1. on subscribing
     // 2. on feed list loading
     static async add(f, update = true) {
-        this.root.children.push(f);
-
         if(!f.id)
             f.id = FeedList.maxId + 1;
         if(f.id > FeedList.maxId)
             FeedList.maxId = f.id;
 
         FeedList.#nodeById[f.id] = f;
-        f.parent = FeedList.root; // set parent to root
+        if(!f.parent)
+            f.parent = FeedList.root;
+        f.parent.children.push(f);
 
         if(update)
             await f.update();
@@ -138,8 +138,10 @@ export class FeedList {
             if(n.type === 'folder') {
                 const folder = new Folder(n);
                 folder.parent = parent;
+                folder.children = [];
                 FeedList.#nodeById[id] = folder;
                 parent.children.push(folder);
+                console.log("Add folder", n);
                 this.#loadNodes(n.children, folder);
             }
             if (n.type === 'feed' || !n.type) {
@@ -147,7 +149,8 @@ export class FeedList {
                 feed.parent = parent;
                 FeedList.#nodeById[id] = feed;
                 parent.children.push(feed);
-                console.log("Add feed")
+                parent.unreadCount += feed.unreadCount;
+                console.log("Add feed", n)
             }
         }
     }

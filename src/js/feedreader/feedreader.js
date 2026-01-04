@@ -145,7 +145,7 @@ export class FeedReader {
         Action.register('aggregator:addFeed',    () => new SubscribeFeedDialog(this.getSelectedNodeId));
 
         // Feed actions
-        Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title })));
+        Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title, parent:FeedList.getNodeById(parseInt(params.parentId)) })));
         Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(parseInt(params.id)));
         Action.register('feedreader:updateNode', (params) => FeedList.updateNode(FeedList.getNodeById(params.id), true));
         Action.register('feedreader:removeNode', (params) => FeedList.remove(parseInt(params.id)));

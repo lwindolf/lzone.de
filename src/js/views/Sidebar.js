@@ -47,29 +47,48 @@ export class Sidebar {
         {{/each}}
 
         {{#* inline "sidebarChildFeed"}}
-            <div class="{{type}}">
                 {{#compare type '==' 'feed'}}
-                    {{#if error}}
-                        ⛔&nbsp;
-                    {{else}}
-                        {{#if iconData}}
-                            <img class='icon' src='{{iconData}}'/>
-                        {{else}}
-                            <img class='icon' src='default.svg'/>
-                        {{/if}}
-                    {{/if}}
-                    <span class='title'>
-                        {{{title}}}
-                    </span>
-                    <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
+                    <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
+                        <div class="{{type}}">
+                            {{#if error}}
+                                ⛔&nbsp;
+                            {{else}}
+                                {{#if iconData}}
+                                    <img class='icon' src='{{iconData}}'/>
+                                {{else}}
+                                    <img class='icon' src='default.svg'/>
+                                {{/if}}
+                            {{/if}}
+                            <span class='title'>
+                                {{{title}}}
+                            </span>
+                            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                        </div>
+                    </a>
+                </li>
                 {{/compare}}
                 {{#compare type '==' 'folder'}}
-                    <span class='title'>
-                        📁&nbsp;
-                        {{{title}}}
-                    </span>
+                <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
+                    {{#notEmpty children}}
+                        <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
+                    {{/notEmpty}}
+                    <a data-path="-:::Folder:::{{id}}" class="nav-list-link" href="#/-/Folder/{{id}}">
+                        <div class="{{type}}">
+                            <span class='title'>
+                                📁&nbsp;
+                                {{{title}}}
+                            </span>
+                            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                        </div>
+                    </a>
+                    <ul class='nav-list feeds'>
+                        {{#each children }}
+                            {{> sidebarChildFeed }}
+                        {{/each}}
+                    </ul>
+                </li>
                 {{/compare}}
-            </div>
         {{/inline}}
    
         <!-- FeedReader section -->
@@ -83,11 +102,7 @@ export class Sidebar {
         <div id="feedlist">
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
-                    <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                        <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
-                            {{> sidebarChildFeed }}
-                        </a>
-                    </li>
+                    {{> sidebarChildFeed }}
                 {{/each}}
             </ul>
         </div>

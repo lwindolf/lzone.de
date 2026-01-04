@@ -112,7 +112,8 @@ header .title {
         margin-right: 0.5rem;
 }
 
-.feed .title {
+.feed .title,
+.folder .title {
         flex: 10 10;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -120,6 +121,7 @@ header .title {
         min-width: 0;
 }
 
+.folder .count,
 .feed .count {
         background: var(--darkerbg);
         padding: 0.1rem 0.4rem;
@@ -130,11 +132,14 @@ header .title {
 }
 
 .selected .feed .count,
-.feed:hover .count {
+.selected .folder .count,
+.feed:hover .count,
+.folder:hover .count {
         background: hsl(from var(--darkerbg) h s calc(l - 10));
 }
 
-.feed .count[data-count="0"] {
+.feed .count[data-count="0"],
+.folder .count[data-count="0"] {
         display: none;
 }
 

@@ -234,6 +234,9 @@ export class Feed {
         if (this.unreadCount < 0)
             this.unreadCount = 0;
 
+        if(this.parent.updateUnread)
+            this.parent.updateUnread(count);
+
         ev.dispatch('nodeUpdated', this);
     }
 
