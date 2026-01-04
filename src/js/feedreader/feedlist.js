@@ -10,6 +10,7 @@
 // FIXME: convert the feed list to a generic AggregatorTree
 
 import { Feed } from './feed.js';
+import { Folder } from './folder.js';
 
 import { DB } from '../models/DB.js'
 import { Settings } from '../models/Settings.js';
@@ -24,9 +25,6 @@ export class FeedList {
 
     // currently known max feed id
     static maxId = 1;
-
-    // loading state, we must not save the feed list while loading
-    static #loading = true;
 
     // Return node by id
     static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
@@ -49,12 +47,8 @@ export class FeedList {
     }
 
     static #save() {
-        // Do not save while loading to avoid saving back a partial feed list
-        if(this.#loading)
-            return;
+        console.log('feedlist save');
 
-        console.log('feedlist save', FeedList.root.children);
-        
         function serializeNode(node) {
             const serialized = node.serialize();
             if (node.children)
@@ -69,6 +63,25 @@ export class FeedList {
     static allowCorsProxy(id, allow) {
         FeedList.#nodeById[id].allowCorsProxy = allow;
         FeedList.#save();
+    }
+
+    // interactive folder adding
+    static addNewFolder(selectedId) {
+        const title = prompt('New folder title:');
+        if (title) {
+            // lookup parent folder by selectedId which is either a feed or a folder
+            let parent = FeedList.getNodeById(selectedId);
+            if(!parent || !parent.children)
+                parent = FeedList.root; // FIXME: support nested folders!
+            const folder = new Folder({ id: ++FeedList.maxId, title, children: [] });
+            parent.children.push(folder);
+            FeedList.#nodeById[folder.id] = folder;
+            FeedList.#save();
+
+            ev.dispatch('nodeUpdated', folder);
+
+            console.log(`feedlist Added new folder: ${title}`, parent, FeedList.root);
+        }
     }
 
     // Add a node
@@ -115,22 +128,51 @@ export class FeedList {
         node.markAllRead();
     }
 
+    // initially loads deserializes feed list data
+    static #loadNodes(nodes, parent) {
+        for(const n of nodes) {
+            const id = parseInt(n.id);
+            if(FeedList.maxId < id)
+                FeedList.maxId = id;
+
+            if(n.type === 'folder') {
+                const folder = new Folder(n);
+                folder.parent = parent;
+                FeedList.#nodeById[id] = folder;
+                parent.children.push(folder);
+                this.#loadNodes(n.children, folder);
+            }
+            if (n.type === 'feed' || !n.type) {
+                const feed = new Feed(n);
+                feed.parent = parent;
+                FeedList.#nodeById[id] = feed;
+                parent.children.push(feed);
+                console.log("Add feed")
+            }
+        }
+    }
+
     // Load folders/feeds from DB
     static async setup() {
         console.log('feedlist setup')
 
-        for(const f of (await DB.get('aggregator', 'tree', 'tree', window.Config.groups.Feeds.defaultFeeds))){
-            await this.add(new Feed(f), false);
-        }
+        const children = await DB.get('aggregator', 'tree', 'tree', window.Config.groups.Feeds.defaultFeeds);
+        this.#loadNodes(children, FeedList.root);
 
-        this.#loading = false;
+        // Trigger sidebar update
+        document.dispatchEvent(new CustomEvent('sections-updated'));
+
         document.addEventListener('nodeUpdated', () => FeedList.#save());
+
+        if(FeedList.root.children.length > 0)
+            FeedList.#save();   // to allow for ad-hoc schema changes
 
         if (Settings.get("feedreader:::updateAllOnStartup"))
             FeedList.update();
 
         // Cleanup orphaned feed items
-        DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));
+        if(FeedList.#nodeById.length > 0)
+            DB.removeOrphans('aggregator', 'items', 'nodeId', Object.keys(FeedList.#nodeById).map((id) => parseInt(id)));
 
         console.log('feedlist setup done')
     }

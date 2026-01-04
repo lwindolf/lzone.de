@@ -1,6 +1,6 @@
 // vim: set ts=4 sw=4:
 
-// Download, parse and merge feeds
+// Download, parse and auto-discover feeds
 
 import { parserAutoDiscover } from './parsers/autodiscover.js';
 import { Favicon } from './parsers/favicon.js';

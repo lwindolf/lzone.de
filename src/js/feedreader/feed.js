@@ -11,6 +11,7 @@ import { FeedUpdater } from './feedupdater.js';
 import { Item } from './item.js';
 import * as ev from '../helpers/events.js';
 import { Settings } from '../models/Settings.js';
+import { linkAutoDiscover } from './parsers/autodiscover.js';
 
 export class Feed {
     // state
@@ -32,6 +33,7 @@ export class Feed {
     icon;                       // icon URL
     iconData;                   // icon data as data URL
     metadata = {};
+    type = 'feed';
 
     // non-persisted state
     feedStatusMsg;              // provides a feedback message during updates (undefined otherwise)
@@ -47,7 +49,8 @@ export class Feed {
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
 
         // Ensure we do not loose the original source URL on bogus HTTP redirects
-        this.orig_source = this.source;
+        if (!this.orig_source)
+            this.orig_source = this.source;
     }
 
     serialize() {
@@ -59,11 +62,13 @@ export class Feed {
             icon             : this.icon,
             iconData         : this.iconData,
             source           : this.source,
+            orig_source      : this.orig_source,
             last_updated     : this.last_updated,
             last_updated_favicon : this.last_updated_favicon,
             allowCorsProxy   : this.allowCorsProxy,
             unreadCount      : this.unreadCount,
-            metadata         : this.metadata
+            metadata         : this.metadata,
+            type             : this.type
         };
     }
 
@@ -101,7 +106,20 @@ export class Feed {
             return;
         }
 
-        const f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
+        let f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
+        if (Feed.ERROR_DISCOVER == f.error) {
+            console.log(`Feed trying autodiscovery for original source ${this.orig_source}`);
+            const text = await fetch(this.orig_source).then((resp) => resp.text());
+            const links = linkAutoDiscover(text, this.orig_source);
+            if (links.length > 0) {
+                console.log(`Feed changing source to ${links[0]}`);
+                this.source = links[0];
+                f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
+            } else {
+                this.#updateStatus(`Feed update failed: Source is not a feed`);
+                return;
+            }
+        }
         if (Feed.ERROR_NONE == f.error) {
             let added = 0;
 
@@ -203,7 +221,6 @@ export class Feed {
     // Only used during parsing time
     // FIXME: maybe should go to another class (e.g. FeedParser)
     addItem(item) {
-        // Finally some guessing
         if (!item.time)
             item.time = Date.now();
 

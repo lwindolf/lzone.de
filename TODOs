@@ -4,6 +4,8 @@ To be fixed
 - itemview show category labels
 - new item handling does not update itemlist
 - implement max item limit
+- favicons are not working (favicon discovery HTML processing failed DOMException: Operation is not supported)
+- XPath evaluate does not work in Browser (but jest test are fine)
 
 Refactor
 ========

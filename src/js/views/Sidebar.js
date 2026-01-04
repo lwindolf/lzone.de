@@ -47,24 +47,34 @@ export class Sidebar {
         {{/each}}
 
         {{#* inline "sidebarChildFeed"}}
-            {{#if error}}
-                ⛔&nbsp;
-            {{else}}
-                {{#if iconData}}
-                    <img class='icon' src='{{iconData}}'/>
-                {{else}}
-                    <img class='icon' src='default.svg'/>
-                {{/if}}
-            {{/if}}
-            <span class='title'>
-                {{{title}}}
-            </span>
-            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+            <div class="{{type}}">
+                {{#compare type '==' 'feed'}}
+                    {{#if error}}
+                        ⛔&nbsp;
+                    {{else}}
+                        {{#if iconData}}
+                            <img class='icon' src='{{iconData}}'/>
+                        {{else}}
+                            <img class='icon' src='default.svg'/>
+                        {{/if}}
+                    {{/if}}
+                    <span class='title'>
+                        {{{title}}}
+                    </span>
+                    <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                {{/compare}}
+                {{#compare type '==' 'folder'}}
+                    <span class='title'>
+                        📁&nbsp;
+                        {{{title}}}
+                    </span>
+                {{/compare}}
+            </div>
         {{/inline}}
    
         <!-- FeedReader section -->
         <ul class="nav-list">
-                <li class="nav-list-item context-node" data-type='folder' data-path="feeds">
+                <li class="nav-list-item context-node" data-type='folder' data-path="feeds" data-id='0'>
                         <a class="nav-list-link pwa-title" data-path="feeds" href="#/-/Feeds">
                                 Feeds
                         </a>
@@ -73,11 +83,9 @@ export class Sidebar {
         <div id="feedlist">
             <ul class="nav-list" id='feedlistViewContent'>
                 {{#each feedlist.children }}
-                    <li class='nav-list-item context-node' data-type='feed' data-id='{{id}}'>
+                    <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
                         <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
-                            <div class="feed">
-                                {{> sidebarChildFeed }}
-                            </div>
+                            {{> sidebarChildFeed }}
                         </a>
                     </li>
                 {{/each}}

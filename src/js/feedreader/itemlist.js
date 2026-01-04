@@ -43,7 +43,7 @@ export class ItemList extends View {
             ],
             mapper: async (data) => {
                 const node = FeedList.getNodeById(data.id);
-                if(!node)
+                if(!node || node.type !== 'feed')
                     return { };
 
                 this.#items = await node.getItems();

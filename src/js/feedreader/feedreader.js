@@ -7,6 +7,8 @@ import { FeedInfo } from './feedinfo.js';
 import { ItemList } from './itemlist.js';
 import { ItemView } from './itemview.js';
 
+import { SubscribeFeedDialog } from '../dialogs/subscribeFeed.js';
+
 import { Settings } from '../models/Settings.js';
 import { Libraries } from "../libraries.js";
 import { ContextMenu } from '../ContextMenu.js';
@@ -28,8 +30,8 @@ export class FeedReader {
 
     // state
     static #el;
-    static #selectedFeed;
-    static #selectedItem;
+    static #selectedFeedId;
+    static #selectedItemId;
 
     // views
     static feedinfo;
@@ -62,9 +64,9 @@ export class FeedReader {
         this.itemview = new ItemView(this.#el.ownerDocument.getElementById('itemViewContent'));
         this.itemlist = new ItemList(this.#el.ownerDocument.getElementById('itemlistViewContent'));
 
-        this.feedinfo.setData({ id: this.#selectedFeed });
-        this.itemview.setData({ id: this.#selectedItem });
-        this.itemlist.setData({ id: this.#selectedFeed });
+        this.feedinfo.setData({ id: this.#selectedFeedId });
+        this.itemview.setData({ id: this.#selectedItemId });
+        this.itemlist.setData({ id: this.#selectedFeedId });
     }
 
     // controller setup
@@ -96,9 +98,19 @@ export class FeedReader {
                 type: 'feed'
             },
             // Folder options
-            /*{
+            {
+                label: 'Update All',
+                action: 'feedreader:updateNode',
+                type: 'folder'
+            },
+            {
                 label: 'Add Feed',
-                action: 'feedreader:addFeed',
+                action: 'aggregator:addFeed',
+                type: 'folder'
+            },
+            {
+                label: 'Add Folder',
+                action: 'aggregator:addFolder',
                 type: 'folder'
             },
             {
@@ -107,16 +119,11 @@ export class FeedReader {
                 type: 'folder'
             },
             {
-                label: 'Update',
-                action: 'feedreader:updateNode',
-                type: 'folder'
-            },
-            {
                 label: 'Remove',
                 action: 'feedreader:removeNode',
                 type: 'folder'
-            }*/
-        ]);        
+            }
+        ]);
 
         new ContextMenu('itemlist', [
             {
@@ -132,6 +139,10 @@ export class FeedReader {
                 action: 'feedreader:toggleItemStar'
             }
         ]);
+
+        // Node actions (FIXME: move to aggregator)
+        Action.register('aggregator:addFolder',  () => FeedList.addNewFolder({ parentId: FeedReader.getSelectedNodeId() }));
+        Action.register('aggregator:addFeed',    () => new SubscribeFeedDialog(this.getSelectedNodeId));
 
         // Feed actions
         Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title })));
@@ -151,7 +162,7 @@ export class FeedReader {
         Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(parseInt(params.id)));
 
         // Item actions
-        Action.register('feedreader:nextUnread',     () => this.nextUnread(this.#selectedFeed, this.#selectedItem));
+        Action.register('feedreader:nextUnread',     () => this.nextUnread(this.#selectedFeedId, this.#selectedItemId));
         Action.register('feedreader:select',         (params) => this.select(params.itemId, params.nodeId));
         Action.register('feedreader:toggleItemRead', async (params) => {
             const item = await Item.getById(parseInt(params.id));
@@ -164,13 +175,13 @@ export class FeedReader {
             const item = await Item.getById(parseInt(params.id));
             item.setStarred(!item.starred);
         });
-        Action.register('feedreader:openItemLink',   (params) => ItemList.openItemLink(parseInt(params.id)));
+        Action.register('feedreader:openItemLink',   (params) => this.itemlist.openItemLink(parseInt(params.id)));
 
         // Note: for wide browser compatibility use only hotkeys used by Google Drive, see docs
         // https://support.google.com/drive/answer/2563044?hl=en&sjid=12990221386685109012-EU
 
-        Action.hotkey('C-A-KeyR',     'feedreader:markRead',   this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
-        Action.hotkey('C-A-KeyU',     'feedreader:updateNode', this.#hashRouteBase, () => { return { id: this.#selectedFeed }; });
+        Action.hotkey('C-A-KeyR',     'feedreader:markRead',   this.#hashRouteBase, () => { return { id: this.#selectedFeedId }; });
+        Action.hotkey('C-A-KeyU',     'feedreader:updateNode', this.#hashRouteBase, () => { return { id: this.#selectedFeedId }; });
         Action.hotkey('C-ArrowRight', 'feedreader:nextUnread', this.#hashRouteBase);
 
         window.addEventListener('hashchange', () => this.#onLocationChange());
@@ -180,8 +191,8 @@ export class FeedReader {
     // location hash based item/feed selection routing
 
     static #onLocationChange() {
-        const oldFeed = this.#selectedFeed;
-        const oldItem = this.#selectedItem;
+        const oldFeed = this.#selectedFeedId;
+        const oldItem = this.#selectedItemId;
 
         if (!window.location.hash.startsWith(this.#hashRouteBase))
             return;
@@ -189,17 +200,17 @@ export class FeedReader {
         console.log('feedreader onLocationChange', window.location.hash);
 
         const match = window.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
-        this.#selectedFeed = match.groups.feedId ? parseInt(match.groups.feedId) : null;
-        this.#selectedItem = match.groups.itemId ? parseInt(match.groups.itemId) : null;
+        this.#selectedFeedId = match.groups.feedId ? parseInt(match.groups.feedId) : null;
+        this.#selectedItemId = match.groups.itemId ? parseInt(match.groups.itemId) : null;
 
-        if ((oldFeed != this.#selectedFeed) ||
-            (oldItem != this.#selectedItem)) {
+        if ((oldFeed != this.#selectedFeedId) ||
+            (oldItem != this.#selectedItemId)) {
 
-            console.log('feedreader selection needs to be changed: item', this.#selectedItem, 'feed', this.#selectedFeed);
-            if (this.#selectedItem)
-                ev.dispatch('itemSelected', { feedId: this.#selectedFeed, id: this.#selectedItem });
+            console.log('feedreader selection needs to be changed: item', this.#selectedItemId, 'feed', this.#selectedFeedId);
+            if (this.#selectedItemId)
+                ev.dispatch('itemSelected', { feedId: this.#selectedFeedId, id: this.#selectedItemId });
             else
-                ev.dispatch('feedSelected', { id: this.#selectedFeed });
+                ev.dispatch('feedSelected', { id: this.#selectedFeedId });
         }
     }
 
@@ -210,18 +221,19 @@ export class FeedReader {
 
     // select a new item (of the currently displayed feed)
     static selectItem(id) {
-        window.location.hash = `${this.#hashRouteBase}${this.#selectedFeed}/Item/${id}`;
+        window.location.hash = `${this.#hashRouteBase}${this.#selectedFeedId}/Item/${id}`;
     }
 
-    static getSelectedItem = () => this.#selectedItem;
+    static getSelectedItemId = () => this.#selectedItemId;
+    static getSelectedNodeId = () => this.#selectedFeedId;
 
     // select next unread (includes switching feeds)
     static async nextUnread() {
         let item, node, id;
 
-        if(this.#selectedFeed) {
-            node = FeedList.getNodeById(this.#selectedFeed);
-            id = this.#selectedItem;
+        if(this.#selectedFeedId) {
+            node = FeedList.getNodeById(this.#selectedFeedId);
+            id = this.#selectedItemId;
         } else {
             // select first node if none is selected
             node = FeedList.getNextUnreadNode(0);

@@ -7,7 +7,7 @@ import { Settings } from '../models/Settings.js';
 /* allows to use the exported fetch as default fetch */
 const originalFetch = window.fetch.bind(window);
 
-// Fetch and URL normally or via CORS proxy
+// Fetch an URL normally or via CORS proxy
 //
 // Same signature as fetch, only difference is that you can pass
 // options.allowCorsProxy = true to enforce using the CORS proxy.
@@ -32,6 +32,9 @@ window.fetch = async function(url, options = {}) {
             // CORS might be enabled selectively (via CORS param or globally via settings)
             if (!allowCorsProxy)
                 allowCorsProxy = await Settings.get('allowCorsProxy', false);
+
+            if (!allowCorsProxy)
+                return null;
 
             // We expect only CORS proxy URLs where we just need to add the encoded URL
             result = await originalFetch(window.Config.corsProxy+encodeURI(url), options);

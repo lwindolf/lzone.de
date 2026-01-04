@@ -35,7 +35,7 @@
     <script type="module">
         await import("./js/config.js");
 
-        const devMode = false;
+        const devMode = false;   // changed by build.sh
         if(devMode) {
             // in devMode load directly from source
             console.warn("Development mode enabled");
@@ -91,12 +91,7 @@
         </div>
     </div>
 
-    <!-- modal dialog -->
-    <div id="modal">
-        <form>
-            <div id="modalContent">
-            </div>
-        </form>
-    </div>
+    <dialog id="modal">
+    </dialog>
 </body>
 </html>

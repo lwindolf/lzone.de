@@ -58,7 +58,7 @@ export class ItemView extends View {
 
                 root.ownerDocument.getElementById('itemViewContent').scrollIntoView({ block: 'start' });
 
-                if(!FeedReader.getSelectedItem())
+                if(!FeedReader.getSelectedItemId())
                     return; // feed info view is active
 
                 // Feed info and item view share the same screen area, only one must be visible at any time

@@ -42,7 +42,36 @@ export class NamespaceParser {
     }
 
     /**
-     * Parse all RSS namespace childs of a given DOM node
+     * Parse all relevant RSS namespace childs of a given DOM feed node
+     * 
+     * @param {*} root        the DOM root
+     * @param {*} xpath       XPath expression for feed DOM node
+     * @param {*} feed        the feed
+     */
+    static parseFeed(root, xpath, feed) {
+        const node = XPath.lookupNode(root, xpath);
+        if (!node)
+            return;
+
+        // Make list of all namespaces defined in root node, we must only
+        // match for present namespaces
+        const nsList = [];
+        for (let i = 0; i < root.attributes.length; i++) {
+            const attr = root.attributes[i];
+            if (attr.name.startsWith('xmlns:')) {
+                nsList.push(attr.name.substring(6));
+            }
+        }
+
+        // Webfeeds support
+        if (nsList.includes('webfeeds')) {
+            if (!feed.icon)
+                feed.icon = XPath.lookup(node, 'webfeeds:icon');
+        }
+    }
+
+    /**
+     * Parse all relevant RSS namespace childs of a given DOM item node
      * 
      * @param {*} root        the DOM root
      * @param {*} node        the item DOM node
@@ -87,7 +116,7 @@ export class NamespaceParser {
         // Media support
         if (nsList.includes('media')) {
             /*
-                Maximual definition could look like this:
+                Full definition could look like this:
             
                 <media:content 
                         url="http://www.foo.com/movie.mov" 
@@ -107,7 +136,7 @@ export class NamespaceParser {
                     
                 (example quoted from specification)
             */
-            XPath.foreach(node, '//media:content', (n) => {
+            XPath.foreach(node, 'media:content', (n) => {
                 item.addMedia(
                     XPath.lookup(n, '@url'),
                     XPath.lookup(n, '@type') || XPath.lookup(n, '@medium'),

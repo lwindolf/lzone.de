@@ -6,7 +6,6 @@ import { ModalDialog } from '../helpers/modal-dialog.js';
 
 export class HelpDialog extends ModalDialog {
     constructor() {
-        // FIXME: copied from NewsAgain, not all is correct
         super(`
             <h2>Help</h2>
 

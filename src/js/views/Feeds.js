@@ -1,7 +1,6 @@
 // vim: set ts=4 sw=4:
 
 import * as r from '../helpers/render.js';
-import * as ev from '../helpers/events.js';
 import { Action } from '../helpers/Action.js';
 import { FeedList } from '../feedreader/feedlist.js';
 import { linkAutoDiscover, parserAutoDiscover } from '../feedreader/parsers/autodiscover.js';
@@ -16,39 +15,6 @@ export class FeedsView {
  
     static #template = r.template(`
         <h1>Folder "Feeds"</h1>
-
-        <h2>Subscriptions</h2>
-
-        <p>
-            <div id='installedSections'>
-            {{#each tree }}
-                <div class='installed'>
-                    <button data-action='feedreader:removeNode' data-id='{{ this.id }}'>Remove</button>
-                    <a href="{{ this.orig_source }}">{{ this.title }}</a>
-                </div>
-            {{else}}
-                You currently have no subscriptions. Try adding one below.
-            {{/each}}
-            </div>
-        </p>
-
-        <h2>Add subscription</h2>
-        
-        <p>
-            <div id='customInstall'>
-                <div>
-                        <input type='text' width='100%' id='url' placeholder='URL'/>
-                        <button>Subscribe</button>
-                </div>
-                {{#if error}}
-                    <div>Error: {{error}}</div>
-                {{/if}}
-            </div>
-        </p>
-
-        <p>Or discover feeds from the different sources...</p>
-
-        <button class="btn" onclick="location.href='#/-/Discover'">Discover Feeds</button>
     `);
 
     constructor(el) {
@@ -69,18 +35,11 @@ export class FeedsView {
             'web+feed', 
             '/?url=%s#/-/Feeds/Add'
         );
-
-        document.addEventListener('nodeRemoved', () => { this.#render(); });
     }
 
     async #render() {
         r.renderElement(this.#el, FeedsView.#template, {
             tree : FeedList.root.children
-        });
-
-        ev.connect('click', '#customInstall button', () => {
-            const url = document.querySelector('#customInstall input#url').value.trim();
-            this.#subscribe(url);
         });
     }
 

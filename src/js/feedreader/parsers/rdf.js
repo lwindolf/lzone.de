@@ -39,6 +39,8 @@ class RDFParser {
 			feed.description = XPath.lookup(root, '/rdf:RDF/ns:channel/ns:description');
 			feed.homepage    = XPath.lookup(root, '/rdf:RDF/ns:channel/ns:link');
 
+			NamespaceParser.parseFeed(root, "/rdf:RDF/ns:channel", feed);
+
 			XPath.foreach(root, '/rdf:RDF/ns:item', this.parseItem, { root, feed });
 		}
 
