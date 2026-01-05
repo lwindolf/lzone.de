@@ -2,12 +2,9 @@ import path from 'path';
 import glob from 'glob';
 
 const config = {
-    entry: {
-        main: './src/js/app.js',
-        components: glob.sync('./src/js/components/**/*.js')
-    },
+    entry: [ './src/js/app.js' ].concat(glob.sync('./src/js/components/**/*.js')),
     output: {
-        filename: 'bundle-[name].js',
+        filename: 'bundle.js',
         path: path.resolve('./www/js/bundle'),
         publicPath: '/js/bundle/'
     },

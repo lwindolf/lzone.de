@@ -48,6 +48,9 @@ export class Feed {
     constructor(defaults = {}) {
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
 
+        if(this.source && !this.source.includes('://'))
+            this.source = 'https://' + this.source;
+
         // Ensure we do not loose the original source URL on bogus HTTP redirects
         if (!this.orig_source)
             this.orig_source = this.source;

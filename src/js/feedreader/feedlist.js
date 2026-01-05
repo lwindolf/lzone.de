@@ -182,8 +182,10 @@ export class FeedList {
 
     // Recursively update a node
     static updateNode(node, force = false) {
+        console.log('feedlist updateNode', node, force)
+
         if(!node.children) {
-            if(node.constructor.name === "Feed")
+            if (node instanceof Feed)
                 node.update(force);
             return;
         }
