@@ -47,48 +47,48 @@ export class Sidebar {
         {{/each}}
 
         {{#* inline "sidebarChildFeed"}}
-                {{#compare type '==' 'feed'}}
-                <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                    <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
-                        <div class="{{type}}">
-                            {{#if error}}
-                                ⛔&nbsp;
+            {{#compare type '==' 'feed'}}
+            <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
+                <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
+                    <div class="{{type}}">
+                        {{#if error}}
+                            ⛔&nbsp;
+                        {{else}}
+                            {{#if iconData}}
+                                <img class='icon' src='{{iconData}}'/>
                             {{else}}
-                                {{#if iconData}}
-                                    <img class='icon' src='{{iconData}}'/>
-                                {{else}}
-                                    <img class='icon' src='default.svg'/>
-                                {{/if}}
+                                <img class='icon' src='default.svg'/>
                             {{/if}}
-                            <span class='title'>
-                                {{{title}}}
-                            </span>
-                            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
-                        </div>
-                    </a>
-                </li>
-                {{/compare}}
-                {{#compare type '==' 'folder'}}
-                <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                    {{#notEmpty children}}
-                        <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
-                    {{/notEmpty}}
-                    <a data-path="-:::Folder:::{{id}}" class="nav-list-link" href="#/-/Folder/{{id}}">
-                        <div class="{{type}}">
-                            <span class='title'>
-                                📁&nbsp;
-                                {{{title}}}
-                            </span>
-                            <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
-                        </div>
-                    </a>
-                    <ul class='nav-list feeds'>
-                        {{#each children }}
-                            {{> sidebarChildFeed }}
-                        {{/each}}
-                    </ul>
-                </li>
-                {{/compare}}
+                        {{/if}}
+                        <span class='title'>
+                            {{{title}}}
+                        </span>
+                        <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                    </div>
+                </a>
+            </li>
+            {{/compare}}
+            {{#compare type '==' 'folder'}}
+            <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
+                {{#notEmpty children}}
+                    <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
+                {{/notEmpty}}
+                <a data-path="-:::Folder:::{{id}}" class="nav-list-link" href="#/-/Folder/{{id}}">
+                    <div class="{{type}}">
+                        <span class='title'>
+                            📁&nbsp;
+                            {{{title}}}
+                        </span>
+                        <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
+                    </div>
+                </a>
+                <ul class='nav-list feeds'>
+                    {{#each children }}
+                        {{> sidebarChildFeed }}
+                    {{/each}}
+                </ul>
+            </li>
+            {{/compare}}
         {{/inline}}
    
         <!-- FeedReader section -->
@@ -186,7 +186,7 @@ export class Sidebar {
         if(!url)
             url = e.dataTransfer.getData('text/url-list')[0];
 
-        alert("Dropped URL: " + url);
+        console.log("FIXME Dropped URL: " + url);
         this.#el.classList.remove('drag-over');
     }
 
@@ -209,6 +209,7 @@ export class Sidebar {
                         .replace(/:::Item:::[^:]*$/, "");   // FIXME: feed reader special handling: ignoring "/Item/xxx" part      
 
         try {
+            console.log('sidebar selection changed to: ', cssPath);
             const sidebar = document.getElementById('sidebar');
             
             // Collapse previous selected
@@ -219,19 +220,17 @@ export class Sidebar {
             if("" === path)
                 return;
 
-            // Open section parents
-            let tmp = cssPath;
-            while (tmp.indexOf(':::') !== -1) {
-                Array.from(sidebar.querySelectorAll(`li[data-path="${tmp}"]`)).forEach(
-                    (p) => p.classList.add('active')
-                );
-                tmp = tmp.replace(/:::[^:]*$/, "");
-            }
-
             // Selection marker
             const target = sidebar.querySelector(`a[data-path="${cssPath}"]`);
             target?.classList.add('active');
             target?.classList.add('selected');
+
+            // Open section parents
+            let node = target;
+            while (node.parentNode && node.id != 'sidebar') {
+                node = node.parentNode;
+                node.classList.add('active');
+            }
 
             // Scroll to selected menu
             target?.scrollIntoView({ block: "nearest" });
