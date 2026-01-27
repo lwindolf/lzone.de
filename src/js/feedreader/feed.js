@@ -63,7 +63,6 @@ export class Feed {
             description      : this.description,
             homepage         : this.homepage,
             icon             : this.icon,
-            iconData         : this.iconData,
             source           : this.source,
             orig_source      : this.orig_source,
             last_updated     : this.last_updated,
@@ -135,7 +134,6 @@ export class Feed {
             this.iconData = f.iconData;
 
             const items = await this.getItems();
-            this.unreadCount = items.filter((i) => !i.read).length;
 
             f.newItems.forEach((i) => {
                 // If item already exists, skip it
@@ -145,10 +143,13 @@ export class Feed {
                     return;
 
                 added++;
-                this.unreadCount++;
-                i.nodeId = this.id;
-                i.save();
+
+                const newItem = new Item(i);
+                newItem.read = false;
+                newItem.nodeId = this.id;
+                newItem.save();
             })
+            this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
             
             if(added > 0)
                 ev.dispatch('itemsAdded', this);
@@ -161,7 +162,7 @@ export class Feed {
 
                 // See also https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
                 const response = await fetch(this.icon);
-                if (response.ok) {                       
+                if (response.ok) {
                     const blob = await response.blob();
                     const data = await new Promise((resolve, reject) => {
                         try {
@@ -173,7 +174,7 @@ export class Feed {
                         }
                     });
                     if (data && data.startsWith('data:image')) {
-                        this.iconData = data;
+                        this.setIcon(data);
                         console.log(`Favicon update for ${this.source} (${this.icon}) was successful`);
                     } else {
                         console.warn(`Favicon update for feed ${this.id} failed`);
@@ -247,5 +248,18 @@ export class Feed {
         const items = await this.getItems();
         items.forEach((i) => i.setRead(true));
         this.updateUnread(-this.unreadCount);
+    }
+
+    setIcon(data) {
+        this.iconData = data;
+        DB.set('aggregator', 'favicons', `feed_${this.id}`, data);
+    }
+
+    async loadIcon() {
+        if (this.iconData)
+            return;
+
+        this.iconData = await DB.get('aggregator', 'favicons', `feed_${this.id}`, undefined);
+        console.log(this);
     }
 }

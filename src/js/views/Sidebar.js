@@ -19,10 +19,12 @@ export class Sidebar {
     static #template = r.template(`
         {{#* inline "sidebarChildNode"}}
             <li class="nav-list-item" data-path="{{ id }}">
-                {{#notEmpty nodes}}
-                    <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
-                {{/notEmpty}}
-                <a data-path="{{ id }}" class="nav-list-link" href="#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">{{ name }}</a>
+                <a data-path="{{ id }}" class="nav-list-link" href="#/{{#reSub ":::" "/"}}{{id}}{{/reSub}}">
+                    {{#notEmpty nodes}}
+                        <span class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></span>
+                    {{/notEmpty}}
+                    {{ name }}
+                </a>
                 <ul data-path="{{ id }}" class="nav-list">
                     {{#each nodes }}
                         {{> sidebarChildNode }}
@@ -50,37 +52,32 @@ export class Sidebar {
             {{#compare type '==' 'feed'}}
             <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
                 <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
-                    <div class="{{type}}">
-                        {{#if error}}
-                            ⛔&nbsp;
+                    {{#if error}}
+                        ⛔&nbsp;
+                    {{else}}
+                        {{#if iconData}}
+                            <img class='icon' src='{{iconData}}'/>
                         {{else}}
-                            {{#if iconData}}
-                                <img class='icon' src='{{iconData}}'/>
-                            {{else}}
-                                <img class='icon' src='default.svg'/>
-                            {{/if}}
+                            <img class='icon' src='default.svg'/>
                         {{/if}}
-                        <span class='title'>
-                            {{{title}}}
-                        </span>
-                        <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
-                    </div>
+                    {{/if}}
+                    <span class='title'>
+                        {{{title}}}
+                    </span>
+                    <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
                 </a>
             </li>
             {{/compare}}
             {{#compare type '==' 'folder'}}
             <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                {{#notEmpty children}}
-                    <a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></a>
-                {{/notEmpty}}
                 <a data-path="-:::Folder:::{{id}}" class="nav-list-link" href="#/-/Folder/{{id}}">
-                    <div class="{{type}}">
-                        <span class='title'>
-                            📁&nbsp;
-                            {{{title}}}
-                        </span>
-                        <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
-                    </div>
+                    {{#notEmpty children}}
+                        <span class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></span>
+                    {{/notEmpty}}
+                    <span class='title'>
+                        {{{title}}}
+                    </span>
+                    <span class='count' data-count='{{unreadCount}}'>{{unreadCount}}</span>
                 </a>
                 <ul class='nav-list feeds'>
                     {{#each children }}
@@ -99,13 +96,11 @@ export class Sidebar {
                         </a>
                 </li>
         </ul>
-        <div id="feedlist">
-            <ul class="nav-list" id='feedlistViewContent'>
-                {{#each feedlist.children }}
-                    {{> sidebarChildFeed }}
-                {{/each}}
-            </ul>
-        </div>
+        <ul class="nav-list" id='feedlistViewContent'>
+            {{#each feedlist.children }}
+                {{> sidebarChildFeed }}
+            {{/each}}
+        </ul>
     `);
 
     constructor(el) {

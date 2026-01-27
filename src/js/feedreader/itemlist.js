@@ -139,8 +139,22 @@ export class ItemList extends View {
             if (item.description && item.description.length > 0) {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(item.description, 'text/html');
+
+                // Some magic to avoid loosing line break whitespaces
+
+                // Replace <br> with spaces
+                doc.body.querySelectorAll('br').forEach(br => br.replaceWith(' '));
+
+                // Add a space after typical block-level elements
+                const blockTags = ['p', 'div', 'li'];
+                blockTags.forEach(tag => {
+                    doc.body.querySelectorAll(tag).forEach(el => {
+                        el.insertAdjacentText('afterend', ' ');
+                    });
+                });
+
                 const textContent = doc.body.textContent || '';
-                title = textContent.substring(0, 100) + (textContent.length > 100 ? '...' : '');
+                title = textContent.substring(0, 100) + (textContent.length > 250 ? '...' : '');
             } else {
                 title = 'No title';
             }

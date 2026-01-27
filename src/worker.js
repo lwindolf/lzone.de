@@ -1,8 +1,10 @@
 // vim: set ts=4 sw=4:
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20260105;
+var cacheVersion = 20260127;
 var cacheName = cachePrefix + '-' + cacheVersion;
+
+// FIXME use webpack-manifest-plugin
 var filesToCache = [
     '/',
     '/css/main.css',
@@ -56,7 +58,7 @@ self.addEventListener('activate', async (e) => {
 /* Serve cached content when offline */
 self.addEventListener('fetch', async (e) => {
     var pathname = new URL(e.request.url).pathname;
-    /* cache all webapp files of the following types (to cache stuff like chunks/images) */
+    /* cache all webapp files of the following types (to cache stuff like bundled js/images/CSS) */
     if ((new URL(e.request.url).host === location.host) &&
         pathname.match(/\.(mjs|js|css|svg|png|ico|json|xml)$/)) {
         e.respondWith(caches.open(cacheName).then((cache) => {

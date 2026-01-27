@@ -128,7 +128,7 @@ export class DB {
         });
     }
 
-    static async get(dbName, storeName, name, defaultValue = 'null') {
+    static async get(dbName, storeName, name, defaultValue = null) {
         const db = await this.#getDB(dbName);
 
         return await new Promise((resolve, reject) => {

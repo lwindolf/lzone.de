@@ -164,7 +164,7 @@ a:not([class]) {
 }
 
 .sidebar {
-        padding: 2rem 0.5rem;
+        padding: 2rem 0;
         
         background-color: var(--darkbg);
         overflow-x: hidden;
@@ -544,7 +544,7 @@ h3 button#editBtn {
 .nav-list-link {
         min-height: 2rem;
         line-height: 1.5rem;
-        padding-right: 2rem;
+        padding-right: 1rem;
         padding-left:  1rem;
         padding-top: .25rem;
         padding-bottom: .25rem;
@@ -555,8 +555,7 @@ h3 button#editBtn {
 }
 
 .nav-list-item {
-        padding-left: 0.75rem;
-        position: relative;
+        padding-left: 1.2rem;
 }
 
 /* First level of nav-list-item should have no padding */
@@ -588,22 +587,18 @@ a[data-path]:not([data-path*=":::"]) {
         color: #959396;
 }
 
-.nav-list .nav-list-item .nav-list-expander {
-        width: 2rem;
-        height: 2rem;
-        padding-top: .5rem;
-        padding-right: .5rem;
-        padding-bottom: .5rem;
-        padding-left: .5rem;
-        position: absolute;
-        right: 0;
+.nav-list .nav-list-item .nav-list-expander svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        display: flex;
+        margin-right: 0.1rem;
 }
 
-.nav-list .nav-list-item .nav-list-expander svg {
+.nav-list .nav-list-item.active>.nav-list-link .nav-list-expander svg {
         transform: rotate(90deg);
 }
 
-.nav-list-item.active>* {
+.nav-list-item.active > ul {
         display: block;
 }
 
@@ -611,11 +606,47 @@ a[data-path]:not([data-path*=":::"]) {
         display: none;
 }
 
-#feedlist .nav-list-link {
-        padding-right: 0.2rem;
+.nav-list-link {
+        cursor: pointer;
+        overflow: hidden;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        display: flex;
+        align-items: center;
 }
-#feedlist .nav-list-item {
-        padding: 0;
+
+.nav-list-link img {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-right: 0.5rem;
+}
+
+.nav-list-link .title{
+        flex: 10 10;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        min-width: 0;
+}
+
+.nav-list-link .count {
+        background: var(--darkerbg);
+        padding: 0.1rem 0.4rem;
+        color: var(--text);
+        font-size: 80%;
+        font-weight: 600;
+        border-radius: 0.2rem;
+}
+
+.selected .nav-list-link .count,
+.nav-list-link:hover .count {
+        background: hsl(from var(--darkerbg) h s calc(l - 10));
+}
+
+.nav-list-link .count[data-count="0"] {
+        display: none;
 }
 
 .pwa-title {
@@ -681,50 +712,6 @@ h3,
 h4,
 h5 {
         clear: both;
-}
-
-div.play button {
-        color: var(--tblue);
-        background: none;
-        font-size: 0.8rem;
-        float: left;
-        margin: 0;
-        margin-right: 0.6rem;
-        padding-left: 0.4rem;
-        padding-right: 0.3rem;
-        padding-top: 0.15rem;
-        padding-bottom: 0.3rem;
-        border: 1px solid #444;
-        border-radius: 0.3rem;
-}
-
-div.play button:hover {
-        color: white;
-        background-color: var(--tblue);
-}
-
-div.play pre {
-        margin-left: 2rem;
-        margin-top: 0;
-}
-
-div.play div.output pre {
-        margin-left: 2rem;
-}
-
-div.output {
-        margin-top: 0.4rem;
-        margin-bottom: 0.4rem;
-}
-
-div.output pre {
-        background: var(--code);
-        color: #ccc;
-        max-height: 400px;
-        overflow: auto;
-        padding: 1.0rem;
-        font-size: 0.75rem;
-        border-radius: 0.2rem;
 }
 
 .main-content img,

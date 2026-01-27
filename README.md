@@ -41,6 +41,9 @@ Update dependencies
 
 Test source without bundling in `src`
 
+    git submodule init
+    git submodule update
+
     npm run startDev
 
 Bundle and test production source in `www`

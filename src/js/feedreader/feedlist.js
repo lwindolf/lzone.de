@@ -6,7 +6,6 @@
 // emits
 // - nodeRemoved(id)
 // 
-// FIXME: implement the tree (currently only flat list of feeds) 
 // FIXME: convert the feed list to a generic AggregatorTree
 
 import { Feed } from './feed.js';
@@ -89,6 +88,8 @@ export class FeedList {
     // 1. on subscribing
     // 2. on feed list loading
     static async add(f, update = true) {
+        console.log('feedlist add', f);
+
         if(!f.id)
             f.id = FeedList.maxId + 1;
         if(f.id > FeedList.maxId)
@@ -129,7 +130,7 @@ export class FeedList {
     }
 
     // initially loads deserializes feed list data
-    static #loadNodes(nodes, parent) {
+    static async #loadNodes(nodes, parent) {
         for(const n of nodes) {
             const id = parseInt(n.id);
             if(FeedList.maxId < id)
@@ -141,16 +142,22 @@ export class FeedList {
                 folder.children = [];
                 FeedList.#nodeById[id] = folder;
                 parent.children.push(folder);
-                console.log("Add folder", n);
-                this.#loadNodes(n.children, folder);
+                console.log("feedlist loadNodes() Add folder", n);
+                await this.#loadNodes(n.children, folder);
             }
             if (n.type === 'feed' || !n.type) {
                 const feed = new Feed(n);
                 feed.parent = parent;
                 FeedList.#nodeById[id] = feed;
                 parent.children.push(feed);
-                parent.unreadCount += feed.unreadCount;
-                console.log("Add feed", n)
+
+                // Always force update unread count
+                const items = await feed.getItems();
+                feed.unreadCount = 0;
+                await feed.loadIcon();
+                feed.updateUnread(items.filter((i) => !i.read).length);
+
+                console.log("feedlist loadNodes() Add feed", n)
             }
         }
     }
@@ -160,7 +167,7 @@ export class FeedList {
         console.log('feedlist setup')
 
         const children = await DB.get('aggregator', 'tree', 'tree', window.Config.groups.Feeds.defaultFeeds);
-        this.#loadNodes(children, FeedList.root);
+        await this.#loadNodes(children, FeedList.root);
 
         // Trigger sidebar update
         document.dispatchEvent(new CustomEvent('sections-updated'));

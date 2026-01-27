@@ -142,7 +142,7 @@ export class FeedReader {
 
         // Node actions (FIXME: move to aggregator)
         Action.register('aggregator:addFolder',  () => FeedList.addNewFolder({ parentId: FeedReader.getSelectedNodeId() }));
-        Action.register('aggregator:addFeed',    () => new SubscribeFeedDialog(this.getSelectedNodeId));
+        Action.register('aggregator:addFeed',    (params) => new SubscribeFeedDialog(params.id?params.id:this.getSelectedNodeId()));
 
         // Feed actions
         Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title, parent:FeedList.getNodeById(parseInt(params.parentId)) })));

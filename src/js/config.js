@@ -31,7 +31,7 @@ export class Config {
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
     static groups = {
         'Lars Windolf': {
-            removable : false,
+            removable : true,
             install : {
                 'About': {
                     github: 'lwindolf/blogs',

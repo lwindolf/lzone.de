@@ -39,7 +39,7 @@ export class FeedUpdater {
                 if (!feed.icon && feed.homepage)
                     try {
                         console.log('feedupdater no icon in feed, starting favicon autodiscovery')
-                        feed.icon = await Favicon.discover(feed.homepage, allowCorsProxy);
+                        feed.icon = await Favicon.discover(feed.homepage, { allowCorsProxy });
                     } catch (e) {
                         // ignore
                     }
