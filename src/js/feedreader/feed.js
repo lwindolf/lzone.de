@@ -133,13 +133,15 @@ export class Feed {
             this.icon = f.icon;
             this.iconData = f.iconData;
 
-            const items = await this.getItems();
+            let items = await this.getItems();           
 
-            f.newItems.forEach((i) => {
-                // If item already exists, skip it
-                if (items.find((x) => (x.sourceId?(x.sourceId === i.sourceId):
-                                      (x.source?(x.source === i.source):
-                                      x.title === i.title))))
+            for (const i of f.newItems) {
+                const isDuplicate = items.some(x => 
+                    x.sourceId === i.sourceId || 
+                    x.source === i.source || 
+                    x.title === i.title
+                );
+                if (isDuplicate)
                     return;
 
                 added++;
@@ -147,8 +149,10 @@ export class Feed {
                 const newItem = new Item(i);
                 newItem.read = false;
                 newItem.nodeId = this.id;
-                newItem.save();
-            })
+                await newItem.save();
+            }
+
+            items = await this.getItems();
             this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
             
             if(added > 0)
@@ -184,7 +188,7 @@ export class Feed {
                     console.warn(`Favicon response for feed ${this.id} failed`);
                 }
             } else {
-                console.warn(`Favicon fetch for feed ${this.id} failed`);
+                console.info(`Favicon ${this.id} does need no update`);
             }
             this.#updateStatus(undefined);
         } else {

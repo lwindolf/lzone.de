@@ -4,7 +4,6 @@ To be fixed
 - itemview show category labels
 - new item handling does not update itemlist
 - implement max item limit
-- favicons are not showing up on startup (despite being cached)
 - Do not parse Atom 0.3 feeds (Tagesschau, causes visible CDATA)
 - feed folder collapse does not work: opening one and clicking a child closes it
 
