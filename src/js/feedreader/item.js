@@ -58,43 +58,53 @@ export class Item {
         this.media.push({ url, mime, length: l });
     }
 
-    setRead(read) {
+    async setRead(read) {
         if (this.read === read)
             return;
 
         this.read = read;
-        this.save();
+        await this.save();
         ev.dispatch('itemUpdated', this);
     }
 
-    setStarred(starred) {
+    async setStarred(starred) {
         if (this.starred === starred)
             return;
 
         this.starred = starred;
-        this.save();
+        await this.save();
         ev.dispatch('itemUpdated', this);
     }
 
-    static getById = async (itemId) => new Item(await DB.getById('aggregator', 'items', itemId));
+    static async getById(itemId) {
+        const data = await DB.getById('aggregator', 'items', itemId);
+        if (!data)
+            throw new Error(`item with id ${itemId} not found`);
+
+        return new Item(data);
+    }
 
     async save() {
         if(!this.nodeId)
-            console.error("item.save(): nodeId is not set!", this);
+            console.error("item save(): nodeId is not set!", this);
 
-        const resultId = await DB.set('aggregator', 'items', this.id, {
-            nodeId      : this.nodeId,
-            read        : this.read,
-            starred     : this.starred,
-            title       : this.title,
-            description : this.description,
-            time        : this.time,
-            source      : this.source,
-            sourceId    : this.sourceId,
-            media       : this.media,
-            metadata    : this.metadata
-        });
-        if(!this.id)
-            this.id = resultId;
+        try {
+            const resultId = await DB.set('aggregator', 'items', this.id, {
+                nodeId      : this.nodeId,
+                read        : this.read,
+                starred     : this.starred,
+                title       : this.title,
+                description : this.description,
+                time        : this.time,
+                source      : this.source,
+                sourceId    : this.sourceId,
+                media       : this.media,
+                metadata    : this.metadata
+            });
+            if(!this.id)
+                this.id = resultId;
+        } catch (error) {
+            console.error("item save(): error saving item", error);
+        }
     }
 }

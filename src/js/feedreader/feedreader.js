@@ -200,6 +200,9 @@ export class FeedReader {
         console.log('feedreader onLocationChange', window.location.hash);
 
         const match = window.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
+        if (!match?.groups)
+            return;
+
         this.#selectedFeedId = match.groups.feedId ? parseInt(match.groups.feedId) : null;
         this.#selectedItemId = match.groups.itemId ? parseInt(match.groups.itemId) : null;
 
