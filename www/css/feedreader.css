@@ -91,7 +91,6 @@ header .title {
         color: var(--text);
 }
 
-.feed,
 .item {
         cursor: pointer;
         overflow: hidden;
@@ -99,48 +98,6 @@ header .title {
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-}
-
-.feed {
-        display: flex;
-        align-items: center;
-}
-
-.feed img {
-        width: 1.4rem;
-        height: 1.4rem;
-        margin-right: 0.5rem;
-}
-
-.feed .title,
-.folder .title {
-        flex: 10 10;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        min-width: 0;
-}
-
-.folder .count,
-.feed .count {
-        background: var(--darkerbg);
-        padding: 0.1rem 0.4rem;
-        color: var(--text);
-        font-size: 80%;
-        font-weight: 600;
-        border-radius: 0.2rem;
-}
-
-.selected .feed .count,
-.selected .folder .count,
-.feed:hover .count,
-.folder:hover .count {
-        background: hsl(from var(--darkerbg) h s calc(l - 10));
-}
-
-.feed .count[data-count="0"],
-.folder .count[data-count="0"] {
-        display: none;
 }
 
 .item {

@@ -3,7 +3,21 @@
 // app customization
 
 export class Config {
-    static siteName = 'LZone';  // used for HTML document title
+    static siteName = 'LZone';
+    static head = `
+    <link rel='alternate' title='LZone Blog' href='https://lzone.de/feed/devops.xml' type='application/atom+xml' />
+    <link rel='alternate' title='Liferea Blog' href='https://lzone.de/liferea/blog/feed.xml' type='application/atom+xml' />
+    <link rel='favicon' href='favicon.ico' type='image/x-icon' />
+    <link rel='blogroll' href='https://lzone.de/blog/blogroll.xml' />
+
+    <title>${Config.siteName}</title>
+
+    <meta name="description" content="LZone - Cheat Sheets for Sysadmin / DevOps / System Architecture" />
+    <meta name="author" content="Lars Windolf" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2c84fa" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lwindolf.github.io/ web+feed:; frame-src 'self' https://imweather.com/; connect-src * data:; style-src 'unsafe-inline' 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' https://lwindolf.github.io/; img-src * data: blob:; media-src *; object-src 'none'" />
+    `;
 
     static welcome = `
         <p>
@@ -31,7 +45,7 @@ export class Config {
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
     static groups = {
         'Lars Windolf': {
-            removable : false,
+            removable : true,
             install : {
                 'About': {
                     github: 'lwindolf/blogs',
@@ -307,4 +321,7 @@ export class Config {
     };
 }
 
-window.Config = Config;
+try {
+    window.Config = Config;
+} catch (e) {
+}
