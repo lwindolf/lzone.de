@@ -8,7 +8,7 @@ export class Config {
     <link rel='alternate' title='LZone Blog' href='https://lzone.de/feed/devops.xml' type='application/atom+xml' />
     <link rel='alternate' title='Liferea Blog' href='https://lzone.de/liferea/blog/feed.xml' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
-    <link rel='blogroll' href='https://lzone.de/blog/blogroll.xml' />
+    <link rel='blogroll' href='https://lzone.de/blog/blogroll.opml' />
 
     <title>${Config.siteName}</title>
 
