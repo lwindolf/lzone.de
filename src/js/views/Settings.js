@@ -125,13 +125,6 @@ export class SettingsView {
             r.renderElement(el, r.template(`
                 <h1>Global Settings</h1>
 
-                <h3>CORS Proxy</h3>
-
-                <p>
-                    <input type="checkbox" name="allowCorsProxy">
-                    Always allow using the CORS Proxy <code>${window.Config.corsProxy}</code>
-                </p>
-
                 <h3>Feed Reader</h3>
 
                 <p>

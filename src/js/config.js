@@ -26,8 +26,6 @@ export class Config {
             so that you can search and read all of it in one place.
         </p>`;
     
-    static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
-
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
 
     // Content tree definition

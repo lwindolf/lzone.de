@@ -39,11 +39,12 @@ export class Feed {
     feedStatusMsg;              // provides a feedback message during updates (undefined otherwise)
 
     // error code constants
-    static ERROR_NONE = 0;
-    static ERROR_AUTH = 1 << 0;
-    static ERROR_NET = 1 << 1;
-    static ERROR_DISCOVER = 1 << 2;
-    static ERROR_XML = 1 << 3;
+    static ERROR_NONE       = 0;
+    static ERROR_AUTH       = 1 << 0;
+    static ERROR_NET_CORS   = 1 << 1;
+    static ERROR_NET        = 1 << 2;
+    static ERROR_DISCOVER   = 1 << 3;
+    static ERROR_XML        = 1 << 4;
 
     constructor(defaults = {}) {
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });

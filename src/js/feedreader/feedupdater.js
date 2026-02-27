@@ -10,7 +10,29 @@ export class FeedUpdater {
     // returns a feed properties or at least error code (e.g. "{ error: Feed.ERROR_XML }")
     // result should be merged into the feed being updated
     static async fetch(url, allowCorsProxy = false) {
+        let cors = false;
+
         console.log(`feedupdater updating ${url}`);
+
+        // Preflight check to detect CORS issues before attempting full fetch
+        // This allows showing end user info about CORS preventing feed updates
+        try {
+            const resp = await fetch(url, { method: 'HEAD', mode: 'cors' });
+            if(null == resp)
+                cors = true;
+        } catch (e) {
+            cors = true;
+        }
+
+        if (cors) {
+            if (allowCorsProxy) {
+                console.log(`feedupdater will retry with CORS proxy for ${url}`);
+            } else {
+                console.log(`feedupdater CORS blocked for ${url}, not fetching`);
+                return new Feed({ error: Feed.ERROR_NET_CORS });
+            }
+        }
+
         /* No etag/last_modified handling here, as this is done by the browser networking.
            We can update as often as we want without worrying about caching. */
         let feed = await fetch(url, { allowCorsProxy })

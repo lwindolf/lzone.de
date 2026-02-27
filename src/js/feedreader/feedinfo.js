@@ -35,29 +35,31 @@ export class FeedInfo extends View {
                                     {{#compare feed.error '==' 2}}⛔{{/compare}}
                                     {{#compare feed.error '>'  2}}✅{{/compare}}
                                     {{#compare feed.error '<'  2}}⬜{{/compare}}
-                                    <span>2. Download</span>
-                                </li>
+                                    <span>2. CORS</span>
+                                </li>                                
                                 <li>
                                     {{#compare feed.error '==' 4}}⛔{{/compare}}
                                     {{#compare feed.error '>'  4}}✅{{/compare}}
                                     {{#compare feed.error '<'  4}}⬜{{/compare}}
-                                    <span>3. Feed Discovery</span>
+                                    <span>3. Download</span>
                                 </li>
                                 <li>
                                     {{#compare feed.error '==' 8}}⛔{{/compare}}
+                                    {{#compare feed.error '>'  8}}✅{{/compare}}
                                     {{#compare feed.error '<'  8}}⬜{{/compare}}
-                                    <span>4. Parsing</span>
+                                    <span>4. Feed Discovery</span>
+                                </li>
+                                <li>
+                                    {{#compare feed.error '==' 16}}⛔{{/compare}}
+                                    {{#compare feed.error '<'  16}}⬜{{/compare}}
+                                    <span>5. Parsing</span>
                                 </li>
                             </ul>    
 
-                            {{#unless feed.allowCorsProxy}}
-                                {{#compare feed.error '==' 2}}
-                                    <p>Downloads often do not work due to <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS">CORS restrictions</a>.
-                                    You might want to use the Cloudflare CORS proxy (<a href="https://corsproxy.io">corsproxy.io</a>) for this feed.</p>
-                                    <button class='btn' data-action='feedreader:allowCorsProxy' data-id='{{feed.id}}' data-global='false'>Use proxy for this feed</button>
-                                    <button class='btn' data-action='feedreader:allowCorsProxy' data-id='{{feed.id}}' data-global='true'>Use proxy for all feeds</button>
-                                {{/compare}}
-                            {{/unless}}
+                            {{#compare feed.error '==' 2}}
+                                <p>Downloads often do not work due to <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS">CORS restrictions</a>.
+                                To workaround this install lzone.de as a web app with a separate browser profile and an browser extension like CORS everywhere.</p>
+                            {{/compare}}
                         {{/if}}
                     </div>
                 </div>
