@@ -76,8 +76,7 @@ export class FeedReader {
         Settings.addSchema({
             'feedreader:::refreshInterval'     : { default: 24,      description: "The default refresh interval for the feed reader" },
             'feedreader:::refreshIntervalUnit' : { default: 'hours', description: "The default refresh interval unit for the feed reader" },
-            'feedreader:::maxItems'            : { default: 100,     description: "The maximum number of items to display in the feed reader" },
-            'allowCorsProxy'                   : { default: false,   description: "Allow using a CORS proxy for feed + content requests" }
+            'feedreader:::maxItems'            : { default: 100,     description: "The maximum number of items to display in the feed reader" }
         });
 
         new ContextMenu('sidebar', [
@@ -148,15 +147,11 @@ export class FeedReader {
         Action.register('feedreader:addFeed',    (params) => FeedList.add(new Feed({ source:params.source, title:params.title, parent:FeedList.getNodeById(parseInt(params.parentId)) })));
         Action.register('feedreader:markRead',   (params) => FeedList.markAllRead(parseInt(params.id)));
         Action.register('feedreader:updateNode', (params) => FeedList.updateNode(FeedList.getNodeById(params.id), true));
-        Action.register('feedreader:removeNode', (params) => FeedList.remove(parseInt(params.id)));
-        Action.register('feedreader:allowCorsProxy', (params) => {
-            const feed = FeedList.getNodeById(params.id);
-            if(params.global === 'true') {
-                Settings.set('allowCorsProxy', true);
-            } else {
-                FeedList.allowCorsProxy(feed.id, true);
-            }
-            feed.update();
+        Action.register('feedreader:removeNode', (params) => {
+            const id = parseInt(params.id);
+            if(FeedReader.#selectedFeedId === id)
+                FeedReader.select(null);
+            FeedList.remove(id);
         });
 
         Action.register('sidebar:feed:middleClick',  (params) => FeedList.markAllRead(parseInt(params.id)));
@@ -219,7 +214,10 @@ export class FeedReader {
 
     // select a new feed (and optionally an item)
     static select(nodeId, itemId = undefined) {
-        window.location.hash = `${this.#hashRouteBase}${nodeId}${itemId ? `/Item/${itemId}` : ''}`;
+        if(nodeId)
+            window.location.hash = `${this.#hashRouteBase}${nodeId}${itemId ? `/Item/${itemId}` : ''}`;
+        else
+            window.location.hash = '#/-/Feeds';
     }
 
     // select a new item (of the currently displayed feed)

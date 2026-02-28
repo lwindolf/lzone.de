@@ -20,7 +20,6 @@ export class Feed {
     orig_source;
     last_updated = 0;
     last_updated_favicon = 0;
-    allowCorsProxy = false;   // whether the user allowed CORS proxy for this feed
     newItems = [];            // temporarily set to items discovered during update
     unreadCount = 0;          // number of unread items in this feed
 
@@ -68,7 +67,6 @@ export class Feed {
             orig_source      : this.orig_source,
             last_updated     : this.last_updated,
             last_updated_favicon : this.last_updated_favicon,
-            allowCorsProxy   : this.allowCorsProxy,
             unreadCount      : this.unreadCount,
             metadata         : this.metadata,
             type             : this.type
@@ -109,7 +107,7 @@ export class Feed {
             return;
         }
 
-        let f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
+        let f = await FeedUpdater.fetch(this.source);
         if (Feed.ERROR_DISCOVER == f.error) {
             console.log(`Feed trying autodiscovery for original source ${this.orig_source}`);
             const text = await fetch(this.orig_source).then((resp) => resp.text());
@@ -117,7 +115,7 @@ export class Feed {
             if (links.length > 0) {
                 console.log(`Feed changing source to ${links[0]}`);
                 this.source = links[0];
-                f = await FeedUpdater.fetch(this.source, this.allowCorsProxy);
+                f = await FeedUpdater.fetch(this.source);
             } else {
                 this.#updateStatus(`Feed update failed: Source is not a feed`);
                 return;
