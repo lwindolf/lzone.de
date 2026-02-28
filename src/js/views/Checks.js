@@ -7,8 +7,6 @@ import * as r from '../helpers/render.js';
 
 export class ChecksView {
     constructor(el) {
-        // load all web components
-        Object.values(window.Config.toolboxComponents).forEach(c => import(c.import));
         ChecksView.render(el);
 
         document.addEventListener('settings-changed', (e) => {

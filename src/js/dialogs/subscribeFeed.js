@@ -7,7 +7,7 @@ import { ModalDialog } from '../helpers/modal-dialog.js';
 
 export class SubscribeFeedDialog extends ModalDialog {
     constructor(parentId) {
-        import(window.Config.rssFinderUrl); // FIXME: possible race condition
+        import(/* webpackIgnore: true */window.Config.rssFinderUrl); // FIXME: possible race condition
         super(`
             {{#unless discover}}
                 <h2>Subscribe to Feed</h2>

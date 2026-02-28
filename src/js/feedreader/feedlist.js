@@ -132,32 +132,38 @@ export class FeedList {
     // initially loads deserializes feed list data
     static async #loadNodes(nodes, parent) {
         for(const n of nodes) {
-            const id = parseInt(n.id);
-            if(FeedList.maxId < id)
-                FeedList.maxId = id;
+            try {
+                const id = parseInt(n.id);
+                if(!id)
+                    return;
+                if(FeedList.maxId < id)
+                    FeedList.maxId = id;
 
-            if(n.type === 'folder') {
-                const folder = new Folder(n);
-                folder.parent = parent;
-                folder.children = [];
-                FeedList.#nodeById[id] = folder;
-                parent.children.push(folder);
-                console.log("feedlist loadNodes() Add folder", n);
-                await this.#loadNodes(n.children, folder);
-            }
-            if (n.type === 'feed' || !n.type) {
-                const feed = new Feed(n);
-                feed.parent = parent;
-                FeedList.#nodeById[id] = feed;
-                parent.children.push(feed);
+                if(n.type === 'folder') {
+                    const folder = new Folder(n);
+                    folder.parent = parent;
+                    folder.children = [];
+                    FeedList.#nodeById[id] = folder;
+                    parent.children.push(folder);
+                    console.log("feedlist loadNodes() Add folder", n);
+                    await this.#loadNodes(n.children, folder);
+                }
+                if (n.type === 'feed' || !n.type) {
+                    const feed = new Feed(n);
+                    feed.parent = parent;
+                    FeedList.#nodeById[id] = feed;
+                    parent.children.push(feed);
 
-                // Always force update unread count
-                const items = await feed.getItems();
-                feed.unreadCount = 0;
-                await feed.loadIcon();
-                feed.updateUnread(items.filter((i) => !i.read).length);
+                    // Always force update unread count
+                    const items = await feed.getItems();
+                    feed.unreadCount = 0;
+                    await feed.loadIcon();
+                    feed.updateUnread(items.filter((i) => !i.read).length);
 
-                console.log("feedlist loadNodes() Add feed", n)
+                    console.log("feedlist loadNodes() Add feed", n)
+                }
+            } catch (e) {
+                console.error("feedlist loadNodes() Error", e)
             }
         }
     }

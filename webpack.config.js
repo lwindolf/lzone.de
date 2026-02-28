@@ -1,6 +1,8 @@
 import path from 'path';
 import glob from 'glob';
 
+console.log([ './src/js/app.js' ].concat(glob.sync('./src/js/components/**/*.js')))
+
 const config = {
     entry: [ './src/js/app.js' ].concat(glob.sync('./src/js/components/**/*.js')),
     output: {

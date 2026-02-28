@@ -2,7 +2,6 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- head insertion marker -->
@@ -36,6 +35,8 @@
             // in devMode load directly from source
             console.warn("Development mode enabled");
             await import("./js/app.js");
+            // load all web components
+            Object.values(window.Config.toolboxComponents).forEach(c => import(c.import));
         } else {
             await import("./js/bundle/bundle.js");
         }

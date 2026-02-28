@@ -23,6 +23,7 @@ export class DB {
                 ]
             }
         },
+        // simple key/value settings
         settings: {
             version: 1,
             stores: {
@@ -41,7 +42,7 @@ export class DB {
 
         if(this.#db[name])
             return this.#db[name];
-
+        console.log("DB setting up " + name);
         await new Promise((resolve, reject) => {
             let s = this;
 

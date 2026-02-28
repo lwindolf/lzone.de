@@ -8,7 +8,7 @@ export class Config {
     <link rel='alternate' title='LZone Blog' href='https://lzone.de/feed/devops.xml' type='application/atom+xml' />
     <link rel='alternate' title='Liferea Blog' href='https://lzone.de/liferea/blog/feed.xml' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
-    <link rel='blogroll' href='https://lzone.de/blog/blogroll.xml' />
+    <link rel='blogroll' href='https://lzone.de/blog/blogroll.opml' />
 
     <title>${Config.siteName}</title>
 
@@ -25,8 +25,6 @@ export class Config {
             installing a ton of Sysadmin / DevOps / System Architecture related content
             so that you can search and read all of it in one place.
         </p>`;
-    
-    static corsProxy = 'https://corsproxy.io/?url='; // CORS proxy (from Cloudflare) to use for fetching feeds
 
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
 
@@ -45,8 +43,8 @@ export class Config {
     // - `catalog` (optional) URL to a JSON file with additional repos that can be installed by the user
     static groups = {
         'Lars Windolf': {
-            removable : true,
-            install : {
+            removable: true,
+            install: {
                 'About': {
                     github: 'lwindolf/blogs',
                     filePattern: '^About/(.*)\\.md$'
@@ -54,8 +52,8 @@ export class Config {
             }
         },
         'Cheat Sheets': {
-            removable : false,      // section with main catalog should not be removable
-            install : {
+            removable: false,      // section with main catalog should not be removable
+            install: {
                 'LZone Cheat Sheets': {
                     github: 'lwindolf/lzone-cheat-sheets',
                     filePattern: '^Cheat Sheets/(.*)\\.md$'
@@ -65,16 +63,16 @@ export class Config {
                     filePattern: '^Video Tutorials/(.*)\\.md$'
                 }
             },
-            catalog : {
-                source  : 'https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/extra-cheat-sheets.json',
-                editUrl : 'https://github.com/lwindolf/lzone-cheat-sheets/blob/master/extra-cheat-sheets.json'
+            catalog: {
+                source: 'https://raw.githubusercontent.com/lwindolf/lzone-cheat-sheets/master/extra-cheat-sheets.json',
+                editUrl: 'https://github.com/lwindolf/lzone-cheat-sheets/blob/master/extra-cheat-sheets.json'
             }
         },
         'Feeds': {
-            removable : false,      // feed reader should not be removable
+            removable: false,      // feed reader should not be removable
             defaultFeeds: [
-                { title: "LZone Blog",       source: "https://lzone.de/feed/devops.xml" },
-                { title: "Liferea Blog",     source: "https://lzone.de/liferea/blog/feed.xml" }
+                { title: "LZone Blog", source: "https://lzone.de/feed/devops.xml" },
+                { title: "Liferea Blog", source: "https://lzone.de/liferea/blog/feed.xml" }
             ]
         }
     };
@@ -83,192 +81,192 @@ export class Config {
     static apps = {
         'Development': {
             'Regex101': {
-                url         : 'https://regex101.com/',
-                description : 'Test regex, get regex explanations'
+                url: 'https://regex101.com/',
+                description: 'Test regex, get regex explanations'
             },
             'REPL JS': {
-                url         : 'https://repljs.com/',
-                favicon     : 'https://repljs.com/android-icon-192x192.png',
-                description : 'Javascript console'
+                url: 'https://repljs.com/',
+                favicon: 'https://repljs.com/android-icon-192x192.png',
+                description: 'Javascript console'
             },
             'HoppScotch.io': {
-                url         : 'https://hoppscotch.io/',
-                description : 'API request tester'
+                url: 'https://hoppscotch.io/',
+                description: 'API request tester'
             },
             'ezgif': {
-                url         : 'https://ezgif.com/',
-                description : 'GIF, PNG, JPG image editor'
+                url: 'https://ezgif.com/',
+                description: 'GIF, PNG, JPG image editor'
             },
-			'keyjs': {
-				url         : 'https://keyjs.dev/',
-				description : 'Get Javascript key codes',
-				favicon     : 'https://keyjs.dev/logo/keyjs-t-32.png'
-			},
+            'keyjs': {
+                url: 'https://keyjs.dev/',
+                description: 'Get Javascript key codes',
+                favicon: 'https://keyjs.dev/logo/keyjs-t-32.png'
+            },
         },
         'DevOps - Playgrounds': {
             'awk, sed, grep': {
-                url          : 'https://sandbox.bio/playgrounds/',
-                favicon      : 'https://sandbox.bio/favicon.ico',
-                description  : 'Sandbox for awk, grep, sed'
+                url: 'https://sandbox.bio/playgrounds/',
+                favicon: 'https://sandbox.bio/favicon.ico',
+                description: 'Sandbox for awk, grep, sed'
             },
             'jq': {
-                url          : 'https://play.jqlang.org/',
-                favicon      : 'https://play.jqlang.org/favicon.svg',
-                description  : 'Official jq playground'
+                url: 'https://play.jqlang.org/',
+                favicon: 'https://play.jqlang.org/favicon.svg',
+                description: 'Official jq playground'
             },
             'Helm': {
-                url          : 'https://helm-playground.org/',
-                favicon      : 'https://helm-playground.org/icons/favicon.ico',
-                description  : 'Play with Helm charts'
+                url: 'https://helm-playground.org/',
+                favicon: 'https://helm-playground.org/icons/favicon.ico',
+                description: 'Play with Helm charts'
             },
             'go.dev': {
-                url          : 'https://go.dev/play/',
-                favicon      : 'https://go.dev/favicon.ico',
-                description  : 'Go programming language playground'
+                url: 'https://go.dev/play/',
+                favicon: 'https://go.dev/favicon.ico',
+                description: 'Go programming language playground'
             },
             'OPA Rego': {
-                url          : 'https://play.openpolicyagent.org/',
-                favicon      : 'https://play.openpolicyagent.org/images/favicon.ico',
-                description  : 'Play with OPA Rego policies'
+                url: 'https://play.openpolicyagent.org/',
+                favicon: 'https://play.openpolicyagent.org/images/favicon.ico',
+                description: 'Play with OPA Rego policies'
             },
             'Killercoda k8s': {
-                url          : 'https://killercoda.com/playgrounds/kubernetes',
-                favicon      : 'https://killercoda.com/favicon.ico',
-                description  : 'Play with Kubernetes in your browser'
+                url: 'https://killercoda.com/playgrounds/kubernetes',
+                favicon: 'https://killercoda.com/favicon.ico',
+                description: 'Play with Kubernetes in your browser'
             },
             'Openshift Sandbox': {
-                url          : 'https://console.redhat.com/openshift/sandbox',
-                favicon      : 'https://access.redhat.com/webassets/avalon/g/favicon.ico',
-                description  : 'Ad-hoc Openshift instances'
+                url: 'https://console.redhat.com/openshift/sandbox',
+                favicon: 'https://access.redhat.com/webassets/avalon/g/favicon.ico',
+                description: 'Ad-hoc Openshift instances'
             },
             'iximiuz': {
-                url          : 'https://labs.iximiuz.com/playgrounds',
-                favicon      : 'https://iximiuz.com/favicon.ico',
-                description  : 'VM, Docker, Podman, containerd, Ubuntu, k8s instances'
+                url: 'https://labs.iximiuz.com/playgrounds',
+                favicon: 'https://iximiuz.com/favicon.ico',
+                description: 'VM, Docker, Podman, containerd, Ubuntu, k8s instances'
             },
             'WurmTerm': {
-                url          : 'https://wurmterm.lzone.de/',
-                favicon      : 'https://wurmterm.lzone.de/favicon.ico',
-                description  : 'Follows along SSH sessions / k8s contexts and detects problems'
-            }   
+                url: 'https://wurmterm.lzone.de/',
+                favicon: 'https://wurmterm.lzone.de/favicon.ico',
+                description: 'Follows along SSH sessions / k8s contexts and detects problems'
+            }
         },
         'Networking': {
             'ipinfo.io': {
-                url          : 'https://ipinfo.io/what-is-my-ip',
-                favicon      : 'https://ipinfo.io/favicon.ico',
-                description  : 'Get your public IP address'
+                url: 'https://ipinfo.io/what-is-my-ip',
+                favicon: 'https://ipinfo.io/favicon.ico',
+                description: 'Get your public IP address'
             },
             'Qualys SSL Labs': {
-                url          : 'https://www.ssllabs.com/ssltest/',
-                favicon      : 'https://www.ssllabs.com/favicon.ico',
-                description  : 'Test SSL/TLS configuration of a server'
+                url: 'https://www.ssllabs.com/ssltest/',
+                favicon: 'https://www.ssllabs.com/favicon.ico',
+                description: 'Test SSL/TLS configuration of a server'
             },
             'crt.sh': {
-                url          : 'https://crt.sh/',
-                favicon      : 'https://crt.sh/favicon.ico',
-                description  : 'Certificate Transparency log search'
+                url: 'https://crt.sh/',
+                favicon: 'https://crt.sh/favicon.ico',
+                description: 'Certificate Transparency log search'
             },
             'mxtoolbox': {
-                url          : 'https://mxtoolbox.com/',
-                description  : 'Domain info lookup'
+                url: 'https://mxtoolbox.com/',
+                description: 'Domain info lookup'
             },
             'Lookingglass': {
-                url          : 'https://lookinglass.org/',
-                description  : 'BGP AS looking class index'
+                url: 'https://lookinglass.org/',
+                description: 'BGP AS looking class index'
             },
             'traceroute': {
-                url          : 'https://www.uptrends.com/tools/traceroute',
-                favicon      : 'https://www.uptrends.com/favicon.svg',
-                description  : 'uptrends.com traceroute from 30+ locations'
+                url: 'https://www.uptrends.com/tools/traceroute',
+                favicon: 'https://www.uptrends.com/favicon.svg',
+                description: 'uptrends.com traceroute from 30+ locations'
             },
             'speedtest': {
-                url          : 'https://www.speedtest.net/',
-                favicon      : 'https://b.cdnst.net/images/favicons/favicon-180.png',
-                description  : 'Test your internet connection speed'
+                url: 'https://www.speedtest.net/',
+                favicon: 'https://b.cdnst.net/images/favicons/favicon-180.png',
+                description: 'Test your internet connection speed'
             },
             'Cloudping': {
-                url          : 'https://www.cloudping.cloud/',
-                favicon      : 'https://cf.feitsui.com/icon/192x192.png',
-                description  : 'HTTP Ping CDNs and AWS regions'
+                url: 'https://www.cloudping.cloud/',
+                favicon: 'https://cf.feitsui.com/icon/192x192.png',
+                description: 'HTTP Ping CDNs and AWS regions'
             },
             'Azure Speed Test': {
-                url          : 'https://azurespeed.com/',
-                favicon      : 'https://azurespeed.com/favicon.ico',
-                description  : 'Test Azure region latency'
+                url: 'https://azurespeed.com/',
+                favicon: 'https://azurespeed.com/favicon.ico',
+                description: 'Test Azure region latency'
             },
             'GCP Ping': {
-                url          : 'https://gcping.com/',
-                favicon      : 'https://gcping.com/icon.662224a4.png',
-                description  : 'Test GCP region latency'
+                url: 'https://gcping.com/',
+                favicon: 'https://gcping.com/icon.662224a4.png',
+                description: 'Test GCP region latency'
             },
             'PeeringDB': {
-                url          : 'https://www.peeringdb.com/',
-                favicon      : 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
-                description  : 'PeeringDB is a database of networks, exchanges, and data centers'
+                url: 'https://www.peeringdb.com/',
+                favicon: 'https://www.peeringdb.com/s/2.68.0//favicon.ico',
+                description: 'PeeringDB is a database of networks, exchanges, and data centers'
             },
             'Snap Drop': {
-                url          : 'https://snapdrop.net/',
-                favicon      : 'https://www.snap-drop.net/images/favicon-96x96.png',
-                description  : 'Share files with other devices in your network'
+                url: 'https://snapdrop.net/',
+                favicon: 'https://www.snap-drop.net/images/favicon-96x96.png',
+                description: 'Share files with other devices in your network'
             }
         },
         'Diagram Tools': {
             'ASCII Flow': {
-                url          : 'https://asciiflow.com',
-                favicon      : 'https://asciiflow.com/public/favicon.png',
-                description  : 'Draw ASCII boxes+arrows'
+                url: 'https://asciiflow.com',
+                favicon: 'https://asciiflow.com/public/favicon.png',
+                description: 'Draw ASCII boxes+arrows'
             },
             'Mermaid': {
-                url          : 'https://mermaid.live',
-                favicon      : 'https://mermaid.live/favicon.svg',
-                description  : 'Draw Flowcharts, Sequence, ER, UML, Gantt, Mindmaps'
+                url: 'https://mermaid.live',
+                favicon: 'https://mermaid.live/favicon.svg',
+                description: 'Draw Flowcharts, Sequence, ER, UML, Gantt, Mindmaps'
             },
             'draw.io': {
-                url          : 'https://draw.io',
-                favicon      : 'https://app.diagrams.net/favicon.ico',
-                description  : 'Good old SVG drawing tool by Sun Microsystems'
+                url: 'https://draw.io',
+                favicon: 'https://app.diagrams.net/favicon.ico',
+                description: 'Good old SVG drawing tool by Sun Microsystems'
             },
             'Wardley Maps': {
-                url          : 'https://onlinewardleymaps.com/',
-                favicon      : 'https://onlinewardleymaps.com/favicon.ico',
-                description  : 'Value chain strategy maps'
+                url: 'https://onlinewardleymaps.com/',
+                favicon: 'https://onlinewardleymaps.com/favicon.ico',
+                description: 'Value chain strategy maps'
             },
             'ArchiText': {
-                url          : 'https://architext.dev/playground.html',
-                favicon      : 'https://architext.dev/favicon.ico',
-                description  : 'Draw ArchiMate style diagrams'
+                url: 'https://architext.dev/playground.html',
+                favicon: 'https://architext.dev/favicon.ico',
+                description: 'Draw ArchiMate style diagrams'
             },
             'nomnoml': {
-                url          : 'https://nomnoml.com/',
-                favicon      : 'https://nomnoml.com/favicon.png',
-                description  : 'Draw UML diagrams'
+                url: 'https://nomnoml.com/',
+                favicon: 'https://nomnoml.com/favicon.png',
+                description: 'Draw UML diagrams'
             },
             'Casual Loops': {
-                url          : 'https://nocomplexity.com/causalloopdiagram',
-                favicon      : 'https://nocomplexity.com/causalloopdiagram/favicon.ico',
-                description  : 'Visualize non-linear causal relationships'
+                url: 'https://nocomplexity.com/causalloopdiagram',
+                favicon: 'https://nocomplexity.com/causalloopdiagram/favicon.ico',
+                description: 'Visualize non-linear causal relationships'
             },
-			'Excalidraw': {
-				url          : 'https://excalidraw.com/',
-				favicon      : 'https://excalidraw.com/apple-touch-icon.png',
-				description  : 'Collaborative drawing whiteboard'
-			},
+            'Excalidraw': {
+                url: 'https://excalidraw.com/',
+                favicon: 'https://excalidraw.com/apple-touch-icon.png',
+                description: 'Collaborative drawing whiteboard'
+            },
             'SankeyMATIC': {
-                url          : 'https://sankeymatic.com/build/',
-                favicon      : 'https://sankeymatic.com/favicon.ico',
-                description  : 'Create Sankey diagrams'
+                url: 'https://sankeymatic.com/build/',
+                favicon: 'https://sankeymatic.com/favicon.ico',
+                description: 'Create Sankey diagrams'
             }
         },
         'Chat': {
             'Cinny': {
-                url          : 'https://app.cinny.in/',
-                favicon      : 'https://app.cinny.in/assets/favicon-5KspoOBy.ico',
-                description  : 'Matrix client'
+                url: 'https://app.cinny.in/',
+                favicon: 'https://app.cinny.in/assets/favicon-5KspoOBy.ico',
+                description: 'Matrix client'
             },
             'KiwiIRC': {
-                url          : 'https://kiwiirc.com/nextclient/',
-                favicon      : 'https://kiwiirc.com/favicon.ico',
-                description  : 'IRC client'
+                url: 'https://kiwiirc.com/nextclient/',
+                favicon: 'https://kiwiirc.com/favicon.ico',
+                description: 'IRC client'
             }
         }
     };
@@ -295,29 +293,46 @@ export class Config {
     // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
-            import     : '/multi-status/js/MultiStatusCloud.js',
-            embed      : `<x-multistatus-cloud data-path="/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
-            settings   : `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
-            enabled    : true
+            import: '/multi-status/js/MultiStatusCloud.js',
+            embed: `<x-multistatus-cloud data-path="/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
+            settings: `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
+            enabled: true
         },
         'DNS Change Detector': {
-            import     : '../components/dns-checker/js/DnsChecker.js',
-            embed      : `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
-            settings   : `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
-            enabled    : false
+            import: '/js/components/dns-checker/js/DnsChecker.js',
+            embed: `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
+            settings: `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
+            enabled: false
         },
         'Pinned Apps': {
-            import     : '../components/pinned-apps/js/PinnedApps.js',
-            embed      : `<x-pinned-apps>ERROR when embedding Pinned Apps</x-pinned-apps>`,
-            settings   : `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
-            enabled    : true
+            import: '/js/components/pinned-apps/js/PinnedApps.js',
+            embed: `<x-pinned-apps>ERROR when embedding Pinned Apps</x-pinned-apps>`,
+            settings: `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
+            enabled: true
         },
         'Badge Checker': {
-            import     : '../components/badge-checker/js/BadgeChecker.js',
-            embed      : `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
-            settings   : `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
-            enabled    : false
+            import: '/js/components/badge-checker/js/BadgeChecker.js',
+            embed: `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
+            settings: `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
+            enabled: false
         }
+    };
+
+    static debug = {
+        // set all=true to enable all logging
+        all: true,
+
+        // or selectively set class trace topics
+        feedreader: false,
+        feedlist: false,
+        feedupdater: false,
+        itemlist: false,
+        // ...
+
+        // or generic helpers
+        events: false,
+        View: false
+        // ...
     };
 }
 

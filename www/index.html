@@ -2,14 +2,13 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     
     <link rel='alternate' title='LZone Blog' href='https://lzone.de/feed/devops.xml' type='application/atom+xml' />
     <link rel='alternate' title='Liferea Blog' href='https://lzone.de/liferea/blog/feed.xml' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
-    <link rel='blogroll' href='https://lzone.de/blog/blogroll.xml' />
+    <link rel='blogroll' href='https://lzone.de/blog/blogroll.opml' />
 
     <title>LZone</title>
 
@@ -49,6 +48,8 @@
             // in devMode load directly from source
             console.warn("Development mode enabled");
             await import("./js/app.js");
+            // load all web components
+            Object.values(window.Config.toolboxComponents).forEach(c => import(c.import));
         } else {
             await import("./js/bundle/bundle.js");
         }

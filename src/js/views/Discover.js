@@ -8,7 +8,7 @@ import * as r from '../helpers/render.js';
 
 export class DiscoverView {
     constructor(el) {
-        import(window.Config.rssFinderUrl).then(() => {
+        import(/* webpackIgnore: true */window.Config.rssFinderUrl).then(() => {
             r.renderElement(el, r.template(`
                 <h1>Discover Feeds</h1>
 
