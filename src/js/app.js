@@ -2,7 +2,6 @@
 
 import { CLI } from './CLI.js';
 import { Commands } from './commands.js';
-import { Config } from './config.js';
 import { Layout } from './layout.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
@@ -92,7 +91,6 @@ export class App {
             CLI         : new CLI('search-input'),            
             Commands,
             ContentView : new ContentView(document.getElementById('main-content-wrap')),
-            debug       : Config.debug,
             FeedReader,
             Layout      : new Layout(),
             Sidebar     : new Sidebar(document.getElementById('site-nav'))            

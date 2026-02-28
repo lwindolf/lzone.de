@@ -124,6 +124,8 @@ export class Feed {
         if (Feed.ERROR_NONE == f.error) {
             let added = 0;
 
+            console.log("Feed parsing success. Merging ...");
+
             this.title = f.title;
             this.source = f.source;
             this.homepage = f.homepage;
@@ -141,7 +143,7 @@ export class Feed {
                     x.title === i.title
                 );
                 if (isDuplicate)
-                    return;
+                    continue;
 
                 added++;
 
@@ -154,12 +156,16 @@ export class Feed {
             items = await this.getItems();
             this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
             
-            if(added > 0)
+            if(added > 0) {
+                console.log(`Feed added ${added} new items`);
                 ev.dispatch('itemsAdded', this);
+            } else {
+                console.log(`Feed no new items added`);
+            }
 
             // FIXME: truncate set of items to match max per-feed cache size
 
-            // Do not update too often (hard-coded 30 * updateInterval)
+            // Do not update favicon too often (hard-coded 30 * updateInterval)
             if ((Date.now() / 1000 - this.last_updated_favicon > 30*updateInterval)) {
                 this.#updateStatus(`Updating favicon for ${this.source} (${this.icon})`);
 
@@ -263,6 +269,6 @@ export class Feed {
             return;
 
         this.iconData = await DB.get('aggregator', 'favicons', `feed_${this.id}`, undefined);
-        console.log(this);
+        console.log("Feed loadIcon()", this);
     }
 }

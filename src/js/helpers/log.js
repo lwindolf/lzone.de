@@ -2,8 +2,9 @@
 
 /* Provides trace topic like filtering of console.log + console.warn
    First word of the msg string is considered the topic name and topics
-   can be enabled by setting window.app.debug['topic']=true */
+   can be enabled by setting window.Config.debug['topic']=true */
 
+   window.originalConsoleLog=1;
 if(!window.originalConsoleLog) {
     const filteredLog = (msg, ...optionalParams) => {
         // If it is not a string it is a data dump, log it directly and always
@@ -13,7 +14,7 @@ if(!window.originalConsoleLog) {
         }
 
         const topic = msg.split(' ')[0];
-        if (window?.app?.debug[topic] || window?.app?.debug['all'])
+        if (window?.Config?.debug[topic] || window?.Config?.debug['all'])
             window.originalConsoleLog(msg, ...optionalParams);
     };
     window.originalConsoleLog = window.console.log;
