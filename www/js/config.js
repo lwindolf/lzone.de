@@ -71,8 +71,8 @@ export class Config {
         'Feeds': {
             removable: false,      // feed reader should not be removable
             defaultFeeds: [
-                { title: "LZone Blog", source: "https://lzone.de/feed/devops.xml" },
-                { title: "Liferea Blog", source: "https://lzone.de/liferea/blog/feed.xml" }
+                { title: "LZone Blog", source: "https://lzone.de/feed/devops.xml", id: 1 },
+                { title: "Liferea Blog", source: "https://lzone.de/feed/liferea.xml", id: 2 }
             ]
         }
     };

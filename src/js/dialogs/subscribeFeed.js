@@ -23,13 +23,13 @@ export class SubscribeFeedDialog extends ModalDialog {
                     {{/if}}
                 </p>
 
-                <p>Or discover feeds from the different sources...</p>
+                <p>Or discover feeds from various sources...</p>
 
                 <button class="btn">Discover Feeds</button>
             {{else}}
                 <h2>Discover Feeds</h2>
 
-                <x-rss-finder show-title="false" subscribe-method="event" icon-path="${window.Config.rssFinderUrl.replace('js/widget.js','icons')}" target="_self"></x-rss-finder>
+                <x-rss-finder show-title="false" subscribe-method="event" base-path="${window.Config.rssFinderUrl.replace('js/widget.js','')}" use-cors-proxy="true" target="_self"></x-rss-finder>
             {{/unless}}
             `,
             {
