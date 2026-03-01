@@ -320,9 +320,10 @@ export class Config {
 
     static debug = {
         // set all=true to enable all logging
-        all: true,
+        all: false,
 
         // or selectively set class trace topics
+        favicon: false,
         feedreader: false,
         feedlist: false,
         feedupdater: false,
