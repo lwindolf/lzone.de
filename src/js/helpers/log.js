@@ -4,7 +4,6 @@
    First word of the msg string is considered the topic name and topics
    can be enabled by setting window.Config.debug['topic']=true */
 
-   window.originalConsoleLog=1;
 if(!window.originalConsoleLog) {
     const filteredLog = (msg, ...optionalParams) => {
         // If it is not a string it is a data dump, log it directly and always

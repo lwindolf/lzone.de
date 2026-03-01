@@ -33,3 +33,17 @@ test('Feed.update', async () => {
     expect(items.length).toBe(1);
     expect((await Item.getById(items[0].id)).title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
 });
+
+test('Feed.update skip', async () => {   
+    const now = Date.now()/1000 - 15; 
+    TestData.slashdotFeed.last_updated = now;
+    await TestData.slashdotFeed.update();
+    expect(TestData.slashdotFeed.last_updated == now).toBe(true);
+});
+
+test('Feed.update force', async () => {   
+    const now = Date.now()/1000 - 15; 
+    TestData.slashdotFeed.last_updated = now;
+    await TestData.slashdotFeed.update(true);
+    expect(TestData.slashdotFeed.last_updated > now).toBe(true);   
+});

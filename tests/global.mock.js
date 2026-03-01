@@ -1,4 +1,7 @@
 import "fake-indexeddb/auto";
+import '../src/js/config.js';
+import '../src/js/helpers/log.js';
+import { Settings } from '../src/js/models/Settings.js';
 
 // JSDOM is missing structured clone used for IndexedDB store (https://stackoverflow.com/questions/73607410/referenceerror-structuredclone-is-not-defined-using-jest-with-nodejs-typesc)
 global.structuredClone = v => JSON.parse(JSON.stringify(v));
@@ -19,3 +22,16 @@ document.body.innerHTML = `
 </div>`;
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
+
+Settings.get = jest.fn((key) => {
+        if (key === 'feedreader:::refreshInterval') return 1;
+        if (key === 'feedreader:::refreshIntervalUnit') return 'days';
+        return undefined;
+})
+
+// For debugging use
+//
+// window.Config.debug.all = true;
+// window.Config.debug.feed = true;
+// window.Config.debug.feedlist = true;
+// ...

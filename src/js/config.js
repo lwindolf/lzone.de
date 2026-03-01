@@ -323,7 +323,7 @@ export class Config {
         all: false,
 
         // or selectively set class trace topics
-        favicon: true,
+        favicon: false,
         feedreader: false,
         feedlist: false,
         feedupdater: false,
@@ -340,4 +340,5 @@ export class Config {
 try {
     window.Config = Config;
 } catch (e) {
+    // eslint-disable-next-line no-empty
 }

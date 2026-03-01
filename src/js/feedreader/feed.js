@@ -48,7 +48,7 @@ export class Feed {
     constructor(defaults = {}) {
         Object.keys(defaults).forEach((k) => { this[k] = defaults[k] });
 
-        if(this.source && !this.source.includes('://'))
+        if (this.source && !this.source.includes('://'))
             this.source = 'https://' + this.source;
 
         // Ensure we do not loose the original source URL on bogus HTTP redirects
@@ -100,7 +100,7 @@ export class Feed {
             this.last_updated = 0;
             this.last_updated_favicon = 0;
         }
-        
+
         // Do not update too often
         if (this.last_updated && (Date.now() / 1000 - this.last_updated < updateInterval)) {
             console.log(`Feed Skipping update of ${this.source} (last updated ${Math.ceil(Date.now() / 1000 - this.last_updated)}s ago)`);
@@ -134,12 +134,12 @@ export class Feed {
             this.icon = f.icon;
             this.iconData = f.iconData;
 
-            let items = await this.getItems();           
+            let items = await this.getItems();
 
             for (const i of f.newItems) {
-                const isDuplicate = items.some(x => 
-                    x.sourceId === i.sourceId || 
-                    x.source === i.source || 
+                const isDuplicate = items.some(x =>
+                    x.sourceId === i.sourceId ||
+                    x.source === i.source ||
                     x.title === i.title
                 );
                 if (isDuplicate)
@@ -155,18 +155,29 @@ export class Feed {
 
             items = await this.getItems();
             this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
-            
-            if(added > 0) {
+
+            // Apply cache limit
+            const maxCount = await this.getMaxItemCount();
+            if (items.length > maxCount) {
+                const itemsToDelete = items
+                    .sort((a, b) => a.time - b.time)
+                    .slice(0, items.length - maxCount)
+                    .filter(i => !i.flagged);
+                for (const item of itemsToDelete) {
+                    await item.remove();
+                }
+                items = await this.getItems();
+            }
+
+            if (added > 0) {
                 console.log(`Feed added ${added} new items`);
                 ev.dispatch('itemsAdded', this);
             } else {
                 console.log(`Feed no new items added`);
             }
 
-            // FIXME: truncate set of items to match max per-feed cache size
-
             // Do not update favicon too often (hard-coded 30 * updateInterval)
-            if ((Date.now() / 1000 - this.last_updated_favicon > 30*updateInterval)) {
+            if ((Date.now() / 1000 - this.last_updated_favicon > 30 * updateInterval)) {
                 this.#updateStatus(`Updating favicon for ${this.source} (${this.icon})`);
 
                 // See also https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
@@ -176,9 +187,9 @@ export class Feed {
                     const data = await new Promise((resolve, reject) => {
                         try {
                             const reader = new FileReader();
-                            reader.onload = function() { resolve(this.result); };
+                            reader.onload = function () { resolve(this.result); };
                             reader.readAsDataURL(blob);
-                        } catch(e) {
+                        } catch (e) {
                             reject(e);
                         }
                     });
@@ -205,9 +216,11 @@ export class Feed {
         ev.dispatch('nodeUpdated', this);
     }
 
-    getItems = async () => 
+    getMaxItemCount = async () => await Settings.get('feedreader:::maxItems');
+
+    getItems = async () =>
         (await DB.getByIndexOnly('aggregator', 'items', 'nodeId', this.id))
-        .map((i) => new Item({ id: i.id, ...i.value }));
+            .map((i) => new Item({ id: i.id, ...i.value }));
 
     // Return the next unread item after the given id
     async getNextUnread(id) {
@@ -229,7 +242,7 @@ export class Feed {
         item = items.find((i) => !i.read);
         console.log('feed getNextUnread find from start result:', item);
         return item;
-    }  
+    }
 
     // Only used during parsing time
     // FIXME: maybe should go to another class (e.g. FeedParser)
@@ -238,7 +251,7 @@ export class Feed {
             item.time = Date.now();
 
         // FIXME: set an id if sourceId is missing
-        
+
         this.newItems.push(item);
     }
 
@@ -247,7 +260,7 @@ export class Feed {
         if (this.unreadCount < 0)
             this.unreadCount = 0;
 
-        if(this.parent.updateUnread)
+        if (this.parent.updateUnread)
             this.parent.updateUnread(count);
 
         ev.dispatch('nodeUpdated', this);

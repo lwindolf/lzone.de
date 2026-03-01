@@ -73,16 +73,6 @@ global['fetch'] = jest.fn().mockImplementation(async () =>
 );
 
 window.Config = Config;
-window.app = {
-    debug: {
-        all         : false,
-        favicon     : false,
-        feedupdater : false,
-        itemlist    : false,
-        feed        : false,
-        feedreader  : false
-    }
-}
 
 export class TestData {
     static slashdotFeed = new Feed({
@@ -96,6 +86,8 @@ export class TestData {
                 description: 'some description',
                 id: 105
             }
-        ]
+        ],
+        parent: {
+        }
     });
 }

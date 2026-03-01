@@ -107,4 +107,17 @@ export class Item {
             console.error("item save(): error saving item", error);
         }
     }
+
+    async remove() {
+        if (!this.id) {
+            console.error("item remove(): id is not set!", this);
+            return;
+        }
+
+        try {
+            await DB.remove('aggregator', 'items', this.id);
+        } catch (error) {
+            console.error("item remove(): error removing item", error);
+        }
+    }
 }

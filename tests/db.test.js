@@ -19,5 +19,5 @@ it('DB get on unknown DB', async () =>  {
 test('DB get on different DBs', async () => {
 	await DB.set('settings', 'settings', 'switch1', 'on');
 	expect(await DB.get('settings', 'settings', 'switch1')).toBe('on');
-	expect(await DB.get('aggregator', 'tree', 'switch1')).toBe('null');
+	expect(await DB.get('aggregator', 'tree', 'switch1')).toBe(null);
 });
