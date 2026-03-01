@@ -1,21 +1,17 @@
 // vim: set ts=4 sw=4:
 
 var cachePrefix = 'lzone';
-var cacheVersion = 20260301;
+var cacheVersion = 20260302;
 var cacheName = cachePrefix + '-' + cacheVersion;
 
-// FIXME use webpack-manifest-plugin
 var filesToCache = [
     '/',
     '/css/main.css',
     '/css/feedreader.css',
-
     '/js/components/badge-checker/css/style.css',
     '/js/components/dns-checker/css/style.css',
 
-    '/js/config.js',
     '/js/bundle.js',
-
     '/js/vendor/handlebars.min.js',
     '/js/vendor/lunr.min.js',
     '/js/vendor/purify.es.mjs',

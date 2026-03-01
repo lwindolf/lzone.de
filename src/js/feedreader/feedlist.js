@@ -17,16 +17,18 @@ import * as ev from '../helpers/events.js';
 
 export class FeedList {
     // hierarchical list of children
-    static root = { children: [], unreadCount: 0 };
+    static root = { children: [], unreadCount: 0, id: 0 };
 
     // id to node lookup map
-    static #nodeById = {};
+    static #nodeById = {
+        0: FeedList.root
+    };
 
     // currently known max feed id
     static maxId = 1;
 
     // Return node by id
-    static getNodeById = (id) =>id?FeedList.#nodeById[parseInt(id)]:undefined;
+    static getNodeById = (id) => id?FeedList.#nodeById[parseInt(id)]:undefined;
 
     // Return the next unread node after the given node id
     static getNextUnreadNode(id) {
