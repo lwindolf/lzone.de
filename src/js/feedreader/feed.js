@@ -74,16 +74,87 @@ export class Feed {
     }
 
     #updateStatus(msg) {
-        console.log(`Feed status update(${this.source}): ${msg}`);
+        console.log(`feed status update(${this.source}): ${msg}`);
         this.feedStatusMsg = msg;
         ev.dispatch('feedUpdating', { id: this.id });
+    }
+
+    async mergeItems(newItems) {
+        let added = 0;
+        let items = await this.getItems();
+
+        console.log("feed_merge items:",
+            newItems.map(i => {return {title: i.title, source: i.source, sourceId: i.sourceId, id: i.id}})
+        );
+
+        for (const i of newItems) {
+            const isDuplicate = items.some(x => {
+                // We follow the Liferea merging logic here (see https://github.com/lwindolf/liferea/blob/main/src/itemset.c)
+
+                // Both have sourceId -> result is equal comparison
+                if (i.sourceId && x.sourceId)
+                    return (i.sourceId === x.sourceId);
+
+                // One has sourceId, the other does not -> automatically different
+                if (i.sourceId || x.sourceId)
+                    return false;
+
+                // Otherwise they are equal if both have same title or description match
+                if (i.title && x.title)
+                    return (i.title === x.title);
+                if (i.description && x.description)
+                    return (i.description === x.description);
+                if (i.source && x.source)
+                    return (i.source === x.source);
+
+                return false;
+            });
+            if (isDuplicate) {
+                console.log("feed_merge Skipping existing item:", i);
+                continue;
+            }
+
+            added++;
+
+            const newItem = new Item(i);
+            newItem.read = false;
+            newItem.nodeId = this.id;
+            await newItem.save();
+            items.push(newItem);
+        }
+
+        // Apply cache limit
+        const maxCount = await this.getMaxItemCount();
+        if (items.length > maxCount) {
+            const itemsToDelete = items
+                .sort((a, b) => a.time - b.time)
+                .slice(0, items.length - maxCount)
+                .filter(i => !i.flagged);
+            for (const item of itemsToDelete) {
+                await item.remove();
+            }
+            items = await this.getItems();
+        }
+
+        // Update unread count
+        items = await this.getItems();
+        this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
+
+        if (added > 0) {
+            console.log(`feed_merge added ${added} new items`);
+            ev.dispatch('itemsAdded', this);
+        } else {
+            console.log(`feed_merge no new items added`);
+            // FIXME: what above dropping removed items?
+            // better would be a itemsChanged signal
+        }
     }
 
     async update(force = false) {
         let updateInterval = await Settings.get('feedreader:::refreshInterval');
         const updateIntervalUnit = await Settings.get('feedreader:::refreshIntervalUnit');
 
-        console.log(`Feed update(${this.source}, force=${force}) with interval ${updateInterval} ${updateIntervalUnit}`);
+        console.log(`feed update(${this.source}, force=${force}) with interval ${updateInterval} ${updateIntervalUnit}`);
 
         if (updateIntervalUnit === 'hours') {
             updateInterval *= 60 * 60;
@@ -109,11 +180,11 @@ export class Feed {
 
         let f = await FeedUpdater.fetch(this.source);
         if (Feed.ERROR_DISCOVER == f.error) {
-            console.log(`Feed trying autodiscovery for original source ${this.orig_source}`);
+            console.log(`feed trying autodiscovery for original source ${this.orig_source}`);
             const text = await fetch(this.orig_source).then((resp) => resp.text());
             const links = linkAutoDiscover(text, this.orig_source);
             if (links.length > 0) {
-                console.log(`Feed changing source to ${links[0]}`);
+                console.log(`feed changing source to ${links[0]}`);
                 this.source = links[0];
                 f = await FeedUpdater.fetch(this.source);
             } else {
@@ -122,9 +193,7 @@ export class Feed {
             }
         }
         if (Feed.ERROR_NONE == f.error) {
-            let added = 0;
-
-            console.log("Feed parsing success. Merging ...");
+            console.log("feed parsing success. Merging ...");
 
             this.title = f.title;
             this.source = f.source;
@@ -134,47 +203,7 @@ export class Feed {
             this.icon = f.icon;
             this.iconData = f.iconData;
 
-            let items = await this.getItems();
-
-            for (const i of f.newItems) {
-                const isDuplicate = items.some(x =>
-                    x.sourceId === i.sourceId ||
-                    x.source === i.source ||
-                    x.title === i.title
-                );
-                if (isDuplicate)
-                    continue;
-
-                added++;
-
-                const newItem = new Item(i);
-                newItem.read = false;
-                newItem.nodeId = this.id;
-                await newItem.save();
-            }
-
-            items = await this.getItems();
-            this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
-
-            // Apply cache limit
-            const maxCount = await this.getMaxItemCount();
-            if (items.length > maxCount) {
-                const itemsToDelete = items
-                    .sort((a, b) => a.time - b.time)
-                    .slice(0, items.length - maxCount)
-                    .filter(i => !i.flagged);
-                for (const item of itemsToDelete) {
-                    await item.remove();
-                }
-                items = await this.getItems();
-            }
-
-            if (added > 0) {
-                console.log(`Feed added ${added} new items`);
-                ev.dispatch('itemsAdded', this);
-            } else {
-                console.log(`Feed no new items added`);
-            }
+            await this.mergeItems(f.newItems);
 
             // Do not update favicon too often (hard-coded 30 * updateInterval)
             if ((Date.now() / 1000 - this.last_updated_favicon > 30 * updateInterval)) {
@@ -195,16 +224,16 @@ export class Feed {
                     });
                     if (data && data.startsWith('data:image')) {
                         this.setIcon(data);
-                        console.log(`Favicon update for ${this.source} (${this.icon}) was successful`);
+                        console.log(`favicon update for ${this.source} (${this.icon}) was successful`);
                     } else {
-                        console.warn(`Favicon update for feed ${this.id} failed`);
+                        console.warn(`favicon update for feed ${this.id} failed`);
                     }
                     this.last_updated_favicon = Date.now() / 1000;
                 } else {
-                    console.warn(`Favicon response for feed ${this.id} failed`);
+                    console.warn(`favicon response for feed ${this.id} failed`);
                 }
             } else {
-                console.info(`Favicon ${this.id} does need no update`);
+                console.info(`favicon ${this.id} does need no update`);
             }
             this.#updateStatus(undefined);
         } else {
@@ -283,6 +312,6 @@ export class Feed {
             return;
 
         this.iconData = await DB.get('aggregator', 'favicons', `feed_${this.id}`, undefined);
-        console.log("Feed loadIcon()", this);
+        console.log("feed loadIcon()", this);
     }
 }

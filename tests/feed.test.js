@@ -50,14 +50,11 @@ describe('Feed.getNextUnread', () => {
 });
 
 describe('Feed.update', () => {
-    test('updates feed metadata successfully', async () => {    
+    test('updates fetches new items and metadata', async () => {    
         await slashdotFeed.update();
         expect(slashdotFeed.last_updated > 0).toBe(true);
         expect(slashdotFeed.description).toBe('News for nerds, stuff that matters');
         expect(slashdotFeed.icon).toBe('https://slashdot.org//favicon.ico');
-    });
-
-    test('creates new items from feed', async () => {
         const items = await slashdotFeed.getItems();
         expect(items.length).toBe(1);
         expect((await Item.getById(items[0].id)).title).toBe('WordPress Blogs Can Now Be Followed in the Fediverse, Including Mastodon');
@@ -151,4 +148,126 @@ describe('Feed error handling', () => {
         await slashdotFeed.update(true);
         expect(slashdotFeed.error).toBe(Feed.ERROR_NONE);
     });
+});
+
+describe('Feed item merging', () => {
+    test('merges new items into existing feed', async () => {
+        const newItems = [
+            {
+                title: 'New Item 1',
+                description: 'Description for new item 1',
+                source: 'https://example.com/new-item-1',
+                sourceId: 'source-1'
+            },
+            {
+                title: 'New Item 2',
+                description: 'Description for new item 2',
+                source: 'https://example.com/new-item-2',
+                sourceId: 'source-2'
+            }
+        ];
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length + 2);
+    });
+
+    test('merges already existing items', async () => {
+        const newItems = [
+            {
+                title: 'Item 1',
+                description: 'Description for new item 1',
+                source: 'https://example.com/new-item-1',
+                sourceId: 'source-1'
+            },
+            {
+                title: 'Item 2',
+                description: 'Description for new item 2',
+                source: 'https://example.com/new-item-2',
+                sourceId: 'source-2'
+            }
+        ];
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length);
+    });
+
+    test('merge item without sourceId twice', async () => {
+        const newItems = [
+            {
+                title: 'New Item 3',
+                description: 'Description for new item 3',
+                source: 'https://example.com/new-item-3'
+            }
+        ];
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length + 1);
+    });
+
+    test('merge item without sourceId/title twice', async () => {
+        const newItems = [
+            {
+                title: 'New Item 4',
+                source: 'https://example.com/new-item-4'
+            }
+        ];
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length + 1);
+    });
+
+    test('merge item without sourceId/title/description twice', async () => {
+        const newItems = [
+            {
+                source: 'https://example.com/new-item-5'
+            }
+        ];
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length + 1);
+    });
+
+    test('merge different items with same link', async () => {
+        const newItems = [
+            {
+                source: 'https://example.com/new-item-6',
+                sourceId: 'source-6'
+            },
+            {
+                source: 'https://example.com/new-item-6',
+                sourceId: 'source-7'
+            },
+            {
+                source: 'https://example.com/new-item-6',
+                title: 'title-8'
+            },
+            {
+                source: 'https://example.com/new-item-6',
+                title: 'title-8',
+                sourceId: 'source-8'
+            },
+            {
+                source: 'https://example.com/new-item-6',
+                title: 'title-9'
+            },
+            {
+                source: 'https://example.com/new-item-6',
+                title: 'title-9'
+            }
+        ];
+        // Expectation here is that all items except for the last are merged
+        const initialItems = await slashdotFeed.getItems();
+        await slashdotFeed.mergeItems(newItems);
+        const mergedItems = await slashdotFeed.getItems();
+        expect(mergedItems.length).toBe(initialItems.length + 5);
+    });
+
 });

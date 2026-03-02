@@ -156,15 +156,16 @@ export class DB {
         return { id, ...result };
     }
 
+    // returns id for upserted value
     static async set(dbName, storeName, name, value) {
         const db = await this.#getDB(dbName);
 
-        await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             const store = db.transaction(storeName, "readwrite").objectStore(storeName);
             try {
                 const res = store.put(name ? { id: name, value } : { value });
-                res.onsuccess = function () {
-                    resolve();
+                res.onsuccess = function (ev) {
+                    resolve(ev.target._result);
                 }
                 res.onerror = function (evt) {
                     reject(`Error saving '${name}' in DB '${dbName}' store '${storeName}': ${evt.target.errorCode}`);

@@ -114,6 +114,8 @@ export class Item {
             return;
         }
 
+        // FIXME: read state count update needs to be triggered
+
         try {
             await DB.remove('aggregator', 'items', this.id);
         } catch (error) {
