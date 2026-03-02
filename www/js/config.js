@@ -317,27 +317,10 @@ export class Config {
             enabled: false
         }
     };
-
-    static debug = {
-        // set all=true to enable all logging
-        all: false,
-
-        // or selectively set class trace topics
-        favicon: false,
-        feedreader: false,
-        feedlist: false,
-        feedupdater: false,
-        itemlist: false,
-        // ...
-
-        // or generic helpers
-        events: false,
-        View: false
-        // ...
-    };
 }
 
 try {
     window.Config = Config;
 } catch (e) {
+    // eslint-disable-next-line no-empty
 }
