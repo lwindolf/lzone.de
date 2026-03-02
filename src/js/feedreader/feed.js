@@ -222,17 +222,15 @@ export class Feed {
         (await DB.getByIndexOnly('aggregator', 'items', 'nodeId', this.id))
             .map((i) => new Item({ id: i.id, ...i.value }));
 
-    // Return the next unread item after the given id
+    // Return the next unread item after the given id (or undefined if none found)
     async getNextUnread(id) {
-        let item, idx = 0;
-
         if (!id)
             return undefined;
 
         // search forward in feed items starting from id
         const items = await this.getItems();
-        items.find((i) => { idx++; return (i.id === id); });   // find current item index
-        item = items.slice(idx).find((i) => !i.read);     // find next unread item
+        const idx = items.findIndex((i) => i.id === id);   // find current item index
+        let item = items.slice(idx + 1).find((i) => !i.read);     // find next unread item
 
         console.log('feed getNextUnread find forward result:', item);
         if (item)
@@ -268,7 +266,10 @@ export class Feed {
 
     async markAllRead() {
         const items = await this.getItems();
-        items.forEach((i) => i.setRead(true));
+        items.forEach((i) => {
+            console.log(`setting i to read `, i);
+            i.setRead(true);
+        });
         this.updateUnread(-this.unreadCount);
     }
 

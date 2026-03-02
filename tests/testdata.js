@@ -1,5 +1,6 @@
 import { Config } from '../src/js/config.js';
 import { Feed } from '../src/js/feedreader/feed';
+import { Item } from '../src/js/feedreader/item';
 import '../src/js/helpers/log.js';
 
 // provide a default fetch mock with static feed returned
@@ -75,19 +76,30 @@ global['fetch'] = jest.fn().mockImplementation(async () =>
 window.Config = Config;
 
 export class TestData {
-    static slashdotFeed = new Feed({
-        id: 1,
-        source: 'https://rss.slashdot.org/Slashdot/slashdotMain',
-        title: 'Slashdot',
-        items: [
-            {
-                title: 'Slashdot feed item',
-                link: 'https://tech.slashdot.org/story/23/09/16/2226218/wordpress-blogs-can-now-be-followed-in-the-fediverse-including-mastodon',
-                description: 'some description',
-                id: 105
-            }
-        ],
-        parent: {
-        }
-    });
+    static getSlashdotFeed() {
+        const f = new Feed({
+            id: 1,
+            source: 'https://rss.slashdot.org/Slashdot/slashdotMain',
+            title: 'Slashdot',
+            parent: {}
+        });
+        // Do not add items here, test should call f.update() to use above feed test data
+        return f;
+    }
+
+    // a feed were items will be added and toggled for read state
+    static getUnreadTestFeed() {
+        const f = new Feed({
+            id: 2,
+            parent: {}
+        });
+        [
+            new Item({ nodeId: 2, id: 100, read: true }),
+            new Item({ nodeId: 2, id: 101, read: true }),
+            new Item({ nodeId: 2, id: 102, read: true }),
+            new Item({ nodeId: 2, id: 103 }),
+            new Item({ nodeId: 2, id: 104 })
+        ].forEach(async item => await item.save());
+        return f;
+    }
 }
