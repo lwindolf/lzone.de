@@ -201,7 +201,6 @@ export class Feed {
             this.description = f.description;
             this.metadata = f.metadata;
             this.icon = f.icon;
-            this.iconData = f.iconData;
 
             await this.mergeItems(f.newItems);
 
