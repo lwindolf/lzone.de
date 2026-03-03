@@ -26,7 +26,7 @@ import * as ev from '../helpers/events.js';
 
 export class FeedReader {
     // config
-    static #hashRouteBase = '#/-/Feed/';
+    static #hashRouteBase = '#/-/Feeds/';
 
     // state
     static #el;
@@ -49,6 +49,7 @@ export class FeedReader {
                 <div id="itemViewContent" style="display: none"></div>
                 <div id="feedViewContent"></div>
             </div>`;
+
 
         Libraries.get('Split').then(Split => {
             Split(['#itemlist', '#itemview'], {
@@ -194,12 +195,17 @@ export class FeedReader {
 
         console.log('feedreader onLocationChange', window.location.hash);
 
-        const match = window.location.hash.match(/Feed\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
-        if (!match?.groups)
-            return;
+        if (window.location.hash === this.#hashRouteBase) {
+            this.#selectedFeedId = null;
+            this.#selectedItemId = null;
+        } else {
+            const match = window.location.hash.match(/Feeds\/(?<feedId>\d+)(\/Item\/(?<itemId>\d+))?/);
+            if (!match?.groups)
+                return;
 
-        this.#selectedFeedId = match.groups.feedId ? parseInt(match.groups.feedId) : null;
-        this.#selectedItemId = match.groups.itemId ? parseInt(match.groups.itemId) : null;
+            this.#selectedFeedId = match.groups.feedId ? parseInt(match.groups.feedId) : null;
+            this.#selectedItemId = match.groups.itemId ? parseInt(match.groups.itemId) : null;
+        }
 
         if ((oldFeed != this.#selectedFeedId) ||
             (oldItem != this.#selectedItemId)) {

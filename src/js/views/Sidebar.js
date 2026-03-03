@@ -51,7 +51,7 @@ export class Sidebar {
         {{#* inline "sidebarChildFeed"}}
             {{#compare type '==' 'feed'}}
             <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                <a data-path="-:::Feed:::{{id}}" class="nav-list-link" href="#/-/Feed/{{id}}">
+                <a data-path="-:::Feeds:::{{cssPath}}" class="nav-list-link" href="#/-/Feeds/{{path}}">
                     {{#if error}}
                         ⛔&nbsp;
                     {{else}}
@@ -70,7 +70,7 @@ export class Sidebar {
             {{/compare}}
             {{#compare type '==' 'folder'}}
             <li class='nav-list-item context-node' data-type='{{type}}' data-id='{{id}}'>
-                <a data-path="-:::Folder:::{{id}}" class="nav-list-link" href="#/-/Folder/{{id}}">
+                <a data-path="-:::Feeds:::{{cssPath}}" class="nav-list-link" href="#/-/Feeds/{{path}}">
                     {{#notEmpty children}}
                         <span class="nav-list-expander"><svg viewBox="0 0 24 24"><use xlink:href="#svg-arrow-right"></use></svg></span>
                     {{/notEmpty}}
@@ -91,7 +91,7 @@ export class Sidebar {
         <!-- FeedReader section -->
         <ul class="nav-list">
                 <li class="nav-list-item context-node" data-type='folder' data-path="feeds" data-id='0'>
-                        <a class="nav-list-link pwa-title" data-path="feeds" href="#/-/Feeds">
+                        <a class="nav-list-link pwa-title" data-path="-:::Feeds" href="#/-/Feeds/">
                                 Feeds
                         </a>
                 </li>
@@ -192,12 +192,37 @@ export class Sidebar {
 
     #onDragOut = () => this.#el.classList.remove('drag-over');
 
+    #getNodePaths(node) {
+        const path = [];
+        while (node) {
+            path.unshift(node.id);
+            node = node.parentNode;
+        }
+        return path;
+    }
+
+    #mapFeedListNodes(node) {
+        const mapNode = (n) => {
+            return {
+                id       : n.id,
+                type     : n.type,
+                unreadCount : n.unreadCount,
+                path     : this.#getNodePaths(n).join("/"),
+                cssPath  : this.#getNodePaths(n).join(":::"),
+                iconData : n.iconData,
+                title    : n.title,
+                children : n.children ? n.children.map(mapNode) : []
+            };
+        };
+        return mapNode(node);
+    }
+
     #render = async () =>
         r.renderElement(this.#el, Sidebar.#template, {
             tree: await Section.getTree(),
-            feedlist: FeedList.root
+            feedlist: this.#mapFeedListNodes(FeedList.root)
         });
-    
+
     static selectionChanged(path) {
         const cssPath = path.replace(/\/$/, "")
                         .replaceAll(/\//g, ":::")

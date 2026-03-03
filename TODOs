@@ -3,9 +3,7 @@ To be fixed
 
 - itemview show category labels
 - new item handling does not update itemlist
-- implement max item limit
 - Do not parse Atom 0.3 feeds (Tagesschau, causes visible CDATA)
-- feed folder collapse does not work: opening one and clicking a child closes it
 
 Refactor
 ========

@@ -46,10 +46,6 @@ export class ContentView {
             view   : 'Discover'
         },
         Feeds    : {
-            switch : 'content',
-            view   : 'Feeds'
-        },
-        Feed     : {
             switch : 'feedreader',
             view   : 'FeedReader'
         },
