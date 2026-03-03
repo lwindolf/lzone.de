@@ -578,6 +578,7 @@ nav#site-nav > ul > .nav-list-item {
 }
 
 /* Group title color */
+a[data-path="-:::Feeds"],
 a[data-path]:not([data-path*=":::"]) {
         font-weight: bold;
         color: var(--text)
@@ -647,29 +648,6 @@ a[data-path]:not([data-path*=":::"]) {
 
 .nav-list-link .count[data-count="0"] {
         display: none;
-}
-
-.pwa-title {
-        cursor: pointer;
-        color: #959396;
-}
-
-.pwa-settings {
-        position: absolute;
-        right: 0;
-        font-weight: bold;
-        font-size: 1.2rem;
-        padding: 0 0.5rem;
-        visibility: hidden;
-}
-
-.pwa-title:hover .pwa-settings {
-        visibility: visible;
-}
-
-.pwa-status {
-        color: silver;
-        font-style: italic;
 }
 
 audio {

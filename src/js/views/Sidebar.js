@@ -36,7 +36,7 @@ export class Sidebar {
         {{#each tree.nodes }}
             <ul class="nav-list">
                     <li class="nav-list-item" data-path="{{ @key }}">
-                            <a class="nav-list-link pwa-title" data-path="{{ @key }}" href="#/{{ @key }}">
+                            <a class="nav-list-link" data-path="{{ @key }}" href="#/{{ @key }}">
                                     {{ @key }}
                             </a>
                     </li>
@@ -90,8 +90,8 @@ export class Sidebar {
    
         <!-- FeedReader section -->
         <ul class="nav-list">
-                <li class="nav-list-item context-node" data-type='folder' data-path="feeds" data-id='0'>
-                        <a class="nav-list-link pwa-title" data-path="-:::Feeds" href="#/-/Feeds/">
+                <li class="nav-list-item context-node" data-type='folder' data-path="-:::Feeds" data-id='0'>
+                        <a class="nav-list-link" data-path="-:::Feeds" href="#/-/Feeds/">
                                 Feeds
                         </a>
                 </li>
