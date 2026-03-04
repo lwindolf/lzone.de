@@ -10,6 +10,7 @@ export class Config {
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
     <link rel='blogroll' href='https://lzone.de/blog/blogroll.opml' />
     <link rel='me' href='https://github.com/lwindolf'>
+    <link rel="webmention" href="https://webmention.io/lzone.de/webmention" />
 
     <title>${Config.siteName}</title>
 
