@@ -4,13 +4,14 @@
 
 export class Config {
     static siteName = 'LZone';
+    static domain = 'lzone.de';
     static head = `
-    <link rel='alternate' title='LZone Blog' href='https://lzone.de/feed/devops.xml' type='application/atom+xml' />
-    <link rel='alternate' title='Liferea Blog' href='https://lzone.de/feed/liferea.xml' type='application/atom+xml' />
+    <link rel='alternate' title='LZone Blog' href='/feed/devops.xml' type='application/atom+xml' />
+    <link rel='alternate' title='Liferea Blog' href='/feed/liferea.xml' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
-    <link rel='blogroll' href='https://lzone.de/blog/blogroll.opml' />
+    <link rel='blogroll' href='/blog/blogroll.opml' />
     <link rel='me' href='https://github.com/lwindolf'>
-    <link rel="webmention" href="https://webmention.io/lzone.de/webmention" />
+    <link rel="webmention" href="https://webmention.io/${Config.domain}/webmention" />
 
     <title>${Config.siteName}</title>
 
@@ -22,11 +23,13 @@ export class Config {
     `;
 
     static welcome = `
-        <p>
+        <div class="h-entry">
+        <p class="e-content">
             LZone is a progressive web app by <a href="https://lzone.de/consulting/en">Lars Windolf</a> that supports
             installing a ton of Sysadmin / DevOps / System Architecture related content
             so that you can search and read all of it in one place.
-        </p>`;
+        </p>
+        </div>`
 
     static rssFinderUrl = 'https://lwindolf.github.io/rss-finder/js/widget.js'; // Web component for RSS feed discovery
 
@@ -317,6 +320,13 @@ export class Config {
             embed: `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
             settings: `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
             enabled: false
+        },
+        // Widget for webmention.io ensure to have a <link rel="webmention" .../> define in the header
+        'Web Mentions': {
+            import: '/js/components/webmentions/js/WebMentions.js',
+            embed: `<x-web-mentions>ERROR when embedding Web Mentions</x-web-mentions>`,
+            settings: `<x-web-mentions-settings>ERROR when embedding Web Mentions Settings</x-web-mentions-settings>`,
+            enabled: true
         }
     };
 }
