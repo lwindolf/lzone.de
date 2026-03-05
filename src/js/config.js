@@ -17,6 +17,7 @@ export class Config {
 
     <meta name="description" content="LZone - Cheat Sheets for Sysadmin / DevOps / System Architecture" />
     <meta name="author" content="Lars Windolf" />
+    <meta name="fediverse:creator" content="@lwindolf@mas.to" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#2c84fa" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lwindolf.github.io/ web+feed:; frame-src 'self' https://imweather.com/; connect-src * data:; style-src 'unsafe-inline' 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' https://lwindolf.github.io/; img-src * data: blob:; media-src *; object-src 'none'" />
@@ -298,8 +299,8 @@ export class Config {
     // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
-            import: '/multi-status/js/MultiStatusCloud.js',
-            embed: `<x-multistatus-cloud data-path="/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
+            import: '/js/components/multi-status/js/MultiStatusCloud.js',
+            embed: `<x-multistatus-cloud data-path="https://lzone.de/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
             settings: `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
             enabled: true
         },
