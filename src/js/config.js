@@ -328,6 +328,12 @@ export class Config {
             embed: `<x-web-mentions>ERROR when embedding Web Mentions</x-web-mentions>`,
             settings: `<x-web-mentions-settings>ERROR when embedding Web Mentions Settings</x-web-mentions-settings>`,
             enabled: true
+        },
+        'Job Status': {
+            import: '/js/components/job-status/js/JobStatus.js',
+            embed: `<x-job-status>ERROR when embedding Job Status</x-job-status>`,
+            settings: `<x-job-status-settings>ERROR when embedding Job Status Settings</x-job-status-settings>`,
+            enabled: false
         }
     };
 }

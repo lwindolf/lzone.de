@@ -106,7 +106,6 @@ export class BadgeCheckerSettings extends HTMLElement {
 
     async render() {
         const badges = await Settings.get('badges', {});
-        console.log(badges);
         this.#div.innerHTML = r.renderToString(`
 		    <p>
 		    	The badge widget can be used to have an overview over all build pipelines
