@@ -36,7 +36,13 @@
             console.warn("Development mode enabled");
             await import("./js/app.js");
             // load all web components
-            Object.values(window.Config.toolboxComponents).forEach(c => import(c.import));
+            Object.values(window.Config.toolboxComponents).forEach(c => {
+                try {
+                    import(c.import);
+                } catch (error) {
+                    console.error(`Error loading component ${c.import}:`, error);
+                }
+            });
         } else {
             await import("./js/bundle/bundle.js");
         }

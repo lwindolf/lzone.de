@@ -172,7 +172,8 @@ export class JobStatusSettings extends HTMLElement {
         const urls = await Settings.get('jobstatus::urls', []);
         this.#div.innerHTML = r.renderToString(`
                     <p>
-                        The job status widget can be used to watch job statuses. Simply add a status URL below.
+                        The job status widget can be used to watch job statuses (here is an <a href="https://lzone.de/rss-feed-index/status.json">example</a>).
+                        Simply add a status URL below to monitor the job execution.
                     </p>
 
                         <h3>Configured Status URLs</h3>
