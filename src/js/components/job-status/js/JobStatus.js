@@ -45,6 +45,30 @@ class JobStatus extends HTMLElement {
             try {
                 const response = await fetch(u + "?ts=" + now);
                 const status = await response.json();
+                let state = 'unknown';
+                let severity;
+
+                if ('running' in status.schedule) {
+                    // key running indicates a continuous or currently running scheduled job
+                    if (status.schedule.running) {
+                        state = 'running';
+                        severity = 'ok';
+                    } else {
+                        state = 'stopped';
+                        severity = 'critical';
+                    }
+                }
+                if ('nextRun' in status.schedule) {
+                    // key nextRun indicates a scheduled job
+                    if (status.nextRun < now) {
+                        state = 'failed to schedule';
+                        severity = 'critical';
+                    } else {
+                        state = 'scheduled';
+                        severity = 'ok';
+                    }
+                }
+
                 this.#results.innerHTML += r.renderToString(`
                     <div>
                         {{#if status.meta.favicon}}
@@ -59,8 +83,8 @@ class JobStatus extends HTMLElement {
                     </div>
                     <table>
                         <tr>
-                            <td>Running</td>
-                            <td>{{status.schedule.running}}</td>
+                            <td>Status</td>
+                            <td class="probe_{{severity}}">{{state}}</td>
                         </tr>
                         <tr>
                             <td>Last Updated</td>
@@ -73,7 +97,13 @@ class JobStatus extends HTMLElement {
                             </tr>
                         {{/each}}
                     </table>
-                `, { u, status, lastUpdated: now - status.schedule.lastUpdate });
+                `, {
+                    u,
+                    status,
+                    state,
+                    severity,
+                    lastUpdated: now - status.schedule.lastUpdate
+                });
             } catch (error) {
                 console.error(`Error fetching status from ${u}:`, error);
                 this.#results.innerHTML += `

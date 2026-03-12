@@ -1,6 +1,7 @@
 :root {
         --text: #37363b;
         --tblue: #2c84fa;
+        --tgreen: #2ac46c;
         --torange: #ffbc40;
         --tred: #c36;
         --code: #eee;
@@ -21,6 +22,7 @@
         :root {
                 --text: #e6e1e8;
                 --tblue: #2c84fa;
+                --tgreen: #2ac46c;
                 --torange: #eb8100;
                 --tred: #c36;
                 --code: #302d36;
@@ -979,6 +981,12 @@ input:invalid {
         background: var(--torange);
         color: #000;
         border: 1px solid var(--torange);
+}
+
+.probe_ok {
+        background: var(--tgreen);
+        color: #000;
+        border: 1px solid var(--tgreen);
 }
 
 .probe_normal {
