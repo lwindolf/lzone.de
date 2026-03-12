@@ -38,12 +38,17 @@ class JobStatus extends HTMLElement {
 
     async #render() {
         this.#results.innerHTML = `
-            <style>
-                div.jobStatus div {
-                    margin-bottom: 0.4rem;
-                    margin-top: 0.4rem;
-                }
-            </style>
+        <style>
+            div.jobStatus div {
+                margin-bottom: 0.4rem;
+                margin-top: 0.4rem;
+            }
+            .date {
+                margin: 6px 0 32px 0;
+                filter: brightness(50%);
+                font-size: 0.8rem;
+            }
+        </style>
         `;
 
         const now = Math.floor(Date.now()/1000);
@@ -139,7 +144,7 @@ class JobStatus extends HTMLElement {
 
             }
         }
-
+        this.#info.innerHTML = `Last updated: ${new Date().toLocaleString()}`;
     }
 }
 

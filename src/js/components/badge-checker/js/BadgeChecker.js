@@ -15,7 +15,6 @@ class BadgeChecker extends HTMLElement {
     // state
     #badges;	// check results
     #updated;	// last update timestamp 
-    #path;      // path where to find CSS and data.json
 
     // shadow dom
     #info;
@@ -25,26 +24,19 @@ class BadgeChecker extends HTMLElement {
         super();
 
         this.attachShadow({ mode: 'open' });
-        this.#path = this.shadowRoot.host.dataset.path;
 
         this.#results = document.createElement('div');
         this.#info = document.createElement('span');
         this.#info.classList.add('date');
 
-        // add component style sheet
+        // inherit style from root document
         const linkElem = document.createElement("link");
         linkElem.setAttribute("rel", "stylesheet");
-        linkElem.setAttribute("href", (this.#path ? this.#path : '') + "css/style.css");
-
-        // inherit style from root document
-        const linkElem2 = document.createElement("link");
-        linkElem2.setAttribute("rel", "stylesheet");
-        linkElem2.setAttribute("href", "css/main.css");
+        linkElem.setAttribute("href", "css/main.css");
 
         this.shadowRoot.append(this.#results);
         this.shadowRoot.append(this.#info);
         this.shadowRoot.appendChild(linkElem);
-        this.shadowRoot.appendChild(linkElem2);
 
         this.#update();
 
@@ -61,12 +53,23 @@ class BadgeChecker extends HTMLElement {
         });
     }
 
-    #setInfo(html) {
-        this.#info.innerHTML = html;
-    }
-
     async #update() {
-        this.#results.innerHTML = '';
+        this.#results.innerHTML = `
+        <style>
+            .date {
+                margin: 6px 0 32px 0;
+                filter: brightness(50%);
+                font-size: 0.8rem;
+            }
+            .badge {
+                clear: both;
+                margin-bottom: 0.5rem;
+            }
+            .badge img {
+                float: right;
+            }
+        </style>
+        `;
 
         this.#updated = await Settings.get('badgesLastUpdated', 0);
         this.#badges = await Settings.get('badges', {});
@@ -80,7 +83,7 @@ class BadgeChecker extends HTMLElement {
         });
 
         this.#updated = Date.now();
-        this.#setInfo(`Last updated: ${new Date(this.#updated).toLocaleString()}`);
+        this.#info.innerHTML = `Last updated: ${new Date(this.#updated).toLocaleString()}`;
     }
 }
 

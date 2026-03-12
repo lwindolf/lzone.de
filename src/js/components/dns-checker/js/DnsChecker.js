@@ -75,20 +75,14 @@ class DnsChecker extends HTMLElement {
         this.#info = document.createElement('span');
         this.#info.classList.add('date');
 
-		// add component style sheet
-		const linkElem = document.createElement("link");
-        linkElem.setAttribute("rel", "stylesheet");
-        linkElem.setAttribute("href", (this.#path?this.#path:'') + "css/style.css");
-
 		// inherit style from root document
-        const linkElem2 = document.createElement("link");
-        linkElem2.setAttribute("rel", "stylesheet");
-        linkElem2.setAttribute("href", "css/main.css");
+        const linkElem = document.createElement("link");
+        linkElem.setAttribute("rel", "stylesheet");
+        linkElem.setAttribute("href", "css/main.css");
 
         this.shadowRoot.append(this.#results);
         this.shadowRoot.append(this.#info);
         this.shadowRoot.appendChild(linkElem);
-		this.shadowRoot.appendChild(linkElem2);
 
 		this.#updating = false;
         this.#update();
@@ -298,7 +292,22 @@ class DnsChecker extends HTMLElement {
 
         this.#setInfo('<i>Checking...</i>');
 
-        this.#results.innerHTML = '';
+        this.#results.innerHTML = `
+		<style>
+			.domain.details_on .domain_details {
+					display: block;
+			}
+
+			.domain_details {
+					display: none;
+			}
+            .date {
+                margin: 6px 0 32px 0;
+                filter: brightness(50%);
+                font-size: 0.8rem;
+            }
+		</style>
+		`;
 
 		this.#updated = await settingsGet('domainsLastUpdated', 0);
 		this.#domains = await settingsGet('domainList', [ 'lzone.de']);
