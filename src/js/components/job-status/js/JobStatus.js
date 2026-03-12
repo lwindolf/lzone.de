@@ -37,7 +37,14 @@ class JobStatus extends HTMLElement {
     }
 
     async #render() {
-        this.#results.innerHTML = '';
+        this.#results.innerHTML = `
+            <style>
+                div.jobStatus div {
+                    margin-bottom: 0.4rem;
+                    margin-top: 0.4rem;
+                }
+            </style>
+        `;
 
         const now = Math.floor(Date.now()/1000);
         const urls = await Settings.get('jobstatus::urls', []);
@@ -48,6 +55,7 @@ class JobStatus extends HTMLElement {
                 let state = 'unknown';
                 let severity;
 
+                // Check for error conditions
                 if ('running' in status.schedule) {
                     // key running indicates a continuous or currently running scheduled job
                     if (status.schedule.running) {
@@ -60,7 +68,7 @@ class JobStatus extends HTMLElement {
                 }
                 if ('nextRun' in status.schedule) {
                     // key nextRun indicates a scheduled job
-                    if (status.nextRun < now) {
+                    if (status.schedule.nextRun < now) {
                         state = 'failed to schedule';
                         severity = 'critical';
                     } else {
@@ -68,8 +76,16 @@ class JobStatus extends HTMLElement {
                         severity = 'ok';
                     }
                 }
+                if ('maxAge' in status.schedule) {
+                    // key maxAge indicates the maximum age of a job status
+                    if (now - status.schedule.lastUpdate > status.schedule.maxAge) {
+                        state = 'stale';
+                        severity = 'critical';
+                    }
+                }
 
                 this.#results.innerHTML += r.renderToString(`
+                <div class="jobStatus">
                     <div>
                         {{#if status.meta.favicon}}
                         <img class="icon" loading="lazy" style="max-width:1rem" src="{{status.meta.favicon}}" alt="{{status.meta.name}} favicon">
@@ -90,6 +106,12 @@ class JobStatus extends HTMLElement {
                             <td>Last Updated</td>
                             <td>{{lastUpdated}}s ago</td>
                         </tr>
+                        {{#if nextRun}}
+                        <tr>
+                            <td>Next Run</td>
+                            <td>in {{nextRun}}s</td>
+                        </tr>
+                        {{/if}}
                         {{#each status.data}}
                             <tr>
                                 <td>{{@key}}</td>
@@ -97,12 +119,14 @@ class JobStatus extends HTMLElement {
                             </tr>
                         {{/each}}
                     </table>
+                </div>
                 `, {
                     u,
                     status,
                     state,
                     severity,
-                    lastUpdated: now - status.schedule.lastUpdate
+                    lastUpdated: now - status.schedule.lastUpdate,
+                    nextRun: status.schedule.nextRun ? (status.schedule.nextRun - now) : null
                 });
             } catch (error) {
                 console.error(`Error fetching status from ${u}:`, error);
