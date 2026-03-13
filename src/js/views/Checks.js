@@ -6,8 +6,30 @@ import * as r from '../helpers/render.js';
 // A view rendering results of multiple optional check tools
 
 export class ChecksView {
+    static imported = false;
+
     constructor(el) {
         ChecksView.render(el);
+
+        if(!ChecksView.imported) {
+            // load all web components
+            //
+            // Note: some might already be loaded by the webpack bundle, but
+            // all remote ones need to be loaded separately. Also in dev mode we
+            // need to load all of them.
+            Object.values(window.Config.toolboxComponents).forEach(c => {
+                try {
+                    if(c.import.startsWith('https://')) {
+                        import(/* webpackIgnore: true */ c.import);
+                    } else {
+                        import(c.import.replace('./js/components/', '../components/'));
+                    }
+                } catch (error) {
+                    console.error(`Error loading component ${c.import}:`, error);
+                }
+            });
+            ChecksView.imported = true;
+        }
 
         document.addEventListener('settings-changed', (e) => {
             if(0 == e.detail.name.indexOf("toolEnabled:::"))
