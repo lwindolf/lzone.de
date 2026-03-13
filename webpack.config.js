@@ -8,7 +8,7 @@ const config = {
     output: {
         filename: 'bundle.js',
         path: path.resolve('./www/js/bundle'),
-        publicPath: '/js/bundle/'
+        publicPath: 'js/bundle/'
     },
     mode: 'production' // or 'development'
 };

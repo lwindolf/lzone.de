@@ -20,7 +20,7 @@ export class Config {
     <meta name="fediverse:creator" content="@lwindolf@mas.to" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#2c84fa" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lwindolf.github.io/ web+feed:; frame-src 'self' https://imweather.com/; connect-src * data:; style-src 'unsafe-inline' 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' https://lwindolf.github.io/; img-src * data: blob:; media-src *; object-src 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lwindolf.github.io/ web+feed:; frame-src 'self' https://imweather.com/; connect-src * data:; style-src 'unsafe-inline' 'self' https://lzone.de; script-src 'unsafe-inline' 'unsafe-eval' 'self' https://lwindolf.github.io/; img-src * data: blob:; media-src *; object-src 'none'" />
     `;
 
     static welcome = `
@@ -299,38 +299,38 @@ export class Config {
     // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
-            import: '/js/components/multi-status/js/MultiStatusCloud.js',
+            import: './js/components/multi-status/js/MultiStatusCloud.js',
             embed: `<x-multistatus-cloud data-path="https://lzone.de/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
             settings: `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
             enabled: true
         },
         'DNS Change Detector': {
-            import: '/js/components/dns-checker/js/DnsChecker.js',
+            import: './js/components/dns-checker/js/DnsChecker.js',
             embed: `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
             settings: `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
             enabled: false
         },
         'Pinned Apps': {
-            import: '/js/components/pinned-apps/js/PinnedApps.js',
+            import: './js/components/pinned-apps/js/PinnedApps.js',
             embed: `<x-pinned-apps>ERROR when embedding Pinned Apps</x-pinned-apps>`,
             settings: `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
             enabled: true
         },
         'Badge Checker': {
-            import: '/js/components/badge-checker/js/BadgeChecker.js',
+            import: './js/components/badge-checker/js/BadgeChecker.js',
             embed: `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
             settings: `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
             enabled: false
         },
         // Widget for webmention.io ensure to have a <link rel="webmention" .../> define in the header
         'Web Mentions': {
-            import: '/js/components/webmentions/js/WebMentions.js',
+            import: './js/components/webmentions/js/WebMentions.js',
             embed: `<x-web-mentions>ERROR when embedding Web Mentions</x-web-mentions>`,
             settings: `<x-web-mentions-settings>ERROR when embedding Web Mentions Settings</x-web-mentions-settings>`,
             enabled: true
         },
         'Job Status': {
-            import: '/js/components/job-status/js/JobStatus.js',
+            import: './js/components/job-status/js/JobStatus.js',
             embed: `<x-job-status>ERROR when embedding Job Status</x-job-status>`,
             settings: `<x-job-status-settings>ERROR when embedding Job Status Settings</x-job-status-settings>`,
             enabled: false
