@@ -107,17 +107,25 @@ export class SettingsView {
             el.innerHTML = `<h1>Settings - ${name}</h1> ${window.Config.toolboxComponents[name].settings}`;
             return; // we want no binding
         } else if (path === '-/Settings/Tools') {
-            r.renderElement(el, r.template(`
-                <h1>Settings - Tools</h1>
 
-                {{#each names}}
-                <div class="tool">
-                    <input type="checkbox" name="toolEnabled:::{{.}}" {{#ifTrue enabled}}checked{{/ifTrue}}>
-                    {{.}} (<a href="#/-/Settings/Tools/{{.}}">Settings</a>)
-                </div>
-                {{/each}}
-            `), {
-                names: Object.keys(window.Config.toolboxComponents)
+            Promise.all(Object.keys(window.Config.toolboxComponents).map(async (name) => {
+                return {
+                    name,
+                    enabled: await Settings.get("toolEnabled:::" + name, window.Config.toolboxComponents[name].enabled)
+                }
+            })).then((tools) => {
+                r.renderElement(el, r.template(`
+                    <h1>Settings - Tools</h1>
+
+                    {{#each tools}}
+                    <div class="tool">
+                        <input type="checkbox" name="toolEnabled:::{{this.name}}" {{#ifTrue this.enabled}}checked{{/ifTrue}}>
+                        {{this.name}} (<a href="#/-/Settings/Tools/{{this.name}}">Settings</a>)
+                    </div>
+                    {{/each}}
+                `), {
+                    tools
+                });
             });
         } else if (path === '-/Settings') {
             const ollamaModels = await Settings.get('ollamaModels', []);
