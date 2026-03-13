@@ -156,5 +156,7 @@ export class BadgeCheckerSettings extends HTMLElement {
     }
 }
 
-customElements.define('x-badge-checker', BadgeChecker);
-customElements.define('x-badge-checker-settings', BadgeCheckerSettings);
+if (!customElements.get('x-badge-checker')) {
+    customElements.define('x-badge-checker', BadgeChecker);
+    customElements.define('x-badge-checker-settings', BadgeCheckerSettings);
+}

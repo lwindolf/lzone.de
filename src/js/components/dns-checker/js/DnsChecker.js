@@ -22,7 +22,6 @@ class DnsChecker extends HTMLElement {
     #domains;	// check results per domain
 	#updated;	// last update timestamp 
 	#updating;	// TRUE if currently updating
-    #path;      // path where to find CSS and data.json
 
     // shadow dom
     #info;
@@ -69,7 +68,6 @@ class DnsChecker extends HTMLElement {
         super();
 
         this.attachShadow({ mode: 'open' });
-        this.#path = this.shadowRoot.host.dataset.path;
 
         this.#results = document.createElement('div');
         this.#info = document.createElement('span');
@@ -398,7 +396,9 @@ export class DnsCheckerSettings extends HTMLElement {
     }
 }
 
-customElements.define('x-dns-checker', DnsChecker);
-customElements.define('x-dns-checker-settings', DnsCheckerSettings);
+if (!customElements.get('x-dns-checker')) {
+	customElements.define('x-dns-checker', DnsChecker);
+	customElements.define('x-dns-checker-settings', DnsCheckerSettings);
 
-DnsChecker.initialize();
+	DnsChecker.initialize();
+}

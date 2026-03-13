@@ -131,5 +131,7 @@ export class WebMentionsSettings extends HTMLElement {
     }
 }
 
-customElements.define('x-web-mentions', WebMentions);
-customElements.define('x-web-mentions-settings', WebMentionsSettings);
+if (!customElements.get('x-web-mentions')) {
+    customElements.define('x-web-mentions', WebMentions);
+    customElements.define('x-web-mentions-settings', WebMentionsSettings);
+}

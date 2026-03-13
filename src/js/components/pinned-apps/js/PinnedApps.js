@@ -144,5 +144,7 @@ export class PinnedAppsSettings extends HTMLElement {
     }
 }
 
-customElements.define('x-pinned-apps', PinnedApps);
-customElements.define('x-pinned-apps-settings', PinnedAppsSettings);
+if (!customElements.get('x-pinned-apps')) {
+    customElements.define('x-pinned-apps', PinnedApps);
+    customElements.define('x-pinned-apps-settings', PinnedAppsSettings);
+}

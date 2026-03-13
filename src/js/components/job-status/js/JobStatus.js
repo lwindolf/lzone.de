@@ -218,5 +218,7 @@ export class JobStatusSettings extends HTMLElement {
     }
 }
 
-customElements.define('x-job-status', JobStatus);
-customElements.define('x-job-status-settings', JobStatusSettings);
+if (!customElements.get('x-job-status')) {
+    customElements.define('x-job-status', JobStatus);
+    customElements.define('x-job-status-settings', JobStatusSettings);
+}

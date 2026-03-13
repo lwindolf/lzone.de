@@ -299,15 +299,15 @@ export class Config {
     // - `enabled`  (mandatory) if the component is enabled by default
     static toolboxComponents = {
         'SaaS Multi Status': {
-            import: './js/components/multi-status/js/MultiStatusCloud.js',
+            import: 'https://lzone.de/multi-status/js/MultiStatusCloud.js',
             embed: `<x-multistatus-cloud data-path="https://lzone.de/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
-            settings: `<x-multistatus-settings data-path="/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
+            settings: `<x-multistatus-settings data-path="https://lzone.de/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
             enabled: true
         },
         'DNS Change Detector': {
             import: './js/components/dns-checker/js/DnsChecker.js',
-            embed: `<x-dns-checker data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker>`,
-            settings: `<x-dns-checker-settings data-path="/js/components/dns-checker/">ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
+            embed: `<x-dns-checker>ERROR when embedding DNS Change Detector!</x-dns-checker>`,
+            settings: `<x-dns-checker-settings>ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
             enabled: false
         },
         'Pinned Apps': {
@@ -318,8 +318,8 @@ export class Config {
         },
         'Badge Checker': {
             import: './js/components/badge-checker/js/BadgeChecker.js',
-            embed: `<x-badge-checker data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker</x-badge-checker>`,
-            settings: `<x-badge-checker-settings data-path="/js/components/badge-checker/">ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
+            embed: `<x-badge-checker>ERROR when embedding Badge Checker</x-badge-checker>`,
+            settings: `<x-badge-checker-settings>ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
             enabled: false
         },
         // Widget for webmention.io ensure to have a <link rel="webmention" .../> define in the header

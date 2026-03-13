@@ -1,6 +1,3 @@
 [submodule "lzone-feed-parser"]
 	path = lzone-feed-parser
 	url = https://github.com/lwindolf/lzone-feed-parser
-[submodule "multi-status"]
-	path = multi-status
-	url = https://github.com/lwindolf/multi-status.git
