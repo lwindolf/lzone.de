@@ -12,6 +12,10 @@ cp -vr src/css www
 
 sed -i "s/devMode = true/devMode = false/" www/index.html
 
+# FIXME: webmentions.js cannot yet be bundled
+mkdir -vp www/js/components/webmentions/js
+cp -vL src/js/components/webmentions/js/webmention.js www/js/components/webmentions/js
+
 # Update index.html title, feeds and blogroll
 cat <<EOT | node --input-type=module
 
