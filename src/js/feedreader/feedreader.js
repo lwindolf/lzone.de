@@ -211,6 +211,10 @@ export class FeedReader {
             (oldItem != this.#selectedItemId)) {
 
             console.log('feedreader selection needs to be changed: item', this.#selectedItemId, 'feed', this.#selectedFeedId);
+
+            if (!oldFeed && this.#selectedFeedId)
+                ev.dispatch('feedSelected', { id: this.#selectedFeedId });
+
             if (this.#selectedItemId)
                 ev.dispatch('itemSelected', { feedId: this.#selectedFeedId, id: this.#selectedItemId });
             else
