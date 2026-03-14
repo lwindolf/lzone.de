@@ -1,6 +1,5 @@
 // vim: set ts=4 sw=4:
 
-import { ChecksView } from "./Checks.js";
 import { Section } from "../models/Section.js";
 import { View } from "../helpers/View.js";
 
@@ -38,8 +37,5 @@ export class HomeView extends View {
                 };
             }
         });
-
-        // Depending on layout the ChecksView is sometimes visible, so we need to instantiate it here
-        new ChecksView(document.getElementById('toolpanelHome'));
     }
 }

@@ -37,6 +37,10 @@ export class ContentView {
             switch : 'content',
             view   : 'Catalog'
         },
+        Tools   : {
+            switch : 'content',
+            view   : 'Tools'
+        },
         CLI      : {
             switch : 'chat',
             view   : undefined

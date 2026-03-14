@@ -6,11 +6,11 @@ import { Layout } from './layout.js';
 import { Sidebar } from './views/Sidebar.js';
 import { Search } from './search.js';
 import { ContentView } from './views/Content.js';
-import { ChecksView } from './views/Checks.js';
 import { CheatSheetCatalog } from './models/CheatSheetCatalog.js';
 import { HelpDialog } from './dialogs/help.js';
 import { keydown } from './helpers/events.js';
 import { FeedReader } from './feedreader/feedreader.js';
+import { ToolsView } from './views/Tools.js';
 
 import './helpers/net.js';
 import './helpers/log.js';
@@ -87,7 +87,7 @@ export class App {
             });
 
         window.app = {
-            ChecksView  : new ChecksView(document.getElementById('toolpanel')),
+            ToolsView   : new ToolsView(document.getElementById('toolpanel')),
             CLI         : new CLI('search-input'),            
             Commands,
             ContentView : new ContentView(document.getElementById('main-content-wrap')),

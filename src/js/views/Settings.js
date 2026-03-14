@@ -103,7 +103,7 @@ export class SettingsView {
 
         // render settings for tool web components
         if (path.startsWith('-/Settings/Tools/')) {
-            // We expect component modules already to be loaded by ChecksView
+            // We expect component modules already to be loaded by ToolsView
             el.innerHTML = `<h1>Settings - ${name}</h1> ${window.Config.toolboxComponents[name].settings}`;
             return; // we want no binding
         } else if (path === '-/Settings/Tools') {

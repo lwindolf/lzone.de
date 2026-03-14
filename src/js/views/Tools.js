@@ -5,13 +5,13 @@ import * as r from '../helpers/render.js';
 
 // A view rendering results of multiple optional check tools
 
-export class ChecksView {
+export class ToolsView {
     static imported = false;
 
     constructor(el) {
-        ChecksView.render(el);
+        ToolsView.render(el);
 
-        if(!ChecksView.imported) {
+        if(!ToolsView.imported) {
             // load all web components
             //
             // Note: some might already be loaded by the webpack bundle, but
@@ -28,12 +28,12 @@ export class ChecksView {
                     console.error(`Error loading component ${c.import}:`, error);
                 }
             });
-            ChecksView.imported = true;
+            ToolsView.imported = true;
         }
 
         document.addEventListener('settings-changed', (e) => {
             if(0 == e.detail.name.indexOf("toolEnabled:::"))
-                ChecksView.render(el);
+                ToolsView.render(el);
         });
     }
 
