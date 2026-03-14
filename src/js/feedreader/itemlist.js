@@ -73,7 +73,7 @@ export class ItemList extends View {
 
         // handle mouse events
         ev.connect('click',    '.item', (el) => FeedReader.select(parseInt(el.dataset.feed), parseInt(el.dataset.id)));
-        ev.connect('auxclick', '.item', (el) => Action.dispatch('feedreader:toggleItemRead', { id: parseInt(el.dataset.id) }, (e) => e.button == 1));
+        ev.connect('auxclick', '.item', (el) => Action.dispatch('feedreader:toggleItemRead', { id: parseInt(el.dataset.id) }), (e) => e.button === 1);
         ev.connect('dblclick', '.item', (el) => this.openItemLink(parseInt(el.dataset.id)));
         ev.connect('click',    '.newItems', () => {
             document.querySelector('.newItems').classList.add('hidden');
