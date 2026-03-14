@@ -7,6 +7,17 @@ import { ModalDialog } from '../helpers/modal-dialog.js';
 
 export class SubscribeFeedDialog extends ModalDialog {
     constructor(parentId) {
+
+        // handle rss-finder subscribe events
+        document.addEventListener('rss-finder-subscribe', (ev) => {
+            ev.preventDefault();
+            Action.dispatch('feedreader:addFeed', {
+                parentId,
+                source: ev.detail.url,
+                title: "New Subscription"
+            });
+        });
+
         import(/* webpackIgnore: true */window.Config.rssFinderUrl); // FIXME: possible race condition
         super(`
             {{#unless discover}}
