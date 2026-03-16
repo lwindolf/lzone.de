@@ -23,4 +23,8 @@ if(!window.originalConsoleLog) {
     window.console.warn = filteredLog;
     window.console.debug = filteredLog;
     window.debug = window.debug || {};
+
+    // Support query string enabled logging
+    if(window.location.search.includes('debug=all'))
+        window.debug.all = true;
 }
