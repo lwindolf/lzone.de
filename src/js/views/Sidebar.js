@@ -117,7 +117,7 @@ export class Sidebar {
         document.addEventListener('nodeRemoved', this.#render);
         document.addEventListener('nodeUpdated', (ev) => {    
             const id = ev.detail.id;       
-            const feed = el.querySelector(`#feedlist .nav-list-item[data-id="${id}"]`);
+            const feed = el.querySelector(`#sidebar .nav-list-item[data-id="${id}"]`);
             if (feed) {
                 const feedTitle   = feed.querySelector('.title');
                 const unreadCount = feed.querySelector('.count');
