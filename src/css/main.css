@@ -643,7 +643,7 @@ a[data-path]:not([data-path*=":::"]) {
         border-radius: 0.2rem;
 }
 
-.selected .nav-list-link .count,
+.nav-list-link.selected .count,
 .nav-list-link:hover .count {
         background: hsl(from var(--darkerbg) h s calc(l - 10));
 }
