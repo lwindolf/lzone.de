@@ -1,5 +1,6 @@
 // vim: set ts=4 sw=4:
 
+import { Commands } from "../../../commands.js";
 import { settingsSet, settingsGet } from "./settings.js";
 
 /* DNS Checker widget
@@ -29,7 +30,7 @@ class DnsChecker extends HTMLElement {
 
 	// static constructor to register CLI commands
 	static initialize() {
-		window.app.Commands.register({
+		Commands.register({
 			dig: {
 				syntax: 'dig [<type>] <domain>',
 				summary: 'Simple Cloudflare DoH lookup',

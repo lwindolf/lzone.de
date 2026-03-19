@@ -396,7 +396,7 @@ window.renderWebMentions = async () => {
     }
 
     const pages = [stripurl(refurl)];
-    if (!!addurls) {
+    if (addurls) {
       addurls.split('|').forEach(function (url) {
         pages.push(stripurl(url));
       });

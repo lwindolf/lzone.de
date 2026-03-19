@@ -63,7 +63,8 @@ window.Handlebars.registerHelper('compare', function (v1, operator, v2, options)
         '<': v1 < v2 ? true : false,
         '<=': v1 <= v2 ? true : false,
         '||': v1 || v2 ? true : false,
-        '&&': v1 && v2 ? true : false
+        '&&': v1 && v2 ? true : false,
+        '&': v1 & v2 ? true : false
     }
     if (Object.prototype.hasOwnProperty.call(operators, operator)) {
         if (operators[operator]) {

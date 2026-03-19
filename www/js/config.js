@@ -302,40 +302,62 @@ export class Config {
             import: 'https://lzone.de/multi-status/js/MultiStatusCloud.js',
             embed: `<x-multistatus-cloud data-path="https://lzone.de/multi-status/" data-reduced="1">ERROR when embedding SaaS MultiStatus</x-multistatus-cloud>`,
             settings: `<x-multistatus-settings data-path="https://lzone.de/multi-status/">ERROR when embedding SaaS MultiStatus Settings</x-multistatus-settings>`,
-            enabled: true
         },
         'DNS Change Detector': {
             import: './js/components/dns-checker/js/DnsChecker.js',
             embed: `<x-dns-checker>ERROR when embedding DNS Change Detector!</x-dns-checker>`,
             settings: `<x-dns-checker-settings>ERROR when embedding DNS Change Detector!</x-dns-checker-settings>`,
-            enabled: false
         },
         'Pinned Apps': {
             import: './js/components/pinned-apps/js/PinnedApps.js',
             embed: `<x-pinned-apps>ERROR when embedding Pinned Apps</x-pinned-apps>`,
             settings: `<x-pinned-apps-settings>ERROR when embedding Pinned Apps Settings</x-pinned-apps-settings>`,
-            enabled: true
         },
         'Badge Checker': {
             import: './js/components/badge-checker/js/BadgeChecker.js',
             embed: `<x-badge-checker>ERROR when embedding Badge Checker</x-badge-checker>`,
             settings: `<x-badge-checker-settings>ERROR when embedding Badge Checker Settings</x-badge-checker-settings>`,
-            enabled: false
         },
         // Widget for webmention.io ensure to have a <link rel="webmention" .../> define in the header
         'Web Mentions': {
             import: './js/components/webmentions/js/WebMentions.js',
             embed: `<x-web-mentions>ERROR when embedding Web Mentions</x-web-mentions>`,
             settings: `<x-web-mentions-settings>ERROR when embedding Web Mentions Settings</x-web-mentions-settings>`,
-            enabled: true
         },
         'Job Status': {
             import: './js/components/job-status/js/JobStatus.js',
             embed: `<x-job-status>ERROR when embedding Job Status</x-job-status>`,
             settings: `<x-job-status-settings>ERROR when embedding Job Status Settings</x-job-status-settings>`,
-            enabled: false
         }
     };
+
+    // Extra settings for tools to enable/disable them per default
+    static extraSettingsSchema = {
+        'toolEnabled:::SaaS Multi Status': {
+            default: true,
+            description: 'Enable SaaS Multi Status'
+        },
+        'toolEnabled:::DNS Change Detector': {
+            default: false,
+            description: 'Enable DNS Change Detector'
+        },
+        'toolEnabled:::Pinned Apps': {
+            default: true,
+            description: 'Enable Pinned Apps'
+        },
+        'toolEnabled:::Badge Checker': {
+            default: false,
+            description: 'Enable Badge Checker'
+        },
+        'toolEnabled:::Web Mentions': {
+            default: true,
+            description: 'Enable Web Mentions'
+        },
+        'toolEnabled:::Job Status': {
+            default: false,
+            description: 'Enable Job Status'
+        }
+    }
 }
 
 try {

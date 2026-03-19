@@ -37,4 +37,4 @@ export class Settings {
         await DB.remove("settings", "settings", name);
 }
 
-Settings.initialize();
+await Settings.initialize();

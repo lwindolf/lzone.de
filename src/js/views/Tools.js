@@ -22,7 +22,9 @@ export class ToolsView {
                     if(c.import.startsWith('https://')) {
                         import(/* webpackIgnore: true */ c.import);
                     } else {
-                        import(c.import.replace('./js/components/', '../components/'));
+                        /* No import needed when webpack is active and import.meta is empty */
+                        if(!import.meta.url.startsWith('file://'))
+                            import(/* webpackIgnore: true */ c.import.replace('./js/components/', '../components/'));
                     }
                 } catch (error) {
                     console.error(`Error loading component ${c.import}:`, error);

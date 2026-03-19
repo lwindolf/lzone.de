@@ -1,6 +1,7 @@
 // vim: set ts=4 sw=4:
 
 import { CLI } from './CLI.js';
+import { Config } from './config.js';
 import { Commands } from './commands.js';
 import { Layout } from './layout.js';
 import { Sidebar } from './views/Sidebar.js';
@@ -11,6 +12,7 @@ import { HelpDialog } from './dialogs/help.js';
 import { keydown } from './helpers/events.js';
 import { FeedReader } from './feedreader/feedreader.js';
 import { ToolsView } from './views/Tools.js';
+import { Settings } from './models/Settings.js';
 
 import './helpers/net.js';
 import './helpers/log.js';
@@ -86,6 +88,9 @@ export class App {
                 console.error('ServiceWorker registration failed: ', error);
             });
 
+        // must be done before any views are being created
+        await Settings.addSchema(Config.extraSettingsSchema);
+
         window.app = {
             ToolsView   : new ToolsView(document.getElementById('toolpanel')),
             CLI         : new CLI('search-input'),            
@@ -93,7 +98,8 @@ export class App {
             ContentView : new ContentView(document.getElementById('main-content-wrap')),
             FeedReader,
             Layout      : new Layout(),
-            Sidebar     : new Sidebar(document.getElementById('site-nav'))            
+            Sidebar     : new Sidebar(document.getElementById('site-nav')),
+            Settings
         };
 
         await CheatSheetCatalog.update();
