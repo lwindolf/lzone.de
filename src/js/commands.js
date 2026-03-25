@@ -229,7 +229,7 @@ export class Commands {
 					div.id = 'webampApp';
 					document.body.appendChild(div);
 
-					Libraries.get('lib_webamp').then(() => {
+					Libraries.get('webamp').then(() => {
 						const app = document.getElementById("webampApp")
 						// eslint-disable-next-line no-undef
 						window.webamp = new Webamp();

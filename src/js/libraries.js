@@ -64,6 +64,13 @@ export class Libraries {
                 c = window.rst2html;
                 break;
             }
+            case 'webamp': {
+                const {
+                    default: Webamp
+                } = await import(/* webpackIgnore: true */"lib_webamp");
+                c = Webamp;
+                break;
+            }
             default: {
                 throw new Error(`Unknown converter: ${name}`);
             }
