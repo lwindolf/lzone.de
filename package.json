@@ -12,7 +12,7 @@
     "dependencies": {
         "asciidoctor": "^3.0.3",
         "dompurify": "^3.3.1",
-        "handlebars": "^4.7.8",
+        "handlebars": "^4.7.9",
         "lunr": "^2.3.6",
         "mermaid": "^11.12.3",
         "pdfjs-dist": "^5.2.133",
