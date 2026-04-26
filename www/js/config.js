@@ -8,7 +8,8 @@ export class Config {
     static head = `
     <link rel='alternate' title='LZone Blog' href='/feed/devops.xml' type='application/atom+xml' />
     <link rel='alternate' title='Liferea Blog' href='/feed/liferea.xml' type='application/atom+xml' />
-    <link rel='alternate' title='Cloud Outages' href='https://raw.githubusercontent.com/lwindolf/cloud-outages/refs/heads/main/feed.atom' type='application/atom+xml' />
+    <link rel='alternate' title='Major Cloud Outages' href='https://raw.githubusercontent.com/lwindolf/cloud-outages/refs/heads/main/feed.atom' type='application/atom+xml' />
+    <link rel='alternate' title='Recent Cloud Outages' href='https://lzone.de/multi-status/feed.atom' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
     <link rel='blogroll' href='/blog/blogroll.opml' />
     <link rel='me' href='https://github.com/lwindolf'>
@@ -80,7 +81,8 @@ export class Config {
             defaultFeeds: [
                 { title: "LZone Blog", source: "https://lzone.de/feed/devops.xml", id: 1 },
                 { title: "Liferea Blog", source: "https://lzone.de/feed/liferea.xml", id: 2 },
-                { title: "Cloud Outages", source: "https://raw.githubusercontent.com/lwindolf/cloud-outages/refs/heads/main/feed.atom", id: 3 }
+                { title: "Major Cloud Outages", source: "https://raw.githubusercontent.com/lwindolf/cloud-outages/refs/heads/main/feed.atom", id: 3 },
+                { title: "Recent Cloud Outages", source: "https://lzone.de/multi-status/feed.atom", id: 4 }
             ]
         }
     };
@@ -110,6 +112,10 @@ export class Config {
                 description: 'Get Javascript key codes',
                 favicon: 'https://keyjs.dev/logo/keyjs-t-32.png'
             },
+            'MS Ontology Playground': {
+                url: 'https://microsoft.github.io/Ontology-Playground/',
+                description: 'Onotology diagram modelling'                
+            }
         },
         'DevOps - Playgrounds': {
             'awk, sed, grep': {
