@@ -108,6 +108,10 @@ export class Config {
                 description: 'Get Javascript key codes',
                 favicon: 'https://keyjs.dev/logo/keyjs-t-32.png'
             },
+            'MS Ontology Playground': {
+                url: 'https://microsoft.github.io/Ontology-Playground/',
+                description: 'Onotology diagram modelling'                
+            }
         },
         'DevOps - Playgrounds': {
             'awk, sed, grep': {

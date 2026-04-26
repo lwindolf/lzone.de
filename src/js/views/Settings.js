@@ -214,9 +214,10 @@ export class SettingsView {
 
                 <h3>App Cache</h3>
 
-                <p>Clear the app cache. This does <b>not</b> any delete content. Try this when the app does not work!</p>
+                <p>Clear the app cache. This does <b>not</b> any delete content. Refresh the page afterwards.</p>
                 <div>
                     <button id="resetPwaCache">Reset PWA cache</button>
+                    <button id="upgradeWorker">Check for updates</button>
                 </div>
                 <p>Current worker version: ${await new Promise((resolve) => {
                     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
@@ -243,20 +244,34 @@ export class SettingsView {
                 updateRefreshIntervalUnit : await Settings.get('feedreader:::refreshIntervalUnit', 'hours')
             });
 
+            el.querySelector('#upgradeWorker').addEventListener('click', async () => {
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        await registration.update();
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ action: 'skipWaiting' });
+                            window.location.reload();
+                        } else {
+                            alert('No new version available.');
+                        }
+                    }
+                } else {
+                    alert('Service worker is not available or not controlling the page.');
+                }
+            });
+
+            el.querySelector('#resetPwaCache').addEventListener('click', () => {
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
+                } else {
+                    alert('Service worker is not available or not controlling the page.');
+                }
+            });
+
             el.querySelector('input[name="ollamaEndpoint"]').addEventListener('change', () => this.#updateOllamaModels(el));
             if (ollamaModels.length === 0)
                 this.#updateOllamaModels();
-
-            el.querySelector('#resetPwaCache').addEventListener('click', () => {
-                if (confirm('Are you sure you want to reset the PWA cache? This will reload the app.')) {
-                    // Send a message to the service worker to clear the cache
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
-                    } else {
-                        console.error('Service worker is not available or not controlling the page.');
-                    }
-                }
-            });
         } else {
             el.innerHTML = "ERROR: Unknown settings path";
         }

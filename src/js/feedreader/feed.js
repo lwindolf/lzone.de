@@ -119,7 +119,6 @@ export class Feed {
             const newItem = new Item(i);
             newItem.read = false;
             newItem.nodeId = this.id;
-            await newItem.save();
             items.push(newItem);
         }
 
@@ -129,15 +128,21 @@ export class Feed {
             const itemsToDelete = items
                 .sort((a, b) => a.time - b.time)
                 .slice(0, items.length - maxCount)
-                .filter(i => !i.flagged);
+                .filter(i => !i.starred);
             for (const item of itemsToDelete) {
-                await item.remove();
+                if (item.id)
+                    await item.remove();
+                items.splice(items.findIndex(i => i.id === item.id), 1);
             }
-            items = await this.getItems();
+        }
+
+        // Write new items to DB
+        for(const item of items) {
+            if (!item.id)
+                await item.save();
         }
 
         // Update unread count
-        items = await this.getItems();
         this.updateUnread(items.filter((i) => !i.read).length - this.unreadCount);
 
         if (added > 0) {
@@ -203,6 +208,7 @@ export class Feed {
             this.icon = f.icon;
 
             await this.mergeItems(f.newItems);
+            this.newItems = [];
 
             // Do not update favicon too often (hard-coded 30 * updateInterval)
             if ((Date.now() / 1000 - this.last_updated_favicon > 30 * updateInterval)) {
