@@ -8,6 +8,7 @@ export class Config {
     static head = `
     <link rel='alternate' title='LZone Blog' href='/feed/devops.xml' type='application/atom+xml' />
     <link rel='alternate' title='Liferea Blog' href='/feed/liferea.xml' type='application/atom+xml' />
+    <link rel='alternate' title='Cloud Outages' href='https://raw.githubusercontent.com/lwindolf/cloud-outages/refs/heads/main/feed.atom' type='application/atom+xml' />
     <link rel='favicon' href='favicon.ico' type='image/x-icon' />
     <link rel='blogroll' href='/blog/blogroll.opml' />
     <link rel='me' href='https://github.com/lwindolf'>
