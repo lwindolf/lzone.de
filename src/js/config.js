@@ -221,6 +221,16 @@ export class Config {
                 url: 'https://snapdrop.net/',
                 favicon: 'https://www.snap-drop.net/images/favicon-96x96.png',
                 description: 'Share files with other devices in your network'
+            },
+            'DNS Checker': {
+                url: 'https://dnschecker.org',
+                favicon: 'https://dnschecker.org/themes/common/images/general/favicon-192.png',
+                description: 'Check DNS resolving from different locations'
+            },
+            'DNSViz': {
+                url: 'https://dnsviz.net/',
+                favicon: 'https://dnsviz.net/static/images/logo_16x16.png',
+                description: 'DNSSEC visualization and checking'
             }
         },
         'Diagram Tools': {
