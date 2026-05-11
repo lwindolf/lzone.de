@@ -14,7 +14,7 @@
         "dompurify": "^3.4.1",
         "handlebars": "^4.7.9",
         "lunr": "^2.3.6",
-        "mermaid": "^11.12.3",
+        "mermaid": "^11.15.0",
         "pdfjs-dist": "^5.2.133",
         "rst2html": "^1.0.0",
         "split.js": "^1.6.5",
