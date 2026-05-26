@@ -90,7 +90,7 @@ export class Commands {
 		date: {
 			syntax: 'date <epoch>',
 			summary: 'epoch -> date',
-			func: (cmd, paramStr) => ["text", new Date(parseInt(paramStr))]
+			func: (cmd, paramStr) => ["text", new Date(parseInt(paramStr)*1000)]
 		},
 		epoch: {
 			syntax: 'epoch <date>',

@@ -55,7 +55,7 @@ class JobStatus extends HTMLElement {
         const urls = await Settings.get('jobstatus::urls', []);
         for(const u of urls) {
             try {
-                const response = await fetch(u + "?ts=" + now);
+                const response = await fetch(u + "?ts=" + now, { cache: 'no-store' });
                 const status = await response.json();
                 let state = 'unknown';
                 let severity;
