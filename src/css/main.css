@@ -959,6 +959,12 @@ input:invalid {
         visibility: visible;
 }
 
+time.date.last-updated {
+        margin: 6px 0 32px 0;
+        filter: brightness(50%);
+        font-size: 0.8rem;
+}
+
 .probe {
         margin: .2rem .1rem;
         padding: 0 .4rem;

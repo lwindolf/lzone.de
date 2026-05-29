@@ -158,7 +158,8 @@ class DnsChecker extends HTMLElement {
 					<pre>${this.#renderSubdomains(d.subdomains)}</pre>
 				</div>
 			`;
-			this.#setInfo(`Last updated: ${new Date(this.#updated).toLocaleString()}`);
+			this.#setInfo("");
+            this.shadowRoot.host.setAttribute('data-last-updated', Date.now());
 		});
     }
 
@@ -300,11 +301,6 @@ class DnsChecker extends HTMLElement {
 			.domain_details {
 					display: none;
 			}
-            .date {
-                margin: 6px 0 32px 0;
-                filter: brightness(50%);
-                font-size: 0.8rem;
-            }
 		</style>
 		`;
 

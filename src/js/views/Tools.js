@@ -9,7 +9,27 @@ export class ToolsView {
     static imported = false;
 
     constructor(el) {
-        ToolsView.render(el);
+        ToolsView.render(el).then(() => {
+            // register mutation observer for all component root elements
+            // on their "last-updated" data attribute
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((m) => {
+                    if (m.type === 'attributes' && m.attributeName === 'data-last-updated') {
+                        let t = m.target.parentElement.querySelector('time.last-updated');
+                        if (!t) {
+                            t = document.createElement('time');
+                            t.classList.add('last-updated');
+                            t.classList.add('date');
+                            m.target.parentElement.appendChild(t);
+                        }
+                        t.setAttribute('datetime', new Date(parseInt(m.target.dataset.lastUpdated)).toISOString());
+                        t.innerHTML = "Last updated: " + new Date(parseInt(m.target.dataset.lastUpdated)).toLocaleString();
+                    }
+                });
+            });
+            observer.observe(el, { attributes: true, subtree: true, attributeFilter: ['data-last-updated'] });
+    
+        });
 
         if(!ToolsView.imported) {
             // load all web components
@@ -40,7 +60,7 @@ export class ToolsView {
     }
 
     static async render(el) {
-        Promise.all(Object.keys(window.Config.toolboxComponents).map(async (name) => {
+        return Promise.all(Object.keys(window.Config.toolboxComponents).map(async (name) => {
             return {
                 name,
                 embed: window.Config.toolboxComponents[name].embed,

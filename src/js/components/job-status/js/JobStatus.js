@@ -12,7 +12,6 @@ class JobStatus extends HTMLElement {
     #updated;	// last update timestamp 
 
     // shadow dom
-    #info;
     #results;
 
     constructor() {
@@ -21,8 +20,6 @@ class JobStatus extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         this.#results = document.createElement('div');
-        this.#info = document.createElement('span');
-        this.#info.classList.add('date');
 
         // inherit style from root document
         const linkElem = document.createElement("link");
@@ -30,7 +27,6 @@ class JobStatus extends HTMLElement {
         linkElem.setAttribute("href", "css/main.css");
 
         this.shadowRoot.append(this.#results);
-        this.shadowRoot.append(this.#info);
         this.shadowRoot.appendChild(linkElem);
 
         this.#render();
@@ -42,11 +38,6 @@ class JobStatus extends HTMLElement {
             div.jobStatus div {
                 margin-bottom: 0.4rem;
                 margin-top: 0.4rem;
-            }
-            .date {
-                margin: 6px 0 32px 0;
-                filter: brightness(50%);
-                font-size: 0.8rem;
             }
         </style>
         `;
@@ -144,7 +135,7 @@ class JobStatus extends HTMLElement {
 
             }
         }
-        this.#info.innerHTML = `Last updated: ${new Date().toLocaleString()}`;
+        this.shadowRoot.host.setAttribute('data-last-updated', Date.now());
     }
 }
 

@@ -17,7 +17,6 @@ class BadgeChecker extends HTMLElement {
     #updated;	// last update timestamp 
 
     // shadow dom
-    #info;
     #results;
 
     constructor() {
@@ -26,8 +25,6 @@ class BadgeChecker extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         this.#results = document.createElement('div');
-        this.#info = document.createElement('span');
-        this.#info.classList.add('date');
 
         // inherit style from root document
         const linkElem = document.createElement("link");
@@ -35,7 +32,6 @@ class BadgeChecker extends HTMLElement {
         linkElem.setAttribute("href", "css/main.css");
 
         this.shadowRoot.append(this.#results);
-        this.shadowRoot.append(this.#info);
         this.shadowRoot.appendChild(linkElem);
 
         this.#update();
@@ -56,11 +52,6 @@ class BadgeChecker extends HTMLElement {
     async #update() {
         this.#results.innerHTML = `
         <style>
-            .date {
-                margin: 6px 0 32px 0;
-                filter: brightness(50%);
-                font-size: 0.8rem;
-            }
             .badge {
                 clear: both;
                 margin-bottom: 0.5rem;
@@ -82,8 +73,7 @@ class BadgeChecker extends HTMLElement {
                 `;
         });
 
-        this.#updated = Date.now();
-        this.#info.innerHTML = `Last updated: ${new Date(this.#updated).toLocaleString()}`;
+        this.shadowRoot.host.setAttribute('data-last-updated', Date.now());
     }
 }
 
